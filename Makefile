@@ -1,9 +1,9 @@
 clean:
 	rm -rf bin
 
-build:
+build: clean
 	mkdir bin
 	g++ *.cpp -o bin/gpp
 
-run: clean build
+run: build
 	./bin/gpp
