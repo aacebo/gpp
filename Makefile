@@ -3,7 +3,7 @@ clean:
 
 build: clean
 	mkdir bin
-	g++ *.cpp -o bin/gpp
+	g++ -std=c++17 *.cpp -o bin/gpp
 
 run: build
 	./bin/gpp
