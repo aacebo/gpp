@@ -5,6 +5,7 @@
 #include <map>
 
 #include "scanner.hpp"
+#include "expression.hpp"
 
 using namespace std;
 using namespace std::filesystem;
