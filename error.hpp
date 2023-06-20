@@ -13,7 +13,7 @@ class error : public exception {
     public:
         error(int ln, int col, string msg) : _ln_(ln), _col_(col), _msg_(msg) { }
 
-        string what() {
+        const string what() {
             return "[ln: " + to_string(_ln_) + ", col: " + to_string(_col_) + "] - " + _msg_;
         }
 };
