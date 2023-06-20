@@ -15,11 +15,12 @@ class scanner {
     vector<error*> _errors_;
 
     public:
-        scanner(string);
+        scanner();
         ~scanner();
 
         const vector<token*> get_tokens() { return this->_tokens_; }
         const vector<error*> get_errors() { return this->_errors_; }
+        void scan(string);
 
     private:
         void push(token::type);

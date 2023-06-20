@@ -5,71 +5,11 @@
 
 using namespace std;
 
-scanner::scanner(string src) {
-    _src_ = src;
+scanner::scanner() {
+    _src_ = "";
     _left_ = 0;
     _right_ = 0;
     _ln_ = 0;
-    
-    while (_right_ < src.length()) {
-        _left_ = _right_;
-        char c = src[_right_];
-        _right_++;
-
-        switch (c) {
-            case ' ':
-            case '\r':
-            case '\t':
-                // ignore whitespace
-                break;
-            case '\n':
-                _ln_++;
-                break;
-            case '(':
-                push(token::type::_lparen_);
-                break;
-            case ')':
-                push(token::type::_rparen_);
-                break;
-            case '{':
-                push(token::type::_lbrace_);
-                break;
-            case '}':
-                push(token::type::_rbrace_);
-                break;
-            case ',':
-                push(token::type::_comma_);
-                break;
-            case '.':
-                push(token::type::_dot_);
-                break;
-            case ';':
-                push(token::type::_semi_colon_);
-                break;
-            case '/':
-                if (peek() == '/') {
-                    on_comment();
-                } else if (peek() == '=') {
-                    push(token::type::_slash_eq_);
-                    _right_++;
-                }
-
-                break;
-            case '"':
-                on_string();
-                break;
-            default:
-                if (is_integer(c)) {
-                    on_number();
-                    break;
-                } else if (is_alpha(c)) {
-                    on_identifier();
-                    break;
-                }
-
-                _errors_.push_back(new error(_ln_, _right_, "unexpected character"));
-        }
-    }
 }
 
 scanner::~scanner() {
@@ -82,10 +22,78 @@ scanner::~scanner() {
     }
 }
 
+void scanner::scan(string src) {
+    this->_src_ += src;
+
+    while (this->_right_ < this->_src_.length()) {
+        this->_left_ = this->_right_;
+        char c = this->_src_[_right_];
+        this->_right_++;
+
+        switch (c) {
+            case ' ':
+            case '\r':
+            case '\t':
+                // ignore whitespace
+                break;
+            case '\n':
+                this->_ln_++;
+                break;
+            case '(':
+                this->push(token::type::_lparen_);
+                break;
+            case ')':
+                this->push(token::type::_rparen_);
+                break;
+            case '{':
+                this->push(token::type::_lbrace_);
+                break;
+            case '}':
+                this->push(token::type::_rbrace_);
+                break;
+            case ',':
+                this->push(token::type::_comma_);
+                break;
+            case '.':
+                this->push(token::type::_dot_);
+                break;
+            case ';':
+                this->push(token::type::_semi_colon_);
+                break;
+            case '/':
+                if (this->peek() == '/') {
+                    this->on_comment();
+                } else if (this->peek() == '=') {
+                    this->push(token::type::_slash_eq_);
+                    this->_right_++;
+                }
+
+                break;
+            case '"':
+                this->on_string();
+                break;
+            default:
+                if (this->is_integer(c)) {
+                    this->on_number();
+                    break;
+                } else if (this->is_alpha(c)) {
+                    this->on_identifier();
+                    break;
+                }
+
+                this->_errors_.push_back(new error(
+                    this->_ln_,
+                    this->_right_,
+                    "unexpected character"
+                ));
+        }
+    }
+}
+
 void scanner::push(token::type type) {
-    _tokens_.push_back(new token(
+    this->_tokens_.push_back(new token(
         type,
-        _src_.substr(this->_left_, this->_right_ - this->_left_),
+        this->_src_.substr(this->_left_, this->_right_ - this->_left_),
         this->_ln_
     ));
 }
