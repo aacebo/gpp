@@ -34,6 +34,7 @@ class token {
             _if_, _else_, _for_, _let_,
             _func_, _return_,
             _class_, _super_, _this_,
+            _package_, _import_,
 
             _eof_
         };
@@ -47,7 +48,9 @@ class token {
             { "return", type::_return_ },
             { "class", type::_class_ },
             { "super", type::_super_ },
-            { "this", type::_this_ }
+            { "this", type::_this_ },
+            { "package", type::_package_ },
+            { "import", type::_import_ }
         };
 
         token(type, string, int);

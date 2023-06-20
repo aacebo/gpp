@@ -62,6 +62,9 @@ scanner::scanner(string src) {
                 if (is_integer(c)) {
                     on_number();
                     break;
+                } else if (is_alpha(c)) {
+                    on_identifier();
+                    break;
                 }
 
                 _errors_.push_back(new error(_ln_, _right_, "unexpected character"));
@@ -96,12 +99,19 @@ char scanner::peek() {
 }
 
 bool scanner::is_integer(char c) {
-    int i(c);
-    return i >= 48 && i <= 57;
+    return c >= '0' && c <= '9';
+}
+
+bool scanner::is_alpha(char c) {
+    return (
+        (c >= 'a' && c <= 'z') ||
+        (c >= 'A' && c <= 'Z') ||
+        c == '_'
+    );
 }
 
 void scanner::on_comment() {
-    while (this->peek() != '\n' && this->_right_ < this->_src_.length()) {
+    while (this->peek() != '\n' && this->peek() != '\0') {
         this->_right_++;
     }
 
@@ -110,7 +120,7 @@ void scanner::on_comment() {
 }
 
 void scanner::on_string() {
-    while (this->peek() != '"' && this->_right_ < this->_src_.length()) {
+    while (this->peek() != '"' && this->peek() != '\0') {
         if (this->peek() == '\n') {
             this->_ln_++;
         }
@@ -133,17 +143,34 @@ void scanner::on_string() {
 }
 
 void scanner::on_number() {
-    while (this->is_integer(this->peek()) && this->_right_ < this->_src_.length()) {
+    while (this->is_integer(this->peek())) {
         this->_right_++;
     }
 
-    if (this->_right_ < this->_src_.length() && this->peek() == '.') {
+    if (this->peek() == '.') {
         this->_right_++;
 
-        while (this->is_integer(this->peek()) && this->_right_ < this->_src_.length()) {
+        while (this->is_integer(this->peek())) {
             this->_right_++;
         }
     }
 
     this->push(token::type::_number_);
+}
+
+void scanner::on_identifier() {
+    while (this->is_alpha(this->peek()) || this->is_integer(this->peek())) {
+        this->_right_++;
+    }
+
+    const string identifier = this->_src_.substr(
+        this->_left_,
+        this->_right_ - this->_left_
+    );
+
+    if (token::keyword_to_type.count(identifier) == 1) {
+        this->push(token::keyword_to_type[identifier]);
+    } else {
+        this->push(token::type::_identifier_);
+    }
 }
