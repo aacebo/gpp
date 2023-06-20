@@ -24,7 +24,8 @@ class scanner {
     private:
         void push(token::type);
         char peek();
-        bool is_next(char);
+        bool is_integer(char c);
         void on_comment();
         void on_string();
+        void on_number();
 };

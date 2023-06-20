@@ -59,6 +59,11 @@ scanner::scanner(string src) {
                 on_string();
                 break;
             default:
+                if (is_integer(c)) {
+                    on_number();
+                    break;
+                }
+
                 _errors_.push_back(new error(_ln_, _right_, "unexpected character"));
         }
     }
@@ -90,12 +95,9 @@ char scanner::peek() {
     return this->_src_[this->_right_];
 }
 
-bool scanner::is_next(char c) {
-    if (this->_right_ >= this->_src_.length() - 1) {
-        return false;
-    }
-
-    return this->_src_[this->_right_ + 1] == c;
+bool scanner::is_integer(char c) {
+    int i(c);
+    return i >= 48 && i <= 57;
 }
 
 void scanner::on_comment() {
@@ -128,4 +130,20 @@ void scanner::on_string() {
 
     this->_right_++;
     this->push(token::type::_string_);
+}
+
+void scanner::on_number() {
+    while (this->is_integer(this->peek()) && this->_right_ < this->_src_.length()) {
+        this->_right_++;
+    }
+
+    if (this->_right_ < this->_src_.length() && this->peek() == '.') {
+        this->_right_++;
+
+        while (this->is_integer(this->peek()) && this->_right_ < this->_src_.length()) {
+            this->_right_++;
+        }
+    }
+
+    this->push(token::type::_number_);
 }
