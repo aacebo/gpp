@@ -33,7 +33,7 @@ class token {
             // keywords
             _if_, _else_, _for_, _let_,
             _func_, _return_,
-            _class_, _super_, _this_,
+            _class_, _super_, _self_, _pub_,
             _package_, _import_,
 
             _eof_
@@ -48,7 +48,8 @@ class token {
             { "return", type::_return_ },
             { "class", type::_class_ },
             { "super", type::_super_ },
-            { "this", type::_this_ },
+            { "self", type::_self_ },
+            { "pub", type::_pub_ },
             { "package", type::_package_ },
             { "import", type::_import_ }
         };
