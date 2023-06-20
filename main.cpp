@@ -39,5 +39,6 @@ int main() {
         delete s.second;
     }
 
+    files.clear();
     return 0;
 }

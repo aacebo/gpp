@@ -17,9 +17,13 @@ scanner::~scanner() {
         delete t;
     }
 
+    this->_tokens_.clear();
+
     for (auto e : this->_errors_) {
         delete e;
     }
+
+    this->_errors_.clear();
 }
 
 void scanner::scan(string src) {
