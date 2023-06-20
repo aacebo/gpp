@@ -2,6 +2,7 @@
 #include <fstream>
 #include <filesystem>
 #include <sstream>
+#include <map>
 
 #include "scanner.hpp"
 
@@ -9,7 +10,7 @@ using namespace std;
 using namespace std::filesystem;
 
 int main() {
-    scanner* s = new scanner();
+    map<path, scanner*> files;
 
     for (recursive_directory_iterator i("."), end; i != end; i++) {
         if (!is_directory(i->path()) && i->path().extension().string() == ".gpp") {
@@ -22,14 +23,21 @@ int main() {
                 text += ch;
             }
 
+            auto s = new scanner();
             s->scan(text);
+            files[i->path()] = s;
+
+            for (auto t : s->get_tokens()) {
+                cout << t->get_type() << " "
+                     << t->get_lex() << " "
+                     << t->get_ln() << endl;
+            }
         }
     }
 
-    for (auto t : s->get_tokens()) {
-        cout << t->get_type() << " " << t->get_lex() << " " << t->get_ln() << endl;
+    for (auto s : files) {
+        delete s.second;
     }
 
-    delete s;
     return 0;
 }
