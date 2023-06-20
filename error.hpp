@@ -5,7 +5,7 @@
 
 using namespace std;
 
-class error : public exception {
+class error : exception {
     int _ln_;
     int _col_;
     const string _msg_;
