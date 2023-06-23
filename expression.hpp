@@ -21,7 +21,7 @@ namespace expression {
             const token::Token name;
             const Expression value;
 
-            Assign(token::Token n, Expression v) : name(n), value(v) { }
+            Assign(token::Token name, Expression value) : name(name), value(value) { }
 
             template <class T>
             T accept(Visitor<T> v) { return v.assign(this); }
@@ -29,11 +29,11 @@ namespace expression {
 
     class Binary : Expression {
         public:
-            const Expression eleft;
+            const Expression left;
             const token::Token op;
-            const Expression eright;
+            const Expression right;
 
-            Binary(Expression left, token::Token o, Expression right) : eleft(left), op(o), eright(right)  { }
+            Binary(Expression left, token::Token op, Expression right) : left(left), op(op), right(right)  { }
 
             template <class T>
             T accept(Visitor<T> v) { return v.binary(this); }
@@ -45,7 +45,7 @@ namespace expression {
             const token::Token paren;
             const vector<Expression> args;
 
-            Call(Expression n, token::Token p, vector<Expression> a) : name(n), paren(p), args(a) { }
+            Call(Expression name, token::Token paren, vector<Expression> args) : name(name), paren(paren), args(args) { }
 
             template <class T>
             T accept(Visitor<T> v) { return v.call(this); }
@@ -56,7 +56,7 @@ namespace expression {
             const Expression object;
             const token::Token name;
 
-            Get(Expression o, token::Token n) : object(o), name(n) { }
+            Get(Expression object, token::Token name) : object(object), name(name) { }
 
             template <class T>
             T accept(Visitor<T> v) { return v.get(this); }
@@ -68,7 +68,7 @@ namespace expression {
             const token::Token name;
             const Expression value;
 
-            Set(Expression o, token::Token n, Expression v) : object(o), name(n), value(v) { }
+            Set(Expression object, token::Token name, Expression value) : object(object), name(name), value(value) { }
 
             template <class T>
             T accept(Visitor<T> v) { return v.set(this); }
@@ -76,9 +76,9 @@ namespace expression {
 
     class Grouping : Expression {
         public:
-            const Expression e;
+            const Expression exp;
 
-            Grouping(Expression exp) : e(exp)  { }
+            Grouping(Expression exp) : exp(exp)  { }
 
             template <class T>
             T accept(Visitor<T> v) { return v.grouping(this); }
@@ -89,7 +89,7 @@ namespace expression {
         public:
             const V value;
 
-            Literal(V v) : value(v)  { }
+            Literal(V value) : value(value)  { }
 
             template <class T>
             T accept(Visitor<T> v) { return v.literal(this); }
@@ -97,11 +97,11 @@ namespace expression {
 
     class Logical : Expression {
         public:
-            const Expression eleft;
+            const Expression left;
             const token::Token op;
-            const Expression eright;
+            const Expression right;
 
-            Logical(Expression left, token::Token o, Expression right) : eleft(left), op(o), eright(right) { }
+            Logical(Expression left, token::Token o, Expression right) : left(left), op(o), right(right) { }
 
             template <class T>
             T accept(Visitor<T> v) { return v.logical(this); }
@@ -112,7 +112,7 @@ namespace expression {
             const token::Token keyword;
             const token::Token method;
 
-            Super(token::Token k, token::Token m) : keyword(k), method(m) { }
+            Super(token::Token keyword, token::Token method) : keyword(keyword), method(method) { }
 
             template <class T>
             T accept(Visitor<T> v) { return v.super(this); }
@@ -122,7 +122,7 @@ namespace expression {
         public:
             const token::Token keyword;
 
-            Self(token::Token k) : keyword(k) { }
+            Self(token::Token keyword) : keyword(keyword) { }
 
             template <class T>
             T accept(Visitor<T> v) { return v.self(this); }
@@ -131,9 +131,9 @@ namespace expression {
     class Unary : Expression {
         public:
             const token::Token op;
-            const Expression eright;
+            const Expression right;
 
-            Unary(token::Token o, Expression right) : op(o), eright(right)  { }
+            Unary(token::Token op, Expression right) : op(op), right(right) { }
 
             template <class T>
             T accept(Visitor<T> v) { return v.unary(this); }
@@ -143,7 +143,7 @@ namespace expression {
         public:
             const token::Token name;
 
-            Let(token::Token n) : name(n) { }
+            Let(token::Token name) : name(name) { }
 
             template <class T>
             T accept(Visitor<T> v) { return v.let(this); }
