@@ -13,7 +13,7 @@ namespace expression {
     class Expression {
         public:
             template <class T>
-            T accept(Visitor<T> v) {}
+            T accept(Visitor<T> v) { }
     };
 
     class Assign : Expression {
@@ -139,13 +139,13 @@ namespace expression {
             T accept(Visitor<T> v) { return v.unary(this); }
     };
 
-    class Let : Expression {
+    class Variable : Expression {
         public:
             const token::Token name;
 
-            Let(token::Token name) : name(name) { }
+            Variable(token::Token name) : name(name) { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.let(this); }
+            T accept(Visitor<T> v) { return v.variable(this); }
     };
 }
