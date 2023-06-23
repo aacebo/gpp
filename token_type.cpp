@@ -1,8 +1,4 @@
-#include <string>
-
 #include "token_type.hpp"
-
-using namespace std;
 
 namespace token {
     Type keyword_to_type(string keyword) {

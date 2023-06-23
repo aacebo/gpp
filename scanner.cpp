@@ -1,9 +1,5 @@
-#include <string>
-
 #include "scanner.hpp"
 #include "error.hpp"
-
-using namespace std;
 
 namespace scanner {
     Scanner::Scanner(string src) : _src(src) {

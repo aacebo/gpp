@@ -1,8 +1,4 @@
-#include <string>
-
 #include "error.hpp"
-
-using namespace std;
 
 namespace error {
     Error::Error(
