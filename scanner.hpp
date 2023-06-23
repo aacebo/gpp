@@ -10,7 +10,7 @@ using namespace std;
 
 namespace scanner {
     class Scanner {
-        string _src;
+        const string _src;
         int _left;
         int _right;
         int _ln;

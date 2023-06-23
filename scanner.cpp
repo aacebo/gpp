@@ -6,8 +6,7 @@
 using namespace std;
 
 namespace scanner {
-    Scanner::Scanner(string src) {
-        this->_src = src;
+    Scanner::Scanner(string src) : _src(src) {
         this->_left = 0;
         this->_right = 0;
         this->_ln = 0;
