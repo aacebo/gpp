@@ -12,7 +12,7 @@ int main() {
         
         for (auto t : s.get_tokens()) {
             cout << t.to_string() << endl;
-        } 
+        }
     }
 
     return 0;
