@@ -8,144 +8,144 @@
 using namespace std;
 
 namespace expression {
-    template <class> class visitor;
+    template <class> class Visitor;
 
-    class expression {
+    class Expression {
         public:
             template <class T>
-            T accept(visitor<T> v) {}
+            T accept(Visitor<T> v) {}
     };
 
-    class assign : expression {
+    class Assign : Expression {
         public:
             const token::Token name;
-            const expression value;
+            const Expression value;
 
-            assign(token::Token n, expression v) : name(n), value(v) { }
+            Assign(token::Token n, Expression v) : name(n), value(v) { }
 
             template <class T>
-            T accept(visitor<T> v) { return v.assign(this); }
+            T accept(Visitor<T> v) { return v.assign(this); }
     };
 
-    class binary : expression {
+    class Binary : Expression {
         public:
-            const expression eleft;
+            const Expression eleft;
             const token::Token op;
-            const expression eright;
+            const Expression eright;
 
-            binary(expression left, token::Token o, expression right) : eleft(left), op(o), eright(right)  { }
+            Binary(Expression left, token::Token o, Expression right) : eleft(left), op(o), eright(right)  { }
 
             template <class T>
-            T accept(visitor<T> v) { return v.binary(this); }
+            T accept(Visitor<T> v) { return v.binary(this); }
     };
 
-    class call : expression {
+    class Call : Expression {
         public:
-            const expression name;
+            const Expression name;
             const token::Token paren;
-            const vector<expression> args;
+            const vector<Expression> args;
 
-            call(expression n, token::Token p, vector<expression> a) : name(n), paren(p), args(a) { }
+            Call(Expression n, token::Token p, vector<Expression> a) : name(n), paren(p), args(a) { }
 
             template <class T>
-            T accept(visitor<T> v) { return v.call(this); }
+            T accept(Visitor<T> v) { return v.call(this); }
     };
 
-    class get : expression {
+    class Get : Expression {
         public:
-            const expression object;
+            const Expression object;
             const token::Token name;
 
-            get(expression o, token::Token n) : object(o), name(n) { }
+            Get(Expression o, token::Token n) : object(o), name(n) { }
 
             template <class T>
-            T accept(visitor<T> v) { return v.get(this); }
+            T accept(Visitor<T> v) { return v.get(this); }
     };
 
-    class set : expression {
+    class Set : Expression {
         public:
-            const expression object;
+            const Expression object;
             const token::Token name;
-            const expression value;
+            const Expression value;
 
-            set(expression o, token::Token n, expression v) : object(o), name(n), value(v) { }
+            Set(Expression o, token::Token n, Expression v) : object(o), name(n), value(v) { }
 
             template <class T>
-            T accept(visitor<T> v) { return v.set(this); }
+            T accept(Visitor<T> v) { return v.set(this); }
     };
 
-    class grouping : expression {
+    class Grouping : Expression {
         public:
-            const expression e;
+            const Expression e;
 
-            grouping(expression exp) : e(exp)  { }
+            Grouping(Expression exp) : e(exp)  { }
 
             template <class T>
-            T accept(visitor<T> v) { return v.grouping(this); }
+            T accept(Visitor<T> v) { return v.grouping(this); }
     };
 
     template <class V>
-    class literal : expression {
+    class Literal : Expression {
         public:
             const V value;
 
-            literal(V v) : value(v)  { }
+            Literal(V v) : value(v)  { }
 
             template <class T>
-            T accept(visitor<T> v) { return v.literal(this); }
+            T accept(Visitor<T> v) { return v.literal(this); }
     };
 
-    class logical : expression {
+    class Logical : Expression {
         public:
-            const expression eleft;
+            const Expression eleft;
             const token::Token op;
-            const expression eright;
+            const Expression eright;
 
-            logical(expression left, token::Token o, expression right) : eleft(left), op(o), eright(right) { }
+            Logical(Expression left, token::Token o, Expression right) : eleft(left), op(o), eright(right) { }
 
             template <class T>
-            T accept(visitor<T> v) { return v.logical(this); }
+            T accept(Visitor<T> v) { return v.logical(this); }
     };
 
-    class super : expression {
+    class Super : Expression {
         public:
             const token::Token keyword;
             const token::Token method;
 
-            super(token::Token k, token::Token m) : keyword(k), method(m) { }
+            Super(token::Token k, token::Token m) : keyword(k), method(m) { }
 
             template <class T>
-            T accept(visitor<T> v) { return v.super(this); }
+            T accept(Visitor<T> v) { return v.super(this); }
     };
 
-    class self : expression {
+    class Self : Expression {
         public:
             const token::Token keyword;
 
-            self(token::Token k) : keyword(k) { }
+            Self(token::Token k) : keyword(k) { }
 
             template <class T>
-            T accept(visitor<T> v) { return v.self(this); }
+            T accept(Visitor<T> v) { return v.self(this); }
     };
 
-    class unary : expression {
+    class Unary : Expression {
         public:
             const token::Token op;
-            const expression eright;
+            const Expression eright;
 
-            unary(token::Token o, expression right) : op(o), eright(right)  { }
+            Unary(token::Token o, Expression right) : op(o), eright(right)  { }
 
             template <class T>
-            T accept(visitor<T> v) { return v.unary(this); }
+            T accept(Visitor<T> v) { return v.unary(this); }
     };
 
-    class let : expression {
+    class Let : Expression {
         public:
             const token::Token name;
 
-            let(token::Token n) : name(n) { }
+            Let(token::Token n) : name(n) { }
 
             template <class T>
-            T accept(visitor<T> v) { return v.let(this); }
+            T accept(Visitor<T> v) { return v.let(this); }
     };
 }

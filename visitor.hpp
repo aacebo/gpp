@@ -3,33 +3,33 @@
 #include "expression.hpp"
 
 namespace expression {
-    class assign;
-    class binary;
-    class call;
-    class get;
-    class set;
-    class grouping;
-    template <class> class literal;
-    class logical;
-    class super;
-    class self;
-    class unary;
-    class let;
+    class Assign;
+    class Binary;
+    class Call;
+    class Get;
+    class Set;
+    class Grouping;
+    template <class> class Literal;
+    class Logical;
+    class Super;
+    class Self;
+    class Unary;
+    class Let;
 
     template <class T>
-    class visitor {
+    class Visitor {
         public:
-            virtual T assign(assign* e) = 0;
-            virtual T binary(binary* e) = 0;
-            virtual T call(call* e) = 0;
-            virtual T get(get* e) = 0;
-            virtual T set(set* e) = 0;
-            virtual T grouping(grouping* e) = 0;
-            virtual T literal(literal<T>* e) = 0;
-            virtual T logical(logical* e) = 0;
-            virtual T super(super* e) = 0;
-            virtual T self(self* e) = 0;
-            virtual T unary(unary* e) = 0;
-            virtual T let(let* e) = 0;
+            virtual T assign(Assign* e) = 0;
+            virtual T binary(Binary* e) = 0;
+            virtual T call(Call* e) = 0;
+            virtual T get(Get* e) = 0;
+            virtual T set(Set* e) = 0;
+            virtual T grouping(Grouping* e) = 0;
+            virtual T literal(Literal<T>* e) = 0;
+            virtual T logical(Logical* e) = 0;
+            virtual T super(Super* e) = 0;
+            virtual T self(Self* e) = 0;
+            virtual T unary(Unary* e) = 0;
+            virtual T let(Let* e) = 0;
     };
 }
