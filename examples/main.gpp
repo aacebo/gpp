@@ -1,7 +1,5 @@
-package main
+use fmt;
 
-import "fmt"
-
-func main() {
-    fmt.Println("hello world")
+fn main() {
+    fmt.println("hello world");
 }

@@ -5,15 +5,18 @@
 
 using namespace std;
 
-class error : exception {
-    int _ln_;
-    int _col_;
-    const string _msg_;
+namespace error {
+    class Error : exception {
+        public:
+            const int ln;
+            const int start;
+            const int end;
+            const string message;
 
-    public:
-        error(int ln, int col, string msg) : _ln_(ln), _col_(col), _msg_(msg) { }
+            Error(int, int, int, string);
+            const string what();
+    };
 
-        const string what() {
-            return "[ln: " + to_string(_ln_) + ", col: " + to_string(_col_) + "] - " + _msg_;
-        }
+    class SyntaxError : public Error { using Error::Error; };
+    class RuntimeError : public Error { using Error::Error; };
 };

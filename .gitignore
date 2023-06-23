@@ -33,4 +33,5 @@
 
 # Misc
 bin
+.vscode
 .DS_Store

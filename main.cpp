@@ -11,7 +11,7 @@ using namespace std;
 using namespace std::filesystem;
 
 int main() {
-    map<path, scanner*> files;
+    map<path, scanner::Scanner*> files;
 
     for (recursive_directory_iterator i("."), end; i != end; i++) {
         if (!is_directory(i->path()) && i->path().extension().string() == ".gpp") {
@@ -24,14 +24,11 @@ int main() {
                 text += ch;
             }
 
-            auto s = new scanner();
-            s->scan(text);
+            auto s = new scanner::Scanner(text);
             files[i->path()] = s;
 
             for (auto t : s->get_tokens()) {
-                cout << t->get_type() << " "
-                     << t->get_lex() << " "
-                     << t->get_ln() << endl;
+                cout << t.to_string() << endl;
             }
         }
     }
