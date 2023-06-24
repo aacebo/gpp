@@ -1,6 +1,7 @@
 #include "file_reader.hpp"
 #include "scanner.hpp"
 #include "parser.hpp"
+#include "error.hpp"
 
 using namespace std;
 
@@ -12,6 +13,12 @@ int main() {
         
         for (auto t : s.get_tokens()) {
             cout << t.fmt() << endl;
+        }
+
+        try {
+            parser::Parser p(s.get_tokens());
+        } catch (error::Error e) {
+            cout << e.what() << endl;
         }
     }
 

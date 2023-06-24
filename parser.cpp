@@ -2,7 +2,21 @@
 
 namespace parser {
     Parser::Parser(vector<token::Token> tokens) : _tokens(tokens) {
+        vector<statement::Statement> stmts;
 
+        while (!this->is_end()) {
+            stmts.push_back(this->_declaration());
+        }
+
+        this->_statements = stmts;
+    }
+
+    const vector<statement::Statement> Parser::get_statements() {
+        return this->_statements;
+    }
+
+    const vector<error::Error> Parser::get_errors() {
+        return this->_errors;
     }
 
     token::Token Parser::next() {
@@ -21,15 +35,15 @@ namespace parser {
         return this->_tokens[this->_it];
     }
 
-    const bool Parser::is_end() {
+    bool Parser::is_end() {
         return this->_tokens[this->_it].type == token::Type::Eof;
     }
 
-    const bool Parser::is_type(token::Type type) {
+    bool Parser::is_type(token::Type type) {
         return this->peek().type == type;
     }
 
-    const error::SyntaxError Parser::error(token::Token token, string message) {
+    error::SyntaxError Parser::error(token::Token token, string message) {
         auto e = error::SyntaxError(
             token.ln,
             token.start,
@@ -41,7 +55,7 @@ namespace parser {
         return e;
     }
 
-    const bool Parser::match(initializer_list<token::Type> types) {
+    bool Parser::match(initializer_list<token::Type> types) {
         for (auto type : types) {
             if (this->is_type(type)) {
                 this->next();
@@ -52,7 +66,7 @@ namespace parser {
         return false;
     }
 
-    const token::Token Parser::consume(token::Type type, string message) {
+    token::Token Parser::consume(token::Type type, string message) {
         if (this->is_type(type)) {
             return this->next();
         }
@@ -60,7 +74,28 @@ namespace parser {
         throw this->error(this->peek(), message);
     }
 
-    const expression::Expression Parser::_assignment() {
+    void Parser::sync() {
+        this->next();
+
+        while (!this->is_end()) {
+            if (this->prev().type == token::Type::SemiColon) return;
+
+            switch (this->peek().type) {
+                case token::Type::Class:
+                case token::Type::Fn:
+                case token::Type::Let:
+                case token::Type::For:
+                case token::Type::If:
+                case token::Type::Return:
+                    return;
+                default: break;
+            }
+
+            this->next();
+        }
+    }
+
+    expression::Expression Parser::_assignment() {
         auto expr = this->_or();
 
         if (this->match({token::Type::Eq})) {
@@ -79,11 +114,11 @@ namespace parser {
         return expr;
     }
 
-    const expression::Expression Parser::_expression() {
+    expression::Expression Parser::_expression() {
         return this->_assignment();
     }
 
-    const expression::Expression Parser::_primary() {
+    expression::Expression Parser::_primary() {
         if (this->match({token::Type::True})) return expression::Literal(true);
         if (this->match({token::Type::False})) return expression::Literal(false);
         if (this->match({token::Type::Nil})) return expression::Literal(nullptr);
@@ -110,7 +145,7 @@ namespace parser {
         throw this->error(this->peek(), "expected expression");
     }
 
-    const expression::Expression Parser::_or() {
+    expression::Expression Parser::_or() {
         auto expr = this->_and();
 
         while (this->match({token::Type::Or})) {
@@ -124,7 +159,7 @@ namespace parser {
         return expr;
     }
 
-    const expression::Expression Parser::_and() {
+    expression::Expression Parser::_and() {
         auto expr = this->_equality();
 
         while (this->match({token::Type::And})) {
@@ -138,7 +173,7 @@ namespace parser {
         return expr;
     }
 
-    const expression::Expression Parser::_equality() {
+    expression::Expression Parser::_equality() {
         auto expr = this->_comparison();
 
         while (this->match({token::Type::NotEq, token::Type::EqEq})) {
@@ -152,7 +187,7 @@ namespace parser {
         return expr;
     }
 
-    const expression::Expression Parser::_comparison() {
+    expression::Expression Parser::_comparison() {
         auto expr = this->_term();
 
         while (this->match({token::Type::Gt, token::Type::GtEq, token::Type::Lt, token::Type::LtEq})) {
@@ -166,7 +201,7 @@ namespace parser {
         return expr;
     }
 
-    const expression::Expression Parser::_term() {
+    expression::Expression Parser::_term() {
         auto expr = this->_factor();
 
         while (this->match({token::Type::Minus, token::Type::Plus})) {
@@ -180,7 +215,7 @@ namespace parser {
         return expr;
     }
 
-    const expression::Expression Parser::_factor() {
+    expression::Expression Parser::_factor() {
         auto expr = this->_unary();
 
         while (this->match({token::Type::Slash, token::Type::Star})) {
@@ -194,7 +229,7 @@ namespace parser {
         return expr;
     }
 
-    const expression::Expression Parser::_unary() {
+    expression::Expression Parser::_unary() {
         if (this->match({token::Type::Not, token::Type::Minus})) {
             return expression::Unary(
                 this->prev(),
@@ -205,7 +240,7 @@ namespace parser {
         return this->_call();
     }
 
-    const expression::Expression Parser::_call() {
+    expression::Expression Parser::_call() {
         auto expr = this->_primary();
 
         while (true) {
@@ -227,7 +262,7 @@ namespace parser {
         return expr;
     }
 
-    const expression::Expression Parser::_call_finish(expression::Expression callee) {
+    expression::Expression Parser::_call_finish(expression::Expression callee) {
         vector<expression::Expression> args;
 
         if (!this->is_type(token::Type::RParen)) {
@@ -242,5 +277,169 @@ namespace parser {
 
         auto paren = this->consume(token::Type::RParen, "expected ')'");
         return expression::Call(callee, paren, args);
+    }
+
+    statement::Statement Parser::_declaration() {
+        try {
+            if (this->match({token::Type::Class})) return this->_class();
+            if (this->match({token::Type::Fn})) return this->_function("function");
+            if (this->match({token::Type::Let})) return this->_var();
+        } catch (error::SyntaxError err) {
+            this->sync();
+        }
+
+        return this->_statement();
+    }
+
+    statement::Statement Parser::_class() {
+        expression::Variable* superclass;
+        auto name = this->consume(token::Type::Identifier, "expected class name");
+
+        if (this->match({token::Type::Lt})) {
+            this->consume(token::Type::Identifier, "expected superclass name");
+            superclass = new expression::Variable(this->prev());
+        }
+
+        this->consume(token::Type::LBrace, "expected '{' before class body");
+
+        vector<statement::Function> methods;
+
+        while (!this->is_type(token::Type::RBrace) && !this->is_end()) {
+            methods.push_back(this->_function("method"));
+        }
+
+        this->consume(token::Type::RBrace, "expected '}' after class body");
+        return statement::Class(name, superclass, methods);
+    }
+
+    statement::Statement Parser::_statement() {
+        if (this->match({token::Type::For})) return this->_for();
+        if (this->match({token::Type::If})) return this->_if();
+        if (this->match({token::Type::Return})) return this->_return();
+        if (this->match({token::Type::LBrace})) return statement::Block(this->_block());
+        return this->_expr();
+    }
+
+    statement::Statement Parser::_for() {
+        statement::Statement* init;
+        this->consume(token::Type::LParen, "expected '(' after 'for'");
+
+        if (this->match({token::Type::SemiColon})) {
+            init = NULL;
+        } else if (this->match({token::Type::Let})) {
+            init = new statement::Statement(this->_var());
+        } else {
+            init = new statement::Statement(this->_expr());
+        }
+
+        expression::Expression* condition;
+
+        if (!this->is_type(token::Type::SemiColon)) {
+            condition = new expression::Expression(this->_expression());
+        }
+
+        this->consume(token::Type::SemiColon, "expected ';' after loop");
+        expression::Expression* increment;
+
+        if (!this->is_type(token::Type::RParen)) {
+            increment = new expression::Expression(this->_expression());
+        }
+
+        this->consume(token::Type::RParen, "expected ')' after 'for' clause");
+        auto body = new statement::Statement(this->_statement());
+
+        if (increment != NULL) {
+            vector<statement::Statement> stmts{*body, statement::Expression(*increment)};
+            body = new statement::Block(stmts);
+        }
+
+        if (condition == NULL) {
+            condition = new expression::Literal(true);
+        }
+
+        body = new statement::For(*condition, *body);
+
+        if (init != NULL) {
+            vector<statement::Statement> stmts{*init, *body};
+            body = new statement::Block(stmts);
+        }
+
+        return *body;
+    }
+
+    statement::Statement Parser::_if() {
+        this->consume(token::Type::LParen, "expected '(' after 'if'");
+        auto condition = this->_expression();
+        this->consume(token::Type::RParen, "expected ')' after 'if' condition");
+
+        auto then_branch = new statement::Statement(this->_statement());
+        statement::Statement* else_branch;
+
+        if (this->match({token::Type::Else})) {
+            else_branch = new statement::Statement(this->_statement());
+        }
+
+        return statement::If(condition, then_branch, else_branch);
+    }
+
+    statement::Statement Parser::_return() {
+        auto keyword = this->prev();
+        expression::Expression* value;
+
+        if (!this->is_type(token::Type::SemiColon)) {
+            value = new expression::Expression(this->_expression());
+        }
+
+        this->consume(token::Type::SemiColon, "expected ';' after return value");
+        return statement::Return(keyword, value);
+    }
+
+    statement::Statement Parser::_var() {
+        expression::Expression* init;
+        auto name = this->consume(token::Type::Identifier, "expected variable name");
+
+        if (this->match({token::Type::Eq})) {
+            init = new expression::Expression(this->_expression());
+        }
+
+        this->consume(token::Type::SemiColon, "expected ';' after variable declaration");
+        return statement::Let(name, init);
+    }
+
+    statement::Statement Parser::_expr() {
+        auto expr = this->_expression();
+        this->consume(token::Type::SemiColon, "expected ';' after expression");
+        return statement::Expression(expr);
+    }
+
+    statement::Function Parser::_function(string kind) {
+        vector<token::Token> params;
+        auto name = this->consume(token::Type::Identifier, "expected \"" + kind + "\" name");
+        this->consume(token::Type::LParen, "expected '(' after \"" + kind + "\" name");
+
+        if (!this->is_type(token::Type::RParen)) {
+            do {
+                if (params.size() >= 255) {
+                    this->error(this->peek(), "cannot have more than 255 parameters");
+                }
+
+                params.push_back(this->consume(token::Type::Identifier, "expected parameter name"));
+            } while (this->match({token::Type::Comma}));
+        }
+
+        this->consume(token::Type::RParen, "expected ')' after parameters");
+        this->consume(token::Type::LBrace, "expected '{' before \"" + kind + "\" body");
+        return statement::Function(name, params, this->_block());
+    }
+
+    vector<statement::Statement> Parser::_block() {
+        vector<statement::Statement> stmts;
+
+        while (!this->is_type(token::Type::RBrace) && !this->is_end()) {
+            stmts.push_back(this->_declaration());
+        }
+
+        this->consume(token::Type::RBrace, "expected '}' after block");
+        return stmts;
     }
 };

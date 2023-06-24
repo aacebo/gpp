@@ -41,10 +41,11 @@ namespace statement {
     class Class : public Statement {
         public:
             const token::Token name;
-            const expression::Variable superclass;
+            const expression::Variable* superclass;
             const vector<Function> methods;
 
-            Class(token::Token name, expression::Variable superclass, vector<Function> methods) : name(name), superclass(superclass), methods(methods) { }
+            Class(token::Token name, expression::Variable* superclass, vector<Function> methods) : name(name), superclass(superclass), methods(methods) { }
+            ~Class() { delete this->superclass; }
 
             template <class T>
             T accept(Visitor<T> v) { return v._class(this); }
@@ -63,10 +64,14 @@ namespace statement {
     class If : public Statement {
         public:
             const expression::Expression condition;
-            const Statement then_branch;
-            const Statement else_branch;
+            const Statement* then_branch;
+            const Statement* else_branch;
 
-            If(expression::Expression condition, Statement then_branch, Statement else_branch) : condition(condition), then_branch(then_branch), else_branch(else_branch) { }
+            If(expression::Expression condition, Statement* then_branch, Statement* else_branch) : condition(condition), then_branch(then_branch), else_branch(else_branch) { }
+            ~If() {
+                delete this->then_branch;
+                delete this->else_branch;
+            }
 
             template <class T>
             T accept(Visitor<T> v) { return v._if(this); }
@@ -75,9 +80,10 @@ namespace statement {
     class Return : public Statement {
         public:
             const token::Token keyword;
-            const expression::Expression value;
+            const expression::Expression* value;
 
-            Return(token::Token keyword, expression::Expression value) : keyword(keyword), value(value) { }
+            Return(token::Token keyword, expression::Expression* value) : keyword(keyword), value(value) { }
+            ~Return() { delete this->value; }
 
             template <class T>
             T accept(Visitor<T> v) { return v._return(this); }
@@ -86,9 +92,10 @@ namespace statement {
     class Let : public Statement {
         public:
             const token::Token name;
-            const expression::Expression init;
+            const expression::Expression* init;
 
-            Let(token::Token name, expression::Expression init) : name(name), init(init) { }
+            Let(token::Token name, expression::Expression* init) : name(name), init(init) { }
+            ~Let() { delete this->init; }
 
             template <class T>
             T accept(Visitor<T> v) { return v.let(this); }
