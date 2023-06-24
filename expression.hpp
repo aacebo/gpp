@@ -1,23 +1,41 @@
-#pragma once
+#ifndef EXPRESSION_H
+#define EXPRESSION_H
 
 #include <vector>
 
 #include "token.hpp"
-#include "visitor.hpp"
 
 using namespace std;
 
 namespace expression {
     template <class> class Visitor;
 
+    enum class Type {
+        Assign,
+        Binary,
+        Call,
+        Get,
+        Set,
+        Grouping,
+        Literal,
+        Logical,
+        Super,
+        Self,
+        Unary,
+        Variable
+    };
+
     class Expression {
         public:
+            Type type;
+
             template <class T>
             T accept(Visitor<T> v) { }
     };
 
-    class Assign : Expression {
+    class Assign : public Expression {
         public:
+            const Type type = Type::Assign;
             const token::Token name;
             const Expression value;
 
@@ -27,8 +45,9 @@ namespace expression {
             T accept(Visitor<T> v) { return v.assign(this); }
     };
 
-    class Binary : Expression {
+    class Binary : public Expression {
         public:
+            const Type type = Type::Binary;
             const Expression left;
             const token::Token op;
             const Expression right;
@@ -39,8 +58,9 @@ namespace expression {
             T accept(Visitor<T> v) { return v.binary(this); }
     };
 
-    class Call : Expression {
+    class Call : public Expression {
         public:
+            const Type type = Type::Call;
             const Expression name;
             const token::Token paren;
             const vector<Expression> args;
@@ -51,8 +71,9 @@ namespace expression {
             T accept(Visitor<T> v) { return v.call(this); }
     };
 
-    class Get : Expression {
+    class Get : public Expression {
         public:
+            const Type type = Type::Get;
             const Expression object;
             const token::Token name;
 
@@ -62,8 +83,9 @@ namespace expression {
             T accept(Visitor<T> v) { return v.get(this); }
     };
 
-    class Set : Expression {
+    class Set : public Expression {
         public:
+            const Type type = Type::Set;
             const Expression object;
             const token::Token name;
             const Expression value;
@@ -74,8 +96,9 @@ namespace expression {
             T accept(Visitor<T> v) { return v.set(this); }
     };
 
-    class Grouping : Expression {
+    class Grouping : public Expression {
         public:
+            const Type type = Type::Grouping;
             const Expression exp;
 
             Grouping(Expression exp) : exp(exp)  { }
@@ -85,8 +108,9 @@ namespace expression {
     };
 
     template <class V>
-    class Literal : Expression {
+    class Literal : public Expression {
         public:
+            const Type type = Type::Literal;
             const V value;
 
             Literal(V value) : value(value)  { }
@@ -95,8 +119,9 @@ namespace expression {
             T accept(Visitor<T> v) { return v.literal(this); }
     };
 
-    class Logical : Expression {
+    class Logical : public Expression {
         public:
+            const Type type = Type::Logical;
             const Expression left;
             const token::Token op;
             const Expression right;
@@ -107,8 +132,9 @@ namespace expression {
             T accept(Visitor<T> v) { return v.logical(this); }
     };
 
-    class Super : Expression {
+    class Super : public Expression {
         public:
+            const Type type = Type::Super;
             const token::Token keyword;
             const token::Token method;
 
@@ -118,8 +144,9 @@ namespace expression {
             T accept(Visitor<T> v) { return v.super(this); }
     };
 
-    class Self : Expression {
+    class Self : public Expression {
         public:
+            const Type type = Type::Self;
             const token::Token keyword;
 
             Self(token::Token keyword) : keyword(keyword) { }
@@ -128,8 +155,9 @@ namespace expression {
             T accept(Visitor<T> v) { return v.self(this); }
     };
 
-    class Unary : Expression {
+    class Unary : public Expression {
         public:
+            const Type type = Type::Unary;
             const token::Token op;
             const Expression right;
 
@@ -139,8 +167,9 @@ namespace expression {
             T accept(Visitor<T> v) { return v.unary(this); }
     };
 
-    class Variable : Expression {
+    class Variable : public Expression {
         public:
+            const Type type = Type::Variable;
             const token::Token name;
 
             Variable(token::Token name) : name(name) { }
@@ -149,3 +178,5 @@ namespace expression {
             T accept(Visitor<T> v) { return v.variable(this); }
     };
 }
+
+#endif

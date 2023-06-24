@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VISITOR_H
+#define VISITOR_H
 
 #include "expression.hpp"
 #include "statement.hpp"
@@ -58,3 +59,5 @@ namespace statement {
             virtual T _for(For* s) = 0;
     };
 };
+
+#endif

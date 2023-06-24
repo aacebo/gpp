@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TOKEN_H
+#define TOKEN_H
 
 #include <string>
 #include <map>
@@ -17,6 +18,9 @@ namespace token {
             const string value;
 
             Token(Type, int, int, int, string);
-            const string to_string();
+            const string fmt();
+            const float to_float();
     };
 };
+
+#endif

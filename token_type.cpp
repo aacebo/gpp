@@ -24,6 +24,10 @@ namespace token {
             return Type::Pub;
         } else if (keyword == "use") {
             return Type::Use;
+        } else if (keyword == "true") {
+            return Type::True;
+        } else if (keyword == "false") {
+            return Type::False;
         }
 
         return Type::Invalid;
@@ -111,6 +115,10 @@ namespace token {
                 return "pub";
             case Type::Use:
                 return "use";
+            case Type::True:
+                return "true";
+            case Type::False:
+                return "false";
             case Type::Eof:
                 return "\0";
             default:

@@ -1,6 +1,6 @@
 #include "file_reader.hpp"
 #include "scanner.hpp"
-#include "statement.hpp"
+#include "parser.hpp"
 
 using namespace std;
 
@@ -11,7 +11,7 @@ int main() {
         scanner::Scanner s(f.second);
         
         for (auto t : s.get_tokens()) {
-            cout << t.to_string() << endl;
+            cout << t.fmt() << endl;
         }
     }
 

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ERROR_H
+#define ERROR_H
 
 #include <exception>
 #include <string>
@@ -20,3 +21,5 @@ namespace error {
     class SyntaxError : public Error { using Error::Error; };
     class RuntimeError : public Error { using Error::Error; };
 };
+
+#endif

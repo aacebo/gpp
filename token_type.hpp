@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TOKEN_TYPE_H
+#define TOKEN_TYPE_H
 
 #include <string>
 
@@ -32,7 +33,7 @@ namespace token {
         If, Else, For, Let,
         Fn, Return,
         Class, Super, Self, Pub,
-        Use,
+        Use, True, False,
 
         Eof,
         Invalid
@@ -41,3 +42,5 @@ namespace token {
     Type keyword_to_type(string);
     string type_to_string(Type);
 };
+
+#endif

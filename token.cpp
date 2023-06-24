@@ -12,7 +12,11 @@ namespace token {
 
     }
 
-    const string Token::to_string() {
+    const string Token::fmt() {
         return type_to_string(this->type) + " -> " + this->value;
+    }
+
+    const float Token::to_float() {
+        return stof(this->value);
     }
 };

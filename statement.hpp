@@ -4,7 +4,6 @@
 
 #include "expression.hpp"
 #include "token.hpp"
-#include "visitor.hpp"
 
 using namespace std;
 
@@ -17,7 +16,7 @@ namespace statement {
             T accept(Visitor<T> v) { }
     };
 
-    class Block : Statement {
+    class Block : public Statement {
         public:
             const vector<Statement> stmts;
 
@@ -27,7 +26,7 @@ namespace statement {
             T accept(Visitor<T> v) { return v.block(this); }
     };
 
-    class Function : Statement {
+    class Function : public Statement {
         public:
             const token::Token name;
             const vector<token::Token> params;
@@ -39,7 +38,7 @@ namespace statement {
             T accept(Visitor<T> v) { return v.function(this); }
     };
 
-    class Class : Statement {
+    class Class : public Statement {
         public:
             const token::Token name;
             const expression::Variable superclass;
@@ -51,7 +50,7 @@ namespace statement {
             T accept(Visitor<T> v) { return v._class(this); }
     };
 
-    class Expression : Statement {
+    class Expression : public Statement {
         public:
             const expression::Expression exp;
 
@@ -61,7 +60,7 @@ namespace statement {
             T accept(Visitor<T> v) { return v.expression(this); }
     };
 
-    class If : Statement {
+    class If : public Statement {
         public:
             const expression::Expression condition;
             const Statement then_branch;
@@ -73,7 +72,7 @@ namespace statement {
             T accept(Visitor<T> v) { return v._if(this); }
     };
 
-    class Return : Statement {
+    class Return : public Statement {
         public:
             const token::Token keyword;
             const expression::Expression value;
@@ -84,7 +83,7 @@ namespace statement {
             T accept(Visitor<T> v) { return v._return(this); }
     };
 
-    class Let : Statement {
+    class Let : public Statement {
         public:
             const token::Token name;
             const expression::Expression init;
@@ -95,7 +94,7 @@ namespace statement {
             T accept(Visitor<T> v) { return v.let(this); }
     };
 
-    class For : Statement {
+    class For : public Statement {
         public:
             const expression::Expression condition;
             const Statement body;

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FILE_READER_H
+#define FILE_READER_H
 
 #include <iostream>
 #include <fstream>
@@ -18,3 +19,5 @@ namespace file_reader {
             const map<path, string> get_files();
     };
 };
+
+#endif
