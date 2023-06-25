@@ -10,32 +10,14 @@ using namespace std;
 namespace expression {
     template <class> class Visitor;
 
-    enum class Type {
-        Assign,
-        Binary,
-        Call,
-        Get,
-        Set,
-        Grouping,
-        Literal,
-        Logical,
-        Super,
-        Self,
-        Unary,
-        Variable
-    };
-
     class Expression {
         public:
-            Type type;
-
             template <class T>
             T accept(Visitor<T> v) { }
     };
 
     class Assign : public Expression {
         public:
-            const Type type = Type::Assign;
             const token::Token name;
             const Expression value;
 
@@ -47,7 +29,6 @@ namespace expression {
 
     class Binary : public Expression {
         public:
-            const Type type = Type::Binary;
             const Expression left;
             const token::Token op;
             const Expression right;
@@ -60,7 +41,6 @@ namespace expression {
 
     class Call : public Expression {
         public:
-            const Type type = Type::Call;
             const Expression name;
             const token::Token paren;
             const vector<Expression> args;
@@ -73,7 +53,6 @@ namespace expression {
 
     class Get : public Expression {
         public:
-            const Type type = Type::Get;
             const Expression object;
             const token::Token name;
 
@@ -85,7 +64,6 @@ namespace expression {
 
     class Set : public Expression {
         public:
-            const Type type = Type::Set;
             const Expression object;
             const token::Token name;
             const Expression value;
@@ -98,7 +76,6 @@ namespace expression {
 
     class Grouping : public Expression {
         public:
-            const Type type = Type::Grouping;
             const Expression exp;
 
             Grouping(Expression exp) : exp(exp)  { }
@@ -110,7 +87,6 @@ namespace expression {
     template <class V>
     class Literal : public Expression {
         public:
-            const Type type = Type::Literal;
             const V value;
 
             Literal(V value) : value(value)  { }
@@ -121,7 +97,6 @@ namespace expression {
 
     class Logical : public Expression {
         public:
-            const Type type = Type::Logical;
             const Expression left;
             const token::Token op;
             const Expression right;
@@ -134,7 +109,6 @@ namespace expression {
 
     class Super : public Expression {
         public:
-            const Type type = Type::Super;
             const token::Token keyword;
             const token::Token method;
 
@@ -146,7 +120,6 @@ namespace expression {
 
     class Self : public Expression {
         public:
-            const Type type = Type::Self;
             const token::Token keyword;
 
             Self(token::Token keyword) : keyword(keyword) { }
@@ -157,7 +130,6 @@ namespace expression {
 
     class Unary : public Expression {
         public:
-            const Type type = Type::Unary;
             const token::Token op;
             const Expression right;
 
@@ -169,7 +141,6 @@ namespace expression {
 
     class Variable : public Expression {
         public:
-            const Type type = Type::Variable;
             const token::Token name;
 
             Variable(token::Token name) : name(name) { }

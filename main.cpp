@@ -21,6 +21,7 @@ int main() {
 
         try {
             parser::Parser p(s.get_tokens());
+            cout << p.get_statements().size() << endl;
         } catch (error::Error e) {
             cout << e.what() << endl;
         }
