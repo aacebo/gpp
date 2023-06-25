@@ -24,7 +24,7 @@ namespace expression {
             Assign(token::Token name, Expression value) : name(name), value(value) { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.assign(this); }
+            T accept(Visitor<T> v) { return v.visit_assign(this); }
     };
 
     class Binary : public Expression {
@@ -36,7 +36,7 @@ namespace expression {
             Binary(Expression left, token::Token op, Expression right) : left(left), op(op), right(right)  { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.binary(this); }
+            T accept(Visitor<T> v) { return v.visit_binary(this); }
     };
 
     class Call : public Expression {
@@ -48,7 +48,7 @@ namespace expression {
             Call(Expression name, token::Token paren, vector<Expression> args) : name(name), paren(paren), args(args) { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.call(this); }
+            T accept(Visitor<T> v) { return v.visit_call(this); }
     };
 
     class Get : public Expression {
@@ -59,7 +59,7 @@ namespace expression {
             Get(Expression object, token::Token name) : object(object), name(name) { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.get(this); }
+            T accept(Visitor<T> v) { return v.visit_get(this); }
     };
 
     class Set : public Expression {
@@ -71,7 +71,7 @@ namespace expression {
             Set(Expression object, token::Token name, Expression value) : object(object), name(name), value(value) { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.set(this); }
+            T accept(Visitor<T> v) { return v.visit_set(this); }
     };
 
     class Grouping : public Expression {
@@ -81,7 +81,7 @@ namespace expression {
             Grouping(Expression exp) : exp(exp)  { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.grouping(this); }
+            T accept(Visitor<T> v) { return v.visit_grouping(this); }
     };
 
     template <class V>
@@ -92,7 +92,7 @@ namespace expression {
             Literal(V value) : value(value)  { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.literal(this); }
+            T accept(Visitor<T> v) { return v.visit_literal(this); }
     };
 
     class Logical : public Expression {
@@ -104,7 +104,7 @@ namespace expression {
             Logical(Expression left, token::Token o, Expression right) : left(left), op(o), right(right) { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.logical(this); }
+            T accept(Visitor<T> v) { return v.visit_logical(this); }
     };
 
     class Super : public Expression {
@@ -115,7 +115,7 @@ namespace expression {
             Super(token::Token keyword, token::Token method) : keyword(keyword), method(method) { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.super(this); }
+            T accept(Visitor<T> v) { return v.visit_super(this); }
     };
 
     class Self : public Expression {
@@ -125,7 +125,7 @@ namespace expression {
             Self(token::Token keyword) : keyword(keyword) { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.self(this); }
+            T accept(Visitor<T> v) { return v.visit_self(this); }
     };
 
     class Unary : public Expression {
@@ -136,7 +136,7 @@ namespace expression {
             Unary(token::Token op, Expression right) : op(op), right(right) { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.unary(this); }
+            T accept(Visitor<T> v) { return v.visit_unary(this); }
     };
 
     class Variable : public Expression {
@@ -146,7 +146,7 @@ namespace expression {
             Variable(token::Token name) : name(name) { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.variable(this); }
+            T accept(Visitor<T> v) { return v.visit_variable(this); }
     };
 }
 
