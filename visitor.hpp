@@ -45,6 +45,7 @@ namespace statement {
     class Return;
     class Let;
     class For;
+    class Use;
 
     template <class T>
     class Visitor {
@@ -57,6 +58,7 @@ namespace statement {
             virtual T _return(Return* s) = 0;
             virtual T let(Let* s) = 0;
             virtual T _for(For* s) = 0;
+            virtual T use(User* s) = 0;
     };
 };
 

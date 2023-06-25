@@ -53,6 +53,15 @@ namespace scanner {
                 case ';':
                     this->push(token::Type::SemiColon);
                     break;
+                case '-':
+                    this->push(this->peek() == '=' ? token::Type::MinusEq : token::Type::Minus);
+                    break;
+                case '+':
+                    this->push(this->peek() == '=' ? token::Type::PlusEq : token::Type::Plus);
+                    break;
+                case '*':
+                    this->push(this->peek() == '=' ? token::Type::StarEq : token::Type::Star);
+                    break;
                 case '/':
                     if (this->peek() == '/') {
                         this->on_comment();
@@ -66,6 +75,18 @@ namespace scanner {
                     break;
                 case '"':
                     this->on_string();
+                    break;
+                case '!':
+                    this->push(this->peek() == '=' ? token::Type::NotEq : token::Type::Not);
+                    break;
+                case '=':
+                    this->push(this->peek() == '=' ? token::Type::EqEq : token::Type::Eq);
+                    break;
+                case '<':
+                    this->push(this->peek() == '=' ? token::Type::LtEq : token::Type::Lt);
+                    break;
+                case '>':
+                    this->push(this->peek() == '=' ? token::Type::GtEq : token::Type::Gt);
                     break;
                 default:
                     if (this->is_integer(c)) {
@@ -84,6 +105,8 @@ namespace scanner {
                     ));
             }
         }
+
+        this->push(token::Type::Eof);
     }
 
     void Scanner::push(token::Type type) {

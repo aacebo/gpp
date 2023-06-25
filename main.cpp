@@ -15,6 +15,10 @@ int main() {
             cout << t.fmt() << endl;
         }
 
+        for (auto e : s.get_errors()) {
+            cout << e.what() << endl;
+        }
+
         try {
             parser::Parser p(s.get_tokens());
         } catch (error::Error e) {

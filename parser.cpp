@@ -87,6 +87,7 @@ namespace parser {
                 case token::Type::For:
                 case token::Type::If:
                 case token::Type::Return:
+                case token::Type::Use:
                     return;
                 default: break;
             }
@@ -142,7 +143,7 @@ namespace parser {
             return expression::Grouping(expr);
         }
 
-        throw this->error(this->peek(), "expected expression");
+        throw this->error(this->peek(), "expected expression \"" + token::type_to_string(this->peek().type) + "\"");
     }
 
     expression::Expression Parser::_or() {
@@ -284,6 +285,7 @@ namespace parser {
             if (this->match({token::Type::Class})) return this->_class();
             if (this->match({token::Type::Fn})) return this->_function("function");
             if (this->match({token::Type::Let})) return this->_var();
+            if (this->match({token::Type::Use})) return this->_use();
         } catch (error::SyntaxError err) {
             this->sync();
         }
@@ -410,6 +412,12 @@ namespace parser {
         auto expr = this->_expression();
         this->consume(token::Type::SemiColon, "expected ';' after expression");
         return statement::Expression(expr);
+    }
+
+    statement::Statement Parser::_use() {
+        auto name = this->consume(token::Type::Identifier, "expected package name");
+        this->consume(token::Type::SemiColon, "expected ';' after package import");
+        return statement::Use(name);
     }
 
     statement::Function Parser::_function(string kind) {

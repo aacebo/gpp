@@ -1,5 +1,6 @@
-use fmt;
+// use fmt;
 
-fn main() {
-    fmt.println("hello world");
-}
+// fn main() {
+//     fmt.println("hello world");
+// }
+let test = "test";

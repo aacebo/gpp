@@ -111,4 +111,14 @@ namespace statement {
             template <class T>
             T accept(Visitor<T> v) { return v._for(this); }
     };
+
+    class Use : public Statement {
+        public:
+            const token::Token name;
+
+            Use(token::Token name) : name(name) { }
+
+            template <class T>
+            T accept(Visitor<T> v) { v.use(this); }
+    };
 };

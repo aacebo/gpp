@@ -13,7 +13,10 @@ namespace token {
     }
 
     const string Token::fmt() {
-        return type_to_string(this->type) + " -> " + this->value;
+        return "[ln: " + to_string(this->ln) +
+            ", start: " + to_string(this->start) +
+            ", end: " + to_string(this->end) +
+            "](" + type_to_string(this->type) + ") -> " + this->value;
     }
 
     const float Token::to_float() {
