@@ -8,58 +8,33 @@
 
 using namespace std;
 
-namespace var {
-    enum class Type {
-        String,
-        Number,
-        Bool,
-        Any
-    };
-    
+namespace scope {   
+    template <class T> 
     class Var {
         public:
-            const Type type;
-            any* value;
+            any value;
 
-            ~Var() { delete this->value; }
-            Var(any value) : type(Type::Any) { this->value = new any(value); }
-            Var(string value) : type(Type::String) { this->value = new any(value); }
-            Var(float value) : type(Type::Number) { this->value = new any(value); }
-            Var(bool value) : type(Type::Bool) { this->value = new any(value); }
+            Var(T value) { this->value = value; }
 
-            void set(any value) { *this->value = value; }
-            void set(string value) { *this->value = any(value); }
-            void set(float value) { *this->value = any(value); }
-            void set(bool value) { *this->value = any(value); }
+            void set(T value) { this->value = value; }
+            T get() { return any_cast<T>(this->value); }
 
-            any get() { return *this->value; }
-            string to_string() {
-                if (this->type != Type::String) {
-                    throw runtime_error("cannot convert type to string");
-                }
+            void nil() { this->value.reset(); }
+            bool is_nil() { return !this->value.has_value(); }
+            string to_string() { return std::to_string(this->value); }
 
-                return any_cast<string>(*this->value);
+            bool operator==(Var<T>& other) {
+                if (this->is_nil() && other.is_nil()) return true;
+                return this->get() == other.get();
             }
 
-            float to_number() {
-                if (this->type != Type::Number) {
-                    throw runtime_error("cannot convert type to number");
+            bool is_truthy() {
+                if (this->is_nil()) return false;
+                if (this->value.type() == typeid(bool)) {
+                    return any_cast<bool>(this->value);
                 }
 
-                return any_cast<float>(*this->value);
-            }
-
-            bool to_bool() {
-                if (this->type != Type::Bool) {
-                    throw runtime_error("cannot convert type to bool");
-                }
-
-                return any_cast<bool>(*this->value);
-            }
-
-            void nil() {
-                delete this->value;
-                this->value = NULL;
+                return true;
             }
     };
 };

@@ -7,7 +7,7 @@ namespace scope {
         }
     }
 
-    var::Var* Scope::get(token::Token name) {
+    Var<any>* Scope::get(token::Token name) {
         if (this->has(name)) {
             return this->_values[name.value];
         }
@@ -29,7 +29,7 @@ namespace scope {
     }
 
     void Scope::define(token::Token name, any value) {
-        this->_values[name.value] = new var::Var(value);
+        this->_values[name.value] = new Var(value);
     }
 
     void Scope::assign(token::Token name, any value) {
