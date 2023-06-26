@@ -13,7 +13,7 @@ namespace statement {
     class Statement {
         public:
             template <class T>
-            T accept(Visitor<T> v) { }
+            T accept(Visitor<T>* v) { throw logic_error("unimplemented"); }
     };
 
     class Block : public Statement {
@@ -23,7 +23,7 @@ namespace statement {
             Block(vector<Statement> stmts) : stmts(stmts) { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.visit_block(this); }
+            T accept(Visitor<T>* v) { return v->visit_block(this); }
     };
 
     class Function : public Statement {
@@ -35,7 +35,7 @@ namespace statement {
             Function(token::Token name, vector<token::Token> params, vector<Statement> body) : name(name), params(params), body(body) { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.visit_function(this); }
+            T accept(Visitor<T>* v) { return v->visit_function(this); }
     };
 
     class Class : public Statement {
@@ -48,7 +48,7 @@ namespace statement {
             ~Class() { delete this->superclass; }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.visit_class(this); }
+            T accept(Visitor<T>* v) { return v->visit_class(this); }
     };
 
     class Expression : public Statement {
@@ -58,7 +58,7 @@ namespace statement {
             Expression(expression::Expression exp) : exp(exp) { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.visit_expression(this); }
+            T accept(Visitor<T>* v) { return v->visit_expression(this); }
     };
 
     class If : public Statement {
@@ -74,7 +74,7 @@ namespace statement {
             }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.visit_if(this); }
+            T accept(Visitor<T>* v) { return v->visit_if(this); }
     };
 
     class Return : public Statement {
@@ -86,7 +86,7 @@ namespace statement {
             ~Return() { delete this->value; }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.visit_return(this); }
+            T accept(Visitor<T>* v) { return v->visit_return(this); }
     };
 
     class Let : public Statement {
@@ -98,7 +98,7 @@ namespace statement {
             ~Let() { delete this->init; }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.visit_let(this); }
+            T accept(Visitor<T>* v) { return v->visit_let(this); }
     };
 
     class For : public Statement {
@@ -109,7 +109,7 @@ namespace statement {
             For(expression::Expression condition, Statement body) : condition(condition), body(body) { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.visit_for(this); }
+            T accept(Visitor<T>* v) { return v->visit_for(this); }
     };
 
     class Use : public Statement {
@@ -119,6 +119,6 @@ namespace statement {
             Use(token::Token name) : name(name) { }
 
             template <class T>
-            T accept(Visitor<T> v) { return v.visit_use(this); }
+            T accept(Visitor<T>* v) { return v->visit_use(this); }
     };
 };

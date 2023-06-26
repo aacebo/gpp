@@ -22,4 +22,16 @@ namespace token {
     const float Token::to_float() {
         return stof(this->value);
     }
+
+    const bool Token::to_bool() {
+        if (this->value == "true") return true;
+        else if (this->value == "false") return false;
+
+        throw error::RuntimeError(
+            this->ln,
+            this->start,
+            this->end,
+            "string \"" + this->value + "\" cannot be cast to bool"
+        );
+    }
 };

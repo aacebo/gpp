@@ -2,7 +2,7 @@
 #include "scanner.hpp"
 #include "parser.hpp"
 #include "error.hpp"
-#include "scope.hpp"
+#include "interpreter.hpp"
 
 using namespace std;
 

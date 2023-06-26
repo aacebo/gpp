@@ -1,7 +1,13 @@
 #include "scope.hpp"
 
 namespace scope {
-    any Scope::get(token::Token name) {
+    Scope::~Scope() {
+        for (auto v : this->_values) {
+            delete v.second;
+        }
+    }
+
+    var::Var* Scope::get(token::Token name) {
         if (this->has(name)) {
             return this->_values[name.value];
         }
@@ -23,12 +29,12 @@ namespace scope {
     }
 
     void Scope::define(token::Token name, any value) {
-        this->_values[name.value] = value;
+        this->_values[name.value] = new var::Var(value);
     }
 
     void Scope::assign(token::Token name, any value) {
         if (this->has(name)) {
-            this->_values[name.value] = value;
+            this->_values[name.value]->set(value);
             return;
         }
 

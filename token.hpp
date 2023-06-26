@@ -20,6 +20,7 @@ namespace token {
             Token(Type, int, int, int, string);
             const string fmt();
             const float to_float();
+            const bool to_bool();
     };
 };
 

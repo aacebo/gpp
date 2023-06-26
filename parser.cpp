@@ -122,7 +122,7 @@ namespace parser {
     expression::Expression Parser::_primary() {
         if (this->match({token::Type::True})) return expression::Literal(true);
         if (this->match({token::Type::False})) return expression::Literal(false);
-        if (this->match({token::Type::Nil})) return expression::Literal(nullptr);
+        if (this->match({token::Type::Nil})) return expression::Literal(NULL);
         if (this->match({token::Type::Number})) return expression::Literal(this->prev().to_float());
         if (this->match({token::Type::String})) return expression::Literal(this->prev().value);
         if (this->match({token::Type::Self})) return expression::Self(this->prev());
