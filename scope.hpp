@@ -5,7 +5,6 @@
 #include <any>
 #include <string>
 
-#include "token.hpp"
 #include "error.hpp"
 #include "var.hpp"
 
@@ -21,10 +20,10 @@ namespace scope {
             Scope(Scope* outer) : _outer(outer) { }
             ~Scope();
 
-            Var<any>* get(token::Token);
-            bool has(token::Token);
-            void define(token::Token, any);
-            void assign(token::Token, any);
+            Var<any>* get(string);
+            bool has(string);
+            void define(string, any);
+            void assign(string, any);
     };
 };
 
