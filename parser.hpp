@@ -19,6 +19,7 @@ namespace parser {
 
         public:
             Parser(vector<token::Token*>);
+            ~Parser();
             const vector<statement::Statement*> get_statements();
             const vector<error::Error*> get_errors();
 
@@ -28,6 +29,7 @@ namespace parser {
             token::Token* peek();
             token::Token* consume(token::Type, string);
             error::SyntaxError* error(token::Token*, string);
+
             bool is_end();
             bool is_type(token::Type);
             bool match(initializer_list<token::Type>);

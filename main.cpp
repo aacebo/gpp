@@ -1,7 +1,6 @@
 #include "file_reader.hpp"
 #include "scanner.hpp"
 #include "parser.hpp"
-#include "error.hpp"
 #include "interpreter.hpp"
 
 using namespace std;
@@ -18,20 +17,25 @@ int main() {
         }
         
         for (auto t : scanner->get_tokens()) {
-            cout << t->fmt() << endl;
+            cout << t->to_string() << endl;
         }
 
         try {
             auto parser = new parser::Parser(scanner->get_tokens());
         
-            for (auto e : parser->get_errors()) {
-                cout << e->what() << endl;
+            if (parser->get_errors().size() > 0) {
+                for (auto e : parser->get_errors()) {
+                    cout << e->what() << endl;
+                }
+
+                return -1;
             }
 
-            cout << parser->get_statements().size() << endl;
+            interpreter->run(parser->get_statements());
             delete parser;
-        } catch (error::Error e) {
+        } catch (exception e) {
             cout << e.what() << endl;
+            return -1;
         }
 
         delete scanner;
@@ -39,6 +43,5 @@ int main() {
 
     delete interpreter;
     delete reader;
-
     return 0;
 }

@@ -1,6 +1,12 @@
 #include "interpreter.hpp"
 
 namespace interpreter {
+    void Interpreter::run(vector<statement::Statement*> stmts) {
+        for (auto stmt : stmts) {
+            this->execute(stmt);
+        }
+    }
+
     scope::Var* Interpreter::evaluate(expression::Expression* expr) {
         switch (expr->type) {
             case expression::Type::Assign:
@@ -364,6 +370,5 @@ namespace interpreter {
     }
 
     void Interpreter::visit_use(statement::Use* stmt) {
-        throw logic_error("unimplemented");
     }
 };

@@ -11,6 +11,20 @@ namespace parser {
         this->_statements = stmts;
     }
 
+    Parser::~Parser() {
+        for (auto stmt : this->_statements) {
+            delete stmt;
+        }
+
+        this->_statements.clear();
+
+        for (auto e : this->_errors) {
+            delete e;
+        }
+
+        this->_errors.clear();
+    }
+
     const vector<statement::Statement*> Parser::get_statements() {
         return this->_statements;
     }

@@ -22,7 +22,9 @@ namespace interpreter {
         public:
             Interpreter() = default;
             ~Interpreter() { delete this->scope; }
+            void run(vector<statement::Statement*>);
 
+        protected:
             scope::Var* evaluate(expression::Expression*);
             void execute(statement::Statement*);
             void execute_block(vector<statement::Statement*>, scope::Scope*);

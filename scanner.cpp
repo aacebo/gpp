@@ -9,6 +9,20 @@ namespace scanner {
         this->scan();
     }
 
+    Scanner::~Scanner() {
+        for (auto token : this->_tokens) {
+            delete token;
+        }
+
+        this->_tokens.clear();
+
+        for (auto e : this->_errors) {
+            delete e;
+        }
+
+        this->_errors.clear();
+    }
+
     const vector<token::Token*> Scanner::get_tokens() {
         return this->_tokens;
     }

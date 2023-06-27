@@ -20,6 +20,7 @@ namespace scanner {
 
         public:
             Scanner(string);
+            ~Scanner();
             const vector<token::Token*> get_tokens();
             const vector<error::Error*> get_errors();
 

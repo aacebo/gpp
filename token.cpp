@@ -12,10 +12,10 @@ namespace token {
 
     }
 
-    const string Token::fmt() {
-        return "[ln: " + to_string(this->ln) +
-            ", start: " + to_string(this->start) +
-            ", end: " + to_string(this->end) +
+    const string Token::to_string() {
+        return "[ln: " + std::to_string(this->ln) +
+            ", start: " + std::to_string(this->start) +
+            ", end: " + std::to_string(this->end) +
             "](" + type_to_string(this->type) + ") -> " + this->value;
     }
 
