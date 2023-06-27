@@ -3,7 +3,7 @@ clean:
 
 build: clean
 	mkdir bin
-	clang++ -std=c++20 *.cpp -o bin/gpp
+	clang++ -g -std=c++20 *.cpp -o bin/gpp
 
 run: build
 	./bin/gpp

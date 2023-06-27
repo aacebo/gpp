@@ -12,118 +12,130 @@ using namespace std;
 namespace expression {
     class Expression {
         public:
-            Type type = Type::Default;
+            Type type;
 
             virtual string to_string() { return type_to_string(this->type); }
     };
 
     class Assign : public Expression {
         public:
-            const Type type = Type::Assign;
             token::Token* name;
             Expression* value;
 
-            Assign(token::Token* name, Expression* value) : name(name), value(value) { }
+            Assign(token::Token* name, Expression* value) : name(name), value(value) {
+                this->type = Type::Assign;
+            }
     };
 
     class Binary : public Expression {
         public:
-            const Type type = Type::Binary;
             Expression* left;
             token::Token* op;
             Expression* right;
 
-            Binary(Expression* left, token::Token* op, Expression* right) : left(left), op(op), right(right)  { }
+            Binary(Expression* left, token::Token* op, Expression* right) : left(left), op(op), right(right) {
+                this->type = Type::Binary;
+            }
     };
 
     class Call : public Expression {
         public:
-            const Type type = Type::Call;
             Expression* name;
             token::Token* paren;
             vector<Expression*> args;
 
-            Call(Expression* name, token::Token* paren, vector<Expression*> args) : name(name), paren(paren), args(args) { }
+            Call(Expression* name, token::Token* paren, vector<Expression*> args) : name(name), paren(paren), args(args) {
+                this->type = Type::Call;
+            }
     };
 
     class Get : public Expression {
         public:
-            const Type type = Type::Get;
             Expression* object;
             token::Token* name;
 
-            Get(Expression* object, token::Token* name) : object(object), name(name) { }
+            Get(Expression* object, token::Token* name) : object(object), name(name) {
+                this->type = Type::Get;
+            }
     };
 
     class Set : public Expression {
         public:
-            const Type type = Type::Set;
             Expression* object;
             token::Token* name;
             Expression* value;
 
-            Set(Expression* object, token::Token* name, Expression* value) : object(object), name(name), value(value) { }
+            Set(Expression* object, token::Token* name, Expression* value) : object(object), name(name), value(value) {
+                this->type = Type::Set;
+            }
     };
 
     class Grouping : public Expression {
         public:
-            const Type type = Type::Grouping;
             Expression* exp;
 
-            Grouping(Expression* exp) : exp(exp)  { }
+            Grouping(Expression* exp) : exp(exp)  {
+                this->type = Type::Grouping;
+            }
     };
 
     template <class V>
     class Literal : public Expression {
         public:
-            const Type type = Type::Literal;
             const V value;
 
-            Literal(V value) : value(value)  { }
+            Literal(V value) : value(value)  {
+                this->type = Type::Literal;
+            }
     };
 
     class Logical : public Expression {
         public:
-            const Type type = Type::Logical;
             Expression* left;
             token::Token* op;
             Expression* right;
 
-            Logical(Expression* left, token::Token* op, Expression* right) : left(left), op(op), right(right) { }
+            Logical(Expression* left, token::Token* op, Expression* right) : left(left), op(op), right(right) {
+                this->type = Type::Logical;
+            }
     };
 
     class Super : public Expression {
         public:
-            const Type type = Type::Super;
             token::Token* keyword;
             token::Token* method;
 
-            Super(token::Token* keyword, token::Token* method) : keyword(keyword), method(method) { }
+            Super(token::Token* keyword, token::Token* method) : keyword(keyword), method(method) {
+                this->type = Type::Super;
+            }
     };
 
     class Self : public Expression {
         public:
-            const Type type = Type::Self;
             token::Token* keyword;
 
-            Self(token::Token* keyword) : keyword(keyword) { }
+            Self(token::Token* keyword) : keyword(keyword) {
+                this->type = Type::Self;
+            }
     };
 
     class Unary : public Expression {
         public:
-            const Type type = Type::Unary;
             token::Token* op;
             Expression* right;
 
-            Unary(token::Token* op, Expression* right) : op(op), right(right) { }
+            Unary(token::Token* op, Expression* right) : op(op), right(right) {
+                this->type = Type::Unary;
+            }
     };
 
     class Variable : public Expression {
         public:
-            const Type type = Type::Variable;
             token::Token* name;
 
-            Variable(token::Token* name) : name(name) { }
+            Variable(token::Token* name) : name(name) {
+                this->type = Type::Variable;
+            }
     };
 }
 

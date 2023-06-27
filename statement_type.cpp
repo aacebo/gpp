@@ -3,8 +3,6 @@
 namespace statement {
     string type_to_string(Type type) {
         switch (type) {
-            case Type::Default:
-                return "default";
             case Type::Block:
                 return "block";
             case Type::Function:

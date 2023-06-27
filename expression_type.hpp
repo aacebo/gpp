@@ -7,7 +7,6 @@ using namespace std;
 
 namespace expression {
     enum class Type {
-        Default,
         Assign,
         Binary,
         Call,

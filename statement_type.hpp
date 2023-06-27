@@ -7,7 +7,6 @@ using namespace std;
 
 namespace statement {
     enum class Type {
-        Default,
         Block,
         Function,
         Class,

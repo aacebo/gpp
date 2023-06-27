@@ -3,8 +3,6 @@
 namespace expression {
     string type_to_string(Type type) {
         switch (type) {
-            case Type::Default:
-                return "default";
             case Type::Assign:
                 return "assign";
             case Type::Binary:
