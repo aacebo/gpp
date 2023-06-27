@@ -1,102 +1,259 @@
 #include "interpreter.hpp"
 
 namespace interpreter {
-    any Interpreter::evaluate(expression::Expression expr) {
-        return expr.accept(this);
+    scope::Var* Interpreter::evaluate(expression::Expression* expr) {
+        switch (expr->type) {
+            case expression::Type::Assign:
+                return this->visit_assign(dynamic_cast<expression::Assign*>(expr));
+            case expression::Type::Binary:
+                return this->visit_binary(dynamic_cast<expression::Binary*>(expr));
+            case expression::Type::Call:
+                return this->visit_call(dynamic_cast<expression::Call*>(expr));
+            case expression::Type::Get:
+                return this->visit_get(dynamic_cast<expression::Get*>(expr));
+            case expression::Type::Set:
+                return this->visit_set(dynamic_cast<expression::Set*>(expr));
+            case expression::Type::Grouping:
+                return this->visit_grouping(dynamic_cast<expression::Grouping*>(expr));
+            case expression::Type::Literal:
+                return this->visit_literal(dynamic_cast<expression::Literal<any>*>(expr));
+            case expression::Type::Logical:
+                return this->visit_logical(dynamic_cast<expression::Logical*>(expr));
+            case expression::Type::Super:
+                return this->visit_super(dynamic_cast<expression::Super*>(expr));
+            case expression::Type::Self:
+                return this->visit_self(dynamic_cast<expression::Self*>(expr));
+            case expression::Type::Unary:
+                return this->visit_unary(dynamic_cast<expression::Unary*>(expr));
+            case expression::Type::Variable:
+                return this->visit_variable(dynamic_cast<expression::Variable*>(expr));
+            default:
+                throw runtime_error("expression type \"" + expr->to_string() + "\" is not supported");
+        }
     }
 
-    void Interpreter::execute(statement::Statement stmt) {
-        return stmt.accept(this);
+    void Interpreter::execute(statement::Statement* stmt) {
+        switch (stmt->type) {
+            case statement::Type::Block:
+                return this->visit_block(dynamic_cast<statement::Block*>(stmt));
+            case statement::Type::Function:
+                return this->visit_function(dynamic_cast<statement::Function*>(stmt));
+            case statement::Type::Class:
+                return this->visit_class(dynamic_cast<statement::Class*>(stmt));
+            case statement::Type::Expression:
+                return this->visit_expression(dynamic_cast<statement::Expression*>(stmt));
+            case statement::Type::If:
+                return this->visit_if(dynamic_cast<statement::If*>(stmt));
+            case statement::Type::Return:
+                return this->visit_return(dynamic_cast<statement::Return*>(stmt));
+            case statement::Type::Let:
+                return this->visit_let(dynamic_cast<statement::Let*>(stmt));
+            case statement::Type::For:
+                return this->visit_for(dynamic_cast<statement::For*>(stmt));
+            case statement::Type::Use:
+                return this->visit_use(dynamic_cast<statement::Use*>(stmt));
+            default:
+                throw runtime_error("statement type \"" + stmt->to_string() + "\" is not supported");
+        }
     }
 
-    void Interpreter::execute_block(vector<statement::Statement> stmts, scope::Scope* scope) {
-        auto prev = this->_scope;
+    void Interpreter::execute_block(vector<statement::Statement*> stmts, scope::Scope* scope) {
+        auto prev = this->scope;
 
         try {
-            this->_scope = scope;
+            this->scope = scope;
 
             for (auto stmt : stmts) {
                 this->execute(stmt);
             }
-        } catch (error::RuntimeError err) {
-            this->_scope = prev;
-            throw err;
+
+            this->scope = prev;
+        } catch (exception e) {
+            this->scope = prev;
+            throw e;
         }
     }
+
+    void Interpreter::check_number_ops(token::Token* op, scope::Var* value) {
+        if (value->is_number()) return;
+
+        throw error::RuntimeError(
+            op->ln,
+            op->start,
+            op->end,
+            "operand must be a number"
+        );
+    }
+
+    void Interpreter::check_number_ops(token::Token* op, scope::Var* left, scope::Var* right) {
+        if (left->is_number() && right->is_number()) return;
+
+        throw error::RuntimeError(
+            op->ln,
+            op->start,
+            op->end,
+            "operands must be numbers"
+        );
+    }
+
+    // Expressions
+
+    scope::Var* Interpreter::visit_assign(expression::Assign* expr) {
+        auto var = this->evaluate(expr->value);
+        this->scope->assign(expr->name->value, var);
+        return var;
+    }
+
+    scope::Var* Interpreter::visit_binary(expression::Binary* expr) {
+        auto left = this->evaluate(expr->left);
+        auto right = this->evaluate(expr->right);
+
+        switch (expr->op->type) {
+            case token::Type::NotEq:
+                return new scope::Var(*left != *right);
+            case token::Type::EqEq:
+                return new scope::Var(*left == *right);
+            case token::Type::Gt:
+                this->check_number_ops(expr->op, left, right);
+                return new scope::Var(*left > *right);
+            case token::Type::GtEq:
+                this->check_number_ops(expr->op, left, right);
+                return new scope::Var(*left >= *right);
+            case token::Type::Lt:
+                this->check_number_ops(expr->op, left, right);
+                return new scope::Var(*left < *right);
+            case token::Type::LtEq:
+                this->check_number_ops(expr->op, left, right);
+                return new scope::Var(*left <= *right);
+            case token::Type::Plus:
+                this->check_number_ops(expr->op, left, right);
+                return new scope::Var(*left + *right);
+            case token::Type::PlusEq:
+                this->check_number_ops(expr->op, left, right);
+                return new scope::Var(*left += *right);
+            case token::Type::Minus:
+                this->check_number_ops(expr->op, left, right);
+                return new scope::Var(*left - *right);
+            case token::Type::Slash:
+                this->check_number_ops(expr->op, left, right);
+                return new scope::Var(*left / *right);
+            case token::Type::Star:
+                this->check_number_ops(expr->op, left, right);
+                return new scope::Var(*left * *right);
+            default:
+                throw runtime_error("binary expression of type \"" + token::type_to_string(expr->op->type) + "\" is not supported");
+        }
+    }
+
+    scope::Var* Interpreter::visit_call(expression::Call* expr) {
+        throw logic_error("unimplemented");
+    }
+
+    scope::Var* Interpreter::visit_get(expression::Get* expr) {
+        throw logic_error("unimplemented");
+    }
+
+    scope::Var* Interpreter::visit_set(expression::Set* expr) {
+        throw logic_error("unimplemented");
+    }
+
+    scope::Var* Interpreter::visit_grouping(expression::Grouping* expr) {
+        return this->evaluate(expr);
+    }
+
+    scope::Var* Interpreter::visit_literal(expression::Literal<any>* expr) {
+        return new scope::Var(expr->value);
+    }
+
+    scope::Var* Interpreter::visit_logical(expression::Logical* expr) {
+        auto left = this->evaluate(expr->left);
+
+        if (expr->op->type == token::Type::Or) {
+            if (left->is_truthy()) {
+                return left;
+            }
+        } else {
+            if (!left->is_truthy()) {
+                return left;
+            }
+        }
+
+        return this->evaluate(expr->right);
+    }
+
+    scope::Var* Interpreter::visit_super(expression::Super* expr) {
+        throw logic_error("unimplemented");
+    }
+
+    scope::Var* Interpreter::visit_self(expression::Self* expr) {
+        throw logic_error("unimplemented");
+    }
+
+    scope::Var* Interpreter::visit_unary(expression::Unary* expr) {
+        auto right = this->evaluate(expr->right);
+
+        switch (expr->op->type) {
+            case token::Type::Not:
+                return new scope::Var(!right->is_truthy());
+            case token::Type::Minus:
+                this->check_number_ops(expr->op, right);
+                return new scope::Var(-*right);
+            default:
+                throw runtime_error("unary expression of type \"" + token::type_to_string(expr->op->type) + "\" is not supported");
+        }
+    }
+
+    scope::Var* Interpreter::visit_variable(expression::Variable* expr) {
+        return this->scope->get(expr->name->value);
+    }
+
+    // Statements
 
     void Interpreter::visit_block(statement::Block* stmt) {
-        this->execute_block(stmt->stmts, new scope::Scope(this->_scope));
-    }
-
-    void Interpreter::visit_let(statement::Let* stmt) {
-        any value;
-
-        if (stmt->init) {
-            value = this->evaluate(*stmt->init);
-        }
-
-        this->_scope->define(stmt->name.value, value);
-    }
-
-    void Interpreter::visit_if(statement::If* stmt) {
-        if (scope::Var(this->evaluate(stmt->condition)).is_truthy()) {
-            this->execute(*stmt->then_branch);
-        } else if (stmt->else_branch) {
-            this->execute(*stmt->else_branch);
-        }
+        auto scope = new scope::Scope();
+        this->execute_block(stmt->stmts, scope);
+        delete scope;
     }
 
     void Interpreter::visit_function(statement::Function* stmt) {
-        auto fn = new scope::Function(*stmt, this->_scope);
-        this->_scope->define(stmt->name.value, fn);
+        throw logic_error("unimplemented");
+    }
+
+    void Interpreter::visit_class(statement::Class* stmt) {
+        throw logic_error("unimplemented");
+    }
+
+    void Interpreter::visit_expression(statement::Expression* stmt) {
+        this->evaluate(stmt->exp);
+    }
+
+    void Interpreter::visit_if(statement::If* stmt) {
+        auto var = this->evaluate(stmt->condition);
+
+        if (var->is_truthy()) {
+            this->execute(stmt->then_branch);
+        } else if (stmt->else_branch) {
+            this->execute(stmt->else_branch);
+        }
     }
 
     void Interpreter::visit_return(statement::Return* stmt) {
-        any value;
+        auto var = (stmt->value) ? this->evaluate(stmt->value) : new scope::Var();
+        throw new scope::Return(var);
+    }
 
-        if (stmt->value) {
-            value = this->evaluate(*stmt->value);
+    void Interpreter::visit_let(statement::Let* stmt) {
+        auto var = (stmt->init) ? this->evaluate(stmt->init) : new scope::Var();
+        this->scope->define(stmt->name->value, var);
+    }
+
+    void Interpreter::visit_for(statement::For* stmt) {
+        while (this->evaluate(stmt->condition)->is_truthy()) {
+            this->execute(stmt->body);
         }
-
-        throw scope::Return(value);
     }
 
-    any Interpreter::visit_assign(expression::Assign* expr) {
-        auto value = this->evaluate(expr->value);
-        this->_scope->assign(expr->name.value, value);
-        return value;
-    }
-
-    any Interpreter::visit_literal(expression::Literal<any>* expr) {
-        return expr->value;
-    }
-
-    any Interpreter::visit_self(expression::Self* expr) {
-        return this->_scope->get(expr->keyword.value)->value;
-    }
-
-    any Interpreter::visit_variable(expression::Variable* expr) {
-        return this->_scope->get(expr->name.value)->value;
-    }
-
-    any Interpreter::visit_call(expression::Call* expr) {
-        any name = this->evaluate(expr->name);
-        vector<any> args;
-
-        for (auto arg : expr->args) {
-            args.push_back(this->evaluate(arg));
-        }
-
-        if (!any_cast<scope::Callable*>(name)) {
-            throw error::RuntimeError(
-                expr->paren.ln,
-                expr->paren.start,
-                expr->paren.end,
-                "can only call functions/classes"
-            );
-        }
-
-        auto fn = any_cast<scope::Callable*>(name);
-        return fn->call(this, args);
+    void Interpreter::visit_use(statement::Use* stmt) {
+        throw logic_error("unimplemented");
     }
 };

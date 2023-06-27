@@ -7,7 +7,7 @@ namespace scope {
         }
     }
 
-    Var<any>* Scope::get(string name) {
+    Var* Scope::get(string name) {
         if (this->has(name)) {
             return this->_values[name];
         }
@@ -23,18 +23,18 @@ namespace scope {
         return this->_values.count(name) == 1;
     }
 
-    void Scope::define(string name, any value) {
-        this->_values[name] = new Var(value);
+    void Scope::define(string name, Var* var) {
+        this->_values[name] = var;
     }
 
-    void Scope::assign(string name, any value) {
+    void Scope::assign(string name, Var* var) {
         if (this->has(name)) {
-            this->_values[name]->set(value);
+            this->_values[name] = var;
             return;
         }
 
         if (this->_outer) {
-            return this->_outer->assign(name, value);
+            return this->_outer->assign(name, var);
         }
 
         throw runtime_error("undefined variable \"" + name + "\"");

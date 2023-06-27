@@ -1,21 +1,22 @@
 #ifndef RETURN_H
 #define RETURN_H
 
-#include <any>
 #include <string>
 #include <exception>
+
+#include "var.hpp"
 
 using namespace std;
 
 namespace scope {
     class Return : exception {
         public:
-            any value;
+            Var* value;
 
-            Return(any value) : value(value) { }
+            Return(Var* value) : value(value) { }
 
             const string what() {
-                return "<return " + any_cast<string>(this->value) + ">";
+                return "<return " + this->value->to_string() + ">";
             }
     };
 };

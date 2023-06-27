@@ -13,17 +13,17 @@ using namespace std;
 namespace scope {
     class Scope {
         Scope* _outer;
-        unordered_map<string, Var<any>*> _values;
+        unordered_map<string, Var*> _values;
 
         public:
             Scope() { }
             Scope(Scope* outer) : _outer(outer) { }
             ~Scope();
 
-            Var<any>* get(string);
+            Var* get(string);
             bool has(string);
-            void define(string, any);
-            void assign(string, any);
+            void define(string, Var*);
+            void assign(string, Var*);
     };
 };
 

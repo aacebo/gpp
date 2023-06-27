@@ -2,151 +2,128 @@
 #define EXPRESSION_H
 
 #include <vector>
+#include <string>
 
 #include "token.hpp"
+#include "expression_type.hpp"
 
 using namespace std;
 
 namespace expression {
-    template <class> class Visitor;
-
     class Expression {
         public:
-            template <class T>
-            T accept(Visitor<T>* v) { throw logic_error("unimplemented"); }
+            Type type = Type::Default;
+
+            virtual string to_string() { return type_to_string(this->type); }
     };
 
     class Assign : public Expression {
         public:
-            const token::Token name;
-            const Expression value;
+            const Type type = Type::Assign;
+            token::Token* name;
+            Expression* value;
 
-            Assign(token::Token name, Expression value) : name(name), value(value) { }
-
-            template <class T>
-            T accept(Visitor<T>* v) { return v->visit_assign(this); }
+            Assign(token::Token* name, Expression* value) : name(name), value(value) { }
     };
 
     class Binary : public Expression {
         public:
-            const Expression left;
-            const token::Token op;
-            const Expression right;
+            const Type type = Type::Binary;
+            Expression* left;
+            token::Token* op;
+            Expression* right;
 
-            Binary(Expression left, token::Token op, Expression right) : left(left), op(op), right(right)  { }
-
-            template <class T>
-            T accept(Visitor<T>* v) { return v->visit_binary(this); }
+            Binary(Expression* left, token::Token* op, Expression* right) : left(left), op(op), right(right)  { }
     };
 
     class Call : public Expression {
         public:
-            const Expression name;
-            const token::Token paren;
-            const vector<Expression> args;
+            const Type type = Type::Call;
+            Expression* name;
+            token::Token* paren;
+            vector<Expression*> args;
 
-            Call(Expression name, token::Token paren, vector<Expression> args) : name(name), paren(paren), args(args) { }
-
-            template <class T>
-            T accept(Visitor<T>* v) { return v->visit_call(this); }
+            Call(Expression* name, token::Token* paren, vector<Expression*> args) : name(name), paren(paren), args(args) { }
     };
 
     class Get : public Expression {
         public:
-            const Expression object;
-            const token::Token name;
+            const Type type = Type::Get;
+            Expression* object;
+            token::Token* name;
 
-            Get(Expression object, token::Token name) : object(object), name(name) { }
-
-            template <class T>
-            T accept(Visitor<T>* v) { return v->visit_get(this); }
+            Get(Expression* object, token::Token* name) : object(object), name(name) { }
     };
 
     class Set : public Expression {
         public:
-            const Expression object;
-            const token::Token name;
-            const Expression value;
+            const Type type = Type::Set;
+            Expression* object;
+            token::Token* name;
+            Expression* value;
 
-            Set(Expression object, token::Token name, Expression value) : object(object), name(name), value(value) { }
-
-            template <class T>
-            T accept(Visitor<T>* v) { return v->visit_set(this); }
+            Set(Expression* object, token::Token* name, Expression* value) : object(object), name(name), value(value) { }
     };
 
     class Grouping : public Expression {
         public:
-            const Expression exp;
+            const Type type = Type::Grouping;
+            Expression* exp;
 
-            Grouping(Expression exp) : exp(exp)  { }
-
-            template <class T>
-            T accept(Visitor<T>* v) { return v->visit_grouping(this); }
+            Grouping(Expression* exp) : exp(exp)  { }
     };
 
     template <class V>
     class Literal : public Expression {
         public:
+            const Type type = Type::Literal;
             const V value;
 
             Literal(V value) : value(value)  { }
-
-            template <class T>
-            T accept(Visitor<T>* v) { return v->visit_literal(this); }
     };
 
     class Logical : public Expression {
         public:
-            const Expression left;
-            const token::Token op;
-            const Expression right;
+            const Type type = Type::Logical;
+            Expression* left;
+            token::Token* op;
+            Expression* right;
 
-            Logical(Expression left, token::Token op, Expression right) : left(left), op(op), right(right) { }
-
-            template <class T>
-            T accept(Visitor<T>* v) { return v->visit_logical(this); }
+            Logical(Expression* left, token::Token* op, Expression* right) : left(left), op(op), right(right) { }
     };
 
     class Super : public Expression {
         public:
-            const token::Token keyword;
-            const token::Token method;
+            const Type type = Type::Super;
+            token::Token* keyword;
+            token::Token* method;
 
-            Super(token::Token keyword, token::Token method) : keyword(keyword), method(method) { }
-
-            template <class T>
-            T accept(Visitor<T>* v) { return v->visit_super(this); }
+            Super(token::Token* keyword, token::Token* method) : keyword(keyword), method(method) { }
     };
 
     class Self : public Expression {
         public:
-            const token::Token keyword;
+            const Type type = Type::Self;
+            token::Token* keyword;
 
-            Self(token::Token keyword) : keyword(keyword) { }
-
-            template <class T>
-            T accept(Visitor<T>* v) { return v->visit_self(this); }
+            Self(token::Token* keyword) : keyword(keyword) { }
     };
 
     class Unary : public Expression {
         public:
-            const token::Token op;
-            const Expression right;
+            const Type type = Type::Unary;
+            token::Token* op;
+            Expression* right;
 
-            Unary(token::Token op, Expression right) : op(op), right(right) { }
-
-            template <class T>
-            T accept(Visitor<T>* v) { return v->visit_unary(this); }
+            Unary(token::Token* op, Expression* right) : op(op), right(right) { }
     };
 
     class Variable : public Expression {
         public:
-            const token::Token name;
+            const Type type = Type::Variable;
+            token::Token* name;
 
-            Variable(token::Token name) : name(name) { }
-
-            template <class T>
-            T accept(Visitor<T>* v) { return v->visit_variable(this); }
+            Variable(token::Token* name) : name(name) { }
     };
 }
 

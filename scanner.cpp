@@ -9,11 +9,11 @@ namespace scanner {
         this->scan();
     }
 
-    const vector<token::Token> Scanner::get_tokens() {
+    const vector<token::Token*> Scanner::get_tokens() {
         return this->_tokens;
     }
 
-    const vector<error::Error> Scanner::get_errors() {
+    const vector<error::Error*> Scanner::get_errors() {
         return this->_errors;
     }
 
@@ -97,7 +97,7 @@ namespace scanner {
                         break;
                     }
 
-                    this->_errors.push_back(error::SyntaxError(
+                    this->_errors.push_back(new error::SyntaxError(
                         this->_ln,
                         this->_left,
                         this->_right,
@@ -110,7 +110,7 @@ namespace scanner {
     }
 
     void Scanner::push(token::Type type) {
-        this->_tokens.push_back(token::Token(
+        this->_tokens.push_back(new token::Token(
             type,
             this->_ln,
             this->_left,
@@ -158,7 +158,7 @@ namespace scanner {
         }
 
         if (this->_right == this->_src.length()) {
-            this->_errors.push_back(error::SyntaxError(
+            this->_errors.push_back(new error::SyntaxError(
                 this->_ln,
                 this->_left,
                 this->_right,

@@ -7,31 +7,38 @@
 using namespace std;
 
 int main() {
-    file_reader::FileReader reader(".");
+    auto interpreter = new interpreter::Interpreter();
+    auto reader = new file_reader::FileReader(".");
 
-    for (auto f : reader.get_files()) {
-        scanner::Scanner s(f.second);
+    for (auto f : reader->get_files()) {
+        auto scanner = new scanner::Scanner(f.second);
 
-        for (auto e : s.get_errors()) {
-            cout << e.what() << endl;
+        for (auto e : scanner->get_errors()) {
+            cout << e->what() << endl;
         }
         
-        for (auto t : s.get_tokens()) {
-            cout << t.fmt() << endl;
+        for (auto t : scanner->get_tokens()) {
+            cout << t->fmt() << endl;
         }
 
         try {
-            parser::Parser p(s.get_tokens());
+            auto parser = new parser::Parser(scanner->get_tokens());
         
-            for (auto e : p.get_errors()) {
-                cout << e.what() << endl;
+            for (auto e : parser->get_errors()) {
+                cout << e->what() << endl;
             }
 
-            cout << p.get_statements().size() << endl;
+            cout << parser->get_statements().size() << endl;
+            delete parser;
         } catch (error::Error e) {
             cout << e.what() << endl;
         }
+
+        delete scanner;
     }
+
+    delete interpreter;
+    delete reader;
 
     return 0;
 }
