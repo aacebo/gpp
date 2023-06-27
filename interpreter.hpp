@@ -132,13 +132,19 @@ namespace interpreter {
             Instance(Class* _class) : _class(_class) { }
 
             string to_string() {
-                string res = "";
+                string res = this->_class->name + " {\n";
+                auto it = this->_fields.begin();
 
-                for (auto field : this->_fields) {
-                    res += field.first + ": " + field.second->to_string() + "\n";
+                while (it != this->_fields.end()) {
+                    res += "\t" + it->first + ": " + it->second->to_string() + "";
+                    it++;
+
+                    if (it != this->_fields.end()) {
+                        res += ",\n";
+                    }
                 }
 
-                return res;
+                return res + "}";
             }
 
             void set(token::Token* name, scope::Var* value) {
