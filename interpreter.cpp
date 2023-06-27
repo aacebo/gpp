@@ -146,15 +146,70 @@ namespace interpreter {
     }
 
     scope::Var* Interpreter::visit_call(expression::Call* expr) {
-        throw logic_error("unimplemented");
+        vector<scope::Var*> args;
+        auto callee = this->evaluate(expr->name);
+
+        for (auto arg : expr->args) {
+            args.push_back(this->evaluate(arg));
+        }
+
+        if (!callee->is_type<Function*>()) {
+            throw new error::RuntimeError(
+                expr->paren->ln,
+                expr->paren->start,
+                expr->paren->end,
+                "only functions can be called"
+            );
+        }
+
+        auto fn = callee->to_type<Function*>();
+
+        if (fn->declaration->params.size() != args.size()) {
+            throw new error::RuntimeError(
+                expr->paren->ln,
+                expr->paren->start,
+                expr->paren->end,
+                "expected " + to_string(fn->declaration->params.size()) +
+                " arguments, received " + to_string(args.size())
+            );
+        }
+
+        return fn->call(args);
     }
 
     scope::Var* Interpreter::visit_get(expression::Get* expr) {
-        throw logic_error("unimplemented");
+        auto object = this->evaluate(expr->object);
+
+        if (!object->is_type<Instance*>()) {
+            throw new error::RuntimeError(
+                expr->name->ln,
+                expr->name->start,
+                expr->name->end,
+                "only instances have fields"
+            );
+        }
+
+        auto instance = object->to_type<Instance*>();
+        return instance->get(expr->name);
     }
 
     scope::Var* Interpreter::visit_set(expression::Set* expr) {
-        throw logic_error("unimplemented");
+        auto object = this->evaluate(expr->object);
+
+        if (!object->is_type<Instance*>()) {
+            throw new error::RuntimeError(
+                expr->name->ln,
+                expr->name->start,
+                expr->name->end,
+                "only instances have fields"
+            );
+        }
+
+        auto instance = object->to_type<Instance*>();
+        auto value = this->evaluate(expr->value);
+        instance->set(expr->name, value);
+
+        return value;
     }
 
     scope::Var* Interpreter::visit_grouping(expression::Grouping* expr) {
@@ -182,11 +237,24 @@ namespace interpreter {
     }
 
     scope::Var* Interpreter::visit_super(expression::Super* expr) {
-        throw logic_error("unimplemented");
+        auto super = this->scope->get("super")->to_type<Class*>();
+        auto instance = this->scope->get("this")->to_type<Instance*>();
+        auto method = super->get_method(expr->method->value);
+
+        if (!method) {
+            throw new error::RuntimeError(
+                expr->method->ln,
+                expr->method->start,
+                expr->method->end,
+                "undefined property \"" + expr->method->value + "\""
+            );
+        }
+
+        return new scope::Var(method->bind(instance));
     }
 
     scope::Var* Interpreter::visit_self(expression::Self* expr) {
-        throw logic_error("unimplemented");
+        return this->scope->get(expr->keyword->value);
     }
 
     scope::Var* Interpreter::visit_unary(expression::Unary* expr) {
@@ -216,11 +284,53 @@ namespace interpreter {
     }
 
     void Interpreter::visit_function(statement::Function* stmt) {
-        throw logic_error("unimplemented");
+        auto func = new Function(stmt, this->scope);
+        this->scope->define(stmt->name->value, new scope::Var(func));
     }
 
     void Interpreter::visit_class(statement::Class* stmt) {
-        throw logic_error("unimplemented");
+        scope::Var* super;
+
+        if (stmt->super) {
+            super = this->evaluate(stmt->super);
+
+            if (!super->is_type<Class*>()) {
+                throw new error::RuntimeError(
+                    stmt->super->name->ln,
+                    stmt->super->name->start,
+                    stmt->super->name->end,
+                    "inherited class must be of type class"
+                );
+            }
+        }
+
+        this->scope->define(stmt->name->value, NULL);
+
+        if (stmt->super) {
+            this->scope = new scope::Scope(this->scope);
+            this->scope->define("super", super);
+        }
+
+        unordered_map<string, Function*> methods;
+
+        for (auto method : stmt->methods) {
+            methods[method->name->value] = new Function(
+                method,
+                this->scope
+            );
+        }
+
+        auto _class = new Class(
+            stmt->name->value,
+            super->to_type<Class*>(),
+            methods
+        );
+
+        if (super) {
+            this->scope = this->scope->parent;
+        }
+
+        this->scope->assign(stmt->name->value, new scope::Var(_class));
     }
 
     void Interpreter::visit_expression(statement::Expression* stmt) {

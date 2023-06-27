@@ -39,10 +39,10 @@ namespace statement {
         public:
             const Type type = Type::Class;
             token::Token* name;
-            expression::Variable* superclass;
+            expression::Variable* super;
             vector<Function*> methods;
 
-            Class(token::Token* name, expression::Variable* superclass, vector<Function*> methods) : name(name), superclass(superclass), methods(methods) { }
+            Class(token::Token* name, expression::Variable* super, vector<Function*> methods) : name(name), super(super), methods(methods) { }
     };
 
     class Expression : public Statement {

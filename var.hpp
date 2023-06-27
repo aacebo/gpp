@@ -29,6 +29,9 @@ namespace scope {
             bool is_bool() { return this->type() == typeid(bool); }
             bool to_bool() { return any_cast<bool>(this->value); }
 
+            template <class T> bool is_type() { return this->type() == typeid(T); }
+            template <class T> T to_type() { return any_cast<T>(this->value); }
+
             bool is_truthy() {
                 if (this->is_nil()) return false;
                 if (this->is_bool()) {

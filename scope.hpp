@@ -12,12 +12,13 @@ using namespace std;
 
 namespace scope {
     class Scope {
-        Scope* _outer;
         unordered_map<string, Var*> _values;
 
         public:
+            Scope* parent;
+
             Scope() { }
-            Scope(Scope* outer) : _outer(outer) { }
+            Scope(Scope* parent) : parent(parent) { }
             ~Scope();
 
             Var* get(string);

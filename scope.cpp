@@ -12,8 +12,8 @@ namespace scope {
             return this->_values[name];
         }
 
-        if (this->_outer) {
-            return this->_outer->get(name);
+        if (this->parent) {
+            return this->parent->get(name);
         }
 
         throw runtime_error("undefined variable \"" + name + "\"");
@@ -33,8 +33,8 @@ namespace scope {
             return;
         }
 
-        if (this->_outer) {
-            return this->_outer->assign(name, var);
+        if (this->parent) {
+            return this->parent->assign(name, var);
         }
 
         throw runtime_error("undefined variable \"" + name + "\"");
