@@ -85,7 +85,7 @@ namespace interpreter {
     void Interpreter::check_number_ops(token::Token* op, scope::Var* value) {
         if (value->is_number()) return;
 
-        throw error::RuntimeError(
+        throw new error::RuntimeError(
             op->ln,
             op->start,
             op->end,
@@ -96,7 +96,7 @@ namespace interpreter {
     void Interpreter::check_number_ops(token::Token* op, scope::Var* left, scope::Var* right) {
         if (left->is_number() && right->is_number()) return;
 
-        throw error::RuntimeError(
+        throw new error::RuntimeError(
             op->ln,
             op->start,
             op->end,
@@ -400,6 +400,15 @@ namespace interpreter {
     }
 
     void Interpreter::visit_let(statement::Let* stmt) {
+        if (this->scope->has(stmt->name->value)) {
+            throw new error::RuntimeError(
+                stmt->name->ln,
+                stmt->name->start,
+                stmt->name->end,
+                "duplicate variable declaration \"" + stmt->name->value + "\""
+            );
+        }
+
         auto var = (stmt->init) ? this->evaluate(stmt->init) : new scope::Var();
         this->scope->define(stmt->name->value, var);
     }

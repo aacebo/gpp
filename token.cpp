@@ -27,7 +27,7 @@ namespace token {
         if (this->value == "true") return true;
         else if (this->value == "false") return false;
 
-        throw error::RuntimeError(
+        throw new error::RuntimeError(
             this->ln,
             this->start,
             this->end,
