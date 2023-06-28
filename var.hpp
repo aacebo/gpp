@@ -9,11 +9,6 @@
 using namespace std;
 
 namespace scope {
-    class Stringify {
-        public:
-            virtual string to_string() = 0;
-    };
-
     class Var {
         public:
             any value;
@@ -30,7 +25,6 @@ namespace scope {
                 if (this->is_string()) return any_cast<string>(this->value);
                 if (this->is_number()) return std::to_string(this->to_number());
                 if (this->is_bool()) return this->to_bool() ? "true" : "false";
-                if (auto v = any_cast<Stringify*>(this->value)) return v->to_string();
                 return "";
             }
 

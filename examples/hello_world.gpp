@@ -11,6 +11,6 @@ fn hello_world() {
     return "hello world!\n";
 }
 
-print hello_world();
 print c;
 print b >= a;
+print hello_world();

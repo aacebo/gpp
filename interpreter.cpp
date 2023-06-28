@@ -384,7 +384,18 @@ namespace interpreter {
     }
 
     void Interpreter::visit_print(statement::Print* stmt) {
-        cout << this->evaluate(stmt->expr)->to_string();
+        auto var = this->evaluate(stmt->expr);
+        auto value = var->to_string();
+
+        if (var->is_type<Function*>()) {
+            value = var->to_type<Function*>()->to_string();
+        } else if (var->is_type<Class*>()) {
+            value = var->to_type<Class*>()->to_string();
+        } else if (var -> is_type<Instance*>()) {
+            value = var->to_type<Instance*>()->to_string();
+        }
+
+        cout << value;
     }
 
     void Interpreter::visit_return(statement::Return* stmt) {
