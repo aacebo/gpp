@@ -166,12 +166,55 @@ namespace scanner {
     }
 
     void Scanner::push(token::Type type) {
+        auto value = this->_src.substr(this->_left, this->_right - this->_left);
+
+        // handle escaped characters
+        if (type == token::Type::String) {
+            for (int i = 0; i < value.length() - 1; i++) {
+                if (value[i] == '\\') {
+                    value.erase(i, 1);
+                    
+                    switch (value[i]) {
+                        case 'a': // bell (alert)
+                            value[i] = '\a';
+                            break;
+                        case 'b': // backspace
+                            value[i] = '\b';
+                            break;
+                        case 't': // horizontal tab
+                            value[i] = '\t';
+                            break;
+                        case 'v': // vertical tab
+                            value[i] = '\v';
+                            break;
+                        case 'n': // new line
+                            value[i] = '\n';
+                            break;
+                        case 'f': // form feed
+                            value[i] = '\f';
+                            break;
+                        case 'r': // carriage return
+                            value[i] = '\r';
+                            break;
+                        case '\'': // single quotation
+                            value[i] = '\'';
+                            break;
+                        case '"': // double quotation
+                            value[i] = '\"';
+                            break;
+                    }
+
+                    i--;
+                }
+            }
+        }
+
         this->_tokens.push_back(new token::Token(
             type,
             this->_ln,
             this->_left,
             this->_right,
-            this->_src.substr(this->_left, this->_right - this->_left)
+            value
         ));
     }
 
@@ -181,6 +224,18 @@ namespace scanner {
         }
 
         return this->_src[this->_right];
+    }
+
+    bool Scanner::is_escaped() {
+        int i = this->_right - 1;
+        bool escaped = false;
+
+        while (i > -1 && this->_src[i] == '\\') {
+            escaped = !escaped;
+            i--;
+        }
+
+        return escaped;
     }
 
     bool Scanner::is_integer(char c) {
@@ -205,7 +260,7 @@ namespace scanner {
     }
 
     void Scanner::on_string() {
-        while (this->peek() != '"' && this->peek() != '\0') {
+        while ((this->peek() != '"' || this->is_escaped()) && this->peek() != '\0') {
             if (this->peek() == '\n') {
                 this->_ln++;
             }

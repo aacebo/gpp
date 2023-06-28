@@ -28,6 +28,7 @@ namespace scanner {
             void scan();
             void push(token::Type);
             char peek();
+            bool is_escaped();
             bool is_integer(char);
             bool is_alpha(char);
             void on_comment();
