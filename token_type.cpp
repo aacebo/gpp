@@ -120,7 +120,7 @@ namespace token {
             case Type::False:
                 return "false";
             case Type::Eof:
-                return "\0";
+                return "eof";
             default:
                 return "";
         }

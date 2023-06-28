@@ -22,7 +22,7 @@ namespace interpreter {
             case expression::Type::Grouping:
                 return this->visit_grouping(dynamic_cast<expression::Grouping*>(expr));
             case expression::Type::Literal:
-                return this->visit_literal(dynamic_cast<expression::Literal<any>*>(expr));
+                return this->visit_literal(dynamic_cast<expression::Literal*>(expr));
             case expression::Type::Logical:
                 return this->visit_logical(dynamic_cast<expression::Logical*>(expr));
             case expression::Type::Super:
@@ -222,7 +222,7 @@ namespace interpreter {
         return this->evaluate(expr);
     }
 
-    scope::Var* Interpreter::visit_literal(expression::Literal<any>* expr) {
+    scope::Var* Interpreter::visit_literal(expression::Literal* expr) {
         return new scope::Var(expr->value);
     }
 
@@ -290,8 +290,8 @@ namespace interpreter {
     }
 
     void Interpreter::visit_function(statement::Function* stmt) {
-        auto func = new Function(stmt, this->scope);
-        this->scope->define(stmt->name->value, new scope::Var(func));
+        auto fn = new Function(stmt, this->scope);
+        this->scope->define(stmt->name->value, new scope::Var(fn));
     }
 
     void Interpreter::visit_class(statement::Class* stmt) {

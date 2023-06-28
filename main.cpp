@@ -34,8 +34,8 @@ int main() {
 
             interpreter->run(parser->get_statements());
             delete parser;
-        } catch (error::Error* e) {
-            cout << e->what() << endl;
+        } catch (exception e) {
+            cout << e.what() << endl;
             return -1;
         }
 

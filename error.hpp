@@ -7,7 +7,7 @@
 using namespace std;
 
 namespace error {
-    class Error : exception {
+    class Error : public exception {
         public:
             const int ln;
             const int start;

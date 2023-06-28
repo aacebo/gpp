@@ -40,7 +40,7 @@ namespace interpreter {
             scope::Var* visit_get(expression::Get*);
             scope::Var* visit_set(expression::Set*);
             scope::Var* visit_grouping(expression::Grouping*);
-            scope::Var* visit_literal(expression::Literal<any>*);
+            scope::Var* visit_literal(expression::Literal*);
             scope::Var* visit_logical(expression::Logical*);
             scope::Var* visit_super(expression::Super*);
             scope::Var* visit_self(expression::Self*);

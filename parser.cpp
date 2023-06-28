@@ -138,7 +138,7 @@ namespace parser {
     expression::Expression* Parser::_primary() {
         if (this->match({token::Type::True})) return new expression::Literal(true);
         if (this->match({token::Type::False})) return new expression::Literal(false);
-        if (this->match({token::Type::Nil})) return new expression::Literal(NULL);
+        if (this->match({token::Type::Nil})) return new expression::Literal();
         if (this->match({token::Type::Number})) return new expression::Literal(this->prev()->to_float());
         if (this->match({token::Type::String})) return new expression::Literal(this->prev()->value);
         if (this->match({token::Type::Self})) return new expression::Self(this->prev());
