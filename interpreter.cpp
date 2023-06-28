@@ -8,6 +8,8 @@ namespace interpreter {
     }
 
     scope::Var* Interpreter::evaluate(expression::Expression* expr) {
+        cout << expr->to_string() << endl;
+
         switch (expr->type) {
             case expression::Type::Assign:
                 return this->visit_assign(dynamic_cast<expression::Assign*>(expr));
@@ -39,6 +41,8 @@ namespace interpreter {
     }
 
     void Interpreter::execute(statement::Statement* stmt) {
+        cout << stmt->to_string() << endl;
+
         switch (stmt->type) {
             case statement::Type::Block:
                 return this->visit_block(dynamic_cast<statement::Block*>(stmt));
@@ -244,7 +248,7 @@ namespace interpreter {
 
     scope::Var* Interpreter::visit_super(expression::Super* expr) {
         auto super = this->scope->get("super")->to_type<Class*>();
-        auto instance = this->scope->get("this")->to_type<Instance*>();
+        auto instance = this->scope->get("self")->to_type<Instance*>();
         auto method = super->get_method(expr->method->value);
 
         if (!method) {
@@ -295,7 +299,7 @@ namespace interpreter {
     }
 
     void Interpreter::visit_class(statement::Class* stmt) {
-        scope::Var* super;
+        scope::Var* super = NULL;
 
         if (stmt->super) {
             super = this->evaluate(stmt->super);
@@ -312,7 +316,7 @@ namespace interpreter {
 
         this->scope->define(stmt->name->value, NULL);
 
-        if (stmt->super) {
+        if (stmt->super != NULL) {
             this->scope = new scope::Scope(this->scope);
             this->scope->define("super", super);
         }
@@ -328,7 +332,7 @@ namespace interpreter {
 
         auto _class = new Class(
             stmt->name->value,
-            super->to_type<Class*>(),
+            super ? super->to_type<Class*>() : NULL,
             methods
         );
 

@@ -149,7 +149,7 @@ namespace parser {
             this->consume(token::Type::Dot, "expected '.' after 'super'");
             return new expression::Super(
                 keyword,
-                this->consume(token::Type::Identifier, "expected superclass method name")
+                this->consume(token::Type::Identifier, "expected super class method name")
             );
         }
 
@@ -310,16 +310,15 @@ namespace parser {
     }
 
     statement::Statement* Parser::_class() {
-        expression::Variable* superclass;
+        expression::Variable* super = NULL;
         auto name = this->consume(token::Type::Identifier, "expected class name");
 
         if (this->match({token::Type::Lt})) {
-            this->consume(token::Type::Identifier, "expected superclass name");
-            superclass = new expression::Variable(this->prev());
+            this->consume(token::Type::Identifier, "expected super class name");
+            super = new expression::Variable(this->prev());
         }
 
         this->consume(token::Type::LBrace, "expected '{' before class body");
-
         vector<statement::Function*> methods;
 
         while (!this->is_type(token::Type::RBrace) && !this->is_end()) {
@@ -327,7 +326,7 @@ namespace parser {
         }
 
         this->consume(token::Type::RBrace, "expected '}' after class body");
-        return new statement::Class(name, superclass, methods);
+        return new statement::Class(name, super, methods);
     }
 
     statement::Statement* Parser::_statement() {
@@ -339,7 +338,7 @@ namespace parser {
     }
 
     statement::Statement* Parser::_for() {
-        statement::Statement* init;
+        statement::Statement* init = NULL;
         this->consume(token::Type::LParen, "expected '(' after 'for'");
 
         if (this->match({token::Type::SemiColon})) {
@@ -350,14 +349,14 @@ namespace parser {
             init = this->_expr();
         }
 
-        expression::Expression* condition;
+        expression::Expression* condition = NULL;
 
         if (!this->is_type(token::Type::SemiColon)) {
             condition = this->_expression();
         }
 
         this->consume(token::Type::SemiColon, "expected ';' after loop");
-        expression::Expression* increment;
+        expression::Expression* increment = NULL;
 
         if (!this->is_type(token::Type::RParen)) {
             increment = this->_expression();
@@ -391,7 +390,7 @@ namespace parser {
         this->consume(token::Type::RParen, "expected ')' after 'if' condition");
 
         auto then_branch = this->_statement();
-        statement::Statement* else_branch;
+        statement::Statement* else_branch = NULL;
 
         if (this->match({token::Type::Else})) {
             else_branch = this->_statement();
@@ -401,8 +400,8 @@ namespace parser {
     }
 
     statement::Statement* Parser::_return() {
+        expression::Expression* value = NULL;
         auto keyword = this->prev();
-        expression::Expression* value;
 
         if (!this->is_type(token::Type::SemiColon)) {
             value = this->_expression();
@@ -413,7 +412,7 @@ namespace parser {
     }
 
     statement::Statement* Parser::_var() {
-        expression::Expression* init;
+        expression::Expression* init = NULL;
         auto name = this->consume(token::Type::Identifier, "expected variable name");
 
         if (this->match({token::Type::Eq})) {

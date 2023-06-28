@@ -32,10 +32,16 @@ int main() {
                 return -1;
             }
 
-            interpreter->run(parser->get_statements());
+            try {
+                interpreter->run(parser->get_statements());
+            } catch (error::RuntimeError* e) {
+                cout << e->what() << endl;
+                return -1;
+            }
+
             delete parser;
-        } catch (error::Error e) {
-            cout << e.what() << endl;
+        } catch (error::SyntaxError* e) {
+            cout << e->what() << endl;
             return -1;
         }
 

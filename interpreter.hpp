@@ -4,6 +4,7 @@
 #include <any>
 #include <vector>
 #include <unordered_map>
+#include <iostream>
 
 #include "scope.hpp"
 #include "return.hpp"
@@ -102,7 +103,7 @@ namespace interpreter {
     class Class : public Interpreter {
         public:
             const string name;
-            const unordered_map<string, Function*> methods;
+            unordered_map<string, Function*> methods;
             Class* super;
 
             Class(
@@ -110,6 +111,14 @@ namespace interpreter {
                 Class* super,
                 unordered_map<string, Function*> methods
             ) : name(name), super(super), methods(methods) { }
+
+            ~Class() {
+                for (auto fn : this->methods) {
+                    delete fn.second;
+                }
+
+                this->methods.clear();
+            }
 
             string to_string() { return "[class " + this->name + "]"; }
 
@@ -132,6 +141,13 @@ namespace interpreter {
 
         public:
             Instance(Class* _class) : _class(_class) { }
+            ~Instance() {
+                for (auto var : this->_fields) {
+                    delete var.second;
+                }
+
+                this->_fields.clear();
+            }
 
             string to_string() {
                 string res = this->_class->name + " {\n";
