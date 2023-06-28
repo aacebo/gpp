@@ -275,7 +275,16 @@ namespace interpreter {
     }
 
     scope::Var* Interpreter::visit_self(expression::Self* expr) {
-        return this->scope->get(expr->keyword->value);
+        try {
+            return this->scope->get(expr->keyword->value);
+        } catch (runtime_error& e) {
+            throw new error::RuntimeError(
+                expr->keyword->ln,
+                expr->keyword->start,
+                expr->keyword->end,
+                e.what()
+            );
+        }
     }
 
     scope::Var* Interpreter::visit_unary(expression::Unary* expr) {
@@ -293,7 +302,16 @@ namespace interpreter {
     }
 
     scope::Var* Interpreter::visit_variable(expression::Variable* expr) {
-        return this->scope->get(expr->name->value);
+        try {
+            return this->scope->get(expr->name->value);
+        } catch (runtime_error& e) {
+            throw new error::RuntimeError(
+                expr->name->ln,
+                expr->name->start,
+                expr->name->end,
+                e.what()
+            );
+        }
     }
 
     // Statements

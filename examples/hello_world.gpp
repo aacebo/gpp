@@ -1,14 +1,23 @@
 let a = 1;
 let b = 2;
 let c = a + b;
+
 c += b;
 c *= 2;
 c /= 3;
 
-class Test { }
+let z;
+z = 1;
+z = "test";
+
+class Test {
+    my_test() {
+        print "this is a test";
+    }
+}
 
 fn hello_world() {
-    print a;
+    print self;
     print "\n";
     return "hello world!\n";
 }
