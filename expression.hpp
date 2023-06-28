@@ -86,9 +86,9 @@ namespace expression {
 
             Literal() { this->type = Type::Literal; }
             Literal(any value) : value(value) { this->type = Type::Literal; }
-            Literal(float value) : value(any(value)) { this->type = Type::Literal; }
-            Literal(bool value) : value(any(value)) { this->type = Type::Literal; }
-            Literal(string value) : value(any(value)) { this->type = Type::Literal; }
+            Literal(float value) : value(value) { this->type = Type::Literal; }
+            Literal(bool value) : value(value) { this->type = Type::Literal; }
+            Literal(string value) : value(value) { this->type = Type::Literal; }
     };
 
     class Logical : public Expression {

@@ -17,8 +17,8 @@ int main() {
             cout << e->what() << endl;
         }
         
-        for (auto t : scanner->get_tokens()) {
-            cout << t->to_string() << endl;
+        for (auto token : scanner->get_tokens()) {
+            cout << token->to_string() << endl;
         }
 
         try {
@@ -34,7 +34,7 @@ int main() {
 
             interpreter->run(parser->get_statements());
             delete parser;
-        } catch (exception e) {
+        } catch (error::Error e) {
             cout << e.what() << endl;
             return -1;
         }
