@@ -8,9 +8,11 @@ c /= 3;
 class Test { }
 
 fn hello_world() {
+    print a;
+    print "\n";
     return "hello world!\n";
 }
 
 print c;
-print b >= a;
+print "\n";
 print hello_world();

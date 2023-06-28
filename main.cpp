@@ -13,12 +13,12 @@ int main() {
     for (auto f : reader->get_files()) {
         auto scanner = new scanner::Scanner(f.second);
 
-        for (auto e : scanner->get_errors()) {
-            cout << e->what() << endl;
-        }
-        
-        for (auto token : scanner->get_tokens()) {
-            cout << token->to_string() << endl;
+        if (scanner->get_errors().size() > 0) {
+            for (auto e : scanner->get_errors()) {
+                cout << e->what() << endl;
+            }
+
+            return -1;
         }
 
         try {

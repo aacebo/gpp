@@ -8,8 +8,6 @@ namespace interpreter {
     }
 
     scope::Var* Interpreter::evaluate(expression::Expression* expr) {
-        cout << expr->to_string() << endl;
-
         switch (expr->type) {
             case expression::Type::Assign:
                 return this->visit_assign(dynamic_cast<expression::Assign*>(expr));
@@ -41,8 +39,6 @@ namespace interpreter {
     }
 
     void Interpreter::execute(statement::Statement* stmt) {
-        cout << stmt->to_string() << endl;
-
         switch (stmt->type) {
             case statement::Type::Block:
                 return this->visit_block(dynamic_cast<statement::Block*>(stmt));
