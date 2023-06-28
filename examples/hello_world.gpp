@@ -17,8 +17,6 @@ class Test {
 }
 
 fn hello_world() {
-    print self;
-    print "\n";
     return "hello world!\n";
 }
 

@@ -212,8 +212,8 @@ namespace scanner {
         this->_tokens.push_back(new token::Token(
             type,
             this->_ln,
-            this->_left,
-            this->_right,
+            this->_left / this->_ln,
+            (this->_left / this->_ln) + (this->_right - this->_left),
             value
         ));
     }
