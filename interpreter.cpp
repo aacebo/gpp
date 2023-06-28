@@ -294,6 +294,17 @@ namespace interpreter {
     }
 
     void Interpreter::visit_function(statement::Function* stmt) {
+        if (this->scope->has(stmt->name->value)) {
+            if (this->scope->get(stmt->name->value)->is_type<Function*>()) {
+                throw new error::RuntimeError(
+                    stmt->name->ln,
+                    stmt->name->start,
+                    stmt->name->end,
+                    "duplicate function declaration \"" + stmt->name->value + "\""
+                );
+            }
+        }
+
         auto fn = new Function(stmt, this->scope);
         this->scope->define(stmt->name->value, new scope::Var(fn));
     }

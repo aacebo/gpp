@@ -3,3 +3,5 @@ let b = 2;
 let c = a + b;
 
 class Test { }
+
+fn Test() { }
