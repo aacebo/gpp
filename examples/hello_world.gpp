@@ -4,4 +4,8 @@ let c = a + b;
 
 class Test { }
 
-fn Test() { }
+fn hello_world() {
+    return "hello world!";
+}
+
+hello_world();
