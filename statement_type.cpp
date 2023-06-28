@@ -13,6 +13,8 @@ namespace statement {
                 return "expression";
             case Type::If:
                 return "if";
+            case Type::Print:
+                return "print";
             case Type::Return:
                 return "return";
             case Type::Let:

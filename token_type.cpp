@@ -28,6 +28,8 @@ namespace token {
             return Type::True;
         } else if (keyword == "false") {
             return Type::False;
+        } else if (keyword == "print") {
+            return Type::Print;
         }
 
         return Type::Invalid;
@@ -119,6 +121,8 @@ namespace token {
                 return "true";
             case Type::False:
                 return "false";
+            case Type::Print:
+                return "print";
             case Type::Eof:
                 return "eof";
             default:

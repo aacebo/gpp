@@ -68,39 +68,81 @@ namespace scanner {
                     this->push(token::Type::SemiColon);
                     break;
                 case '-':
-                    this->push(this->peek() == '=' ? token::Type::MinusEq : token::Type::Minus);
+                    if (this->peek() == '=') {
+                        this->_right++;
+                        this->push(token::Type::MinusEq);
+                    } else {
+                        this->push(token::Type::Minus);
+                    }
+
                     break;
                 case '+':
-                    this->push(this->peek() == '=' ? token::Type::PlusEq : token::Type::Plus);
+                    if (this->peek() == '=') {
+                        this->_right++;
+                        this->push(token::Type::PlusEq);
+                    } else {
+                        this->push(token::Type::Plus);
+                    }
+
                     break;
                 case '*':
-                    this->push(this->peek() == '=' ? token::Type::StarEq : token::Type::Star);
+                    if (this->peek() == '=') {
+                        this->_right++;
+                        this->push(token::Type::StarEq);
+                    } else {
+                        this->push(token::Type::Star);
+                    }
+
                     break;
                 case '/':
                     if (this->peek() == '/') {
                         this->on_comment();
                     } else if (this->peek() == '=') {
-                        this->push(token::Type::SlashEq);
                         this->_right++;
+                        this->push(token::Type::SlashEq);
                     } else {
                         this->push(token::Type::Slash);
                     }
 
                     break;
-                case '"':
-                    this->on_string();
-                    break;
                 case '!':
-                    this->push(this->peek() == '=' ? token::Type::NotEq : token::Type::Not);
+                    if (this->peek() == '=') {
+                        this->_right++;
+                        this->push(token::Type::NotEq);
+                    } else {
+                        this->push(token::Type::Not);
+                    }
+
                     break;
                 case '=':
-                    this->push(this->peek() == '=' ? token::Type::EqEq : token::Type::Eq);
+                    if (this->peek() == '=') {
+                        this->_right++;
+                        this->push(token::Type::EqEq);
+                    } else {
+                        this->push(token::Type::Eq);
+                    }
+
                     break;
                 case '<':
-                    this->push(this->peek() == '=' ? token::Type::LtEq : token::Type::Lt);
+                    if (this->peek() == '=') {
+                        this->_right++;
+                        this->push(token::Type::LtEq);
+                    } else {
+                        this->push(token::Type::Lt);
+                    }
+
                     break;
                 case '>':
-                    this->push(this->peek() == '=' ? token::Type::GtEq : token::Type::Gt);
+                    if (this->peek() == '=') {
+                        this->_right++;
+                        this->push(token::Type::GtEq);
+                    } else {
+                        this->push(token::Type::Gt);
+                    }
+
+                    break;
+                case '"':
+                    this->on_string();
                     break;
                 default:
                     if (this->is_integer(c)) {
@@ -182,8 +224,9 @@ namespace scanner {
             return;
         }
 
-        this->_right++;
+        this->_left++;
         this->push(token::Type::String);
+        this->_right++;
     }
 
     void Scanner::on_number() {

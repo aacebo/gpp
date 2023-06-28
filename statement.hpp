@@ -68,6 +68,15 @@ namespace statement {
             }
     };
 
+    class Print : public Statement {
+        public:
+            expression::Expression* expr;
+
+            Print(expression::Expression* expr) : expr(expr) {
+                this->type = Type::Print;
+            }
+    };
+
     class Return : public Statement {
         public:
             token::Token* keyword;

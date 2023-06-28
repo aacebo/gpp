@@ -55,6 +55,7 @@ namespace parser {
             statement::Statement* _class();
             statement::Statement* _for();
             statement::Statement* _if();
+            statement::Statement* _print();
             statement::Statement* _return();
             statement::Statement* _var();
             statement::Statement* _expr();

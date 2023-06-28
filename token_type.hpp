@@ -34,6 +34,7 @@ namespace token {
         Fn, Return,
         Class, Super, Self, Pub,
         Use, True, False,
+        Print,
 
         Eof,
         Invalid

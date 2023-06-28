@@ -221,7 +221,7 @@ namespace parser {
     expression::Expression* Parser::_term() {
         auto expr = this->_factor();
 
-        while (this->match({token::Type::Minus, token::Type::Plus})) {
+        while (this->match({token::Type::Minus, token::Type::MinusEq, token::Type::Plus, token::Type::PlusEq})) {
             return new expression::Binary(
                 expr,
                 this->prev(),
@@ -235,7 +235,7 @@ namespace parser {
     expression::Expression* Parser::_factor() {
         auto expr = this->_unary();
 
-        while (this->match({token::Type::Slash, token::Type::Star})) {
+        while (this->match({token::Type::Slash, token::Type::SlashEq, token::Type::Star, token::Type::StarEq})) {
             return new expression::Binary(
                 expr,
                 this->prev(),
@@ -332,6 +332,7 @@ namespace parser {
     statement::Statement* Parser::_statement() {
         if (this->match({token::Type::For})) return this->_for();
         if (this->match({token::Type::If})) return this->_if();
+        if (this->match({token::Type::Print})) return this->_print();
         if (this->match({token::Type::Return})) return this->_return();
         if (this->match({token::Type::LBrace})) return new statement::Block(this->_block());
         return this->_expr();
@@ -397,6 +398,12 @@ namespace parser {
         }
 
         return new statement::If(condition, then_branch, else_branch);
+    }
+
+    statement::Statement* Parser::_print() {
+        auto expr = this->_expression();
+        this->consume(token::Type::SemiColon, "expected ';' after value");
+        return new statement::Print(expr);
     }
 
     statement::Statement* Parser::_return() {

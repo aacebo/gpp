@@ -8,7 +8,12 @@
 
 using namespace std;
 
-namespace scope {   
+namespace scope {
+    class Stringify {
+        public:
+            virtual string to_string() = 0;
+    };
+
     class Var {
         public:
             any value;
@@ -21,7 +26,13 @@ namespace scope {
             const type_info& type() { return this->value.type(); }
 
             bool is_string() { return this->type() == typeid(string); }
-            string to_string() { return any_cast<string>(this->value); }
+            string to_string() {
+                if (this->is_string()) return any_cast<string>(this->value);
+                if (this->is_number()) return std::to_string(this->to_number());
+                if (this->is_bool()) return this->to_bool() ? "true" : "false";
+                if (auto v = any_cast<Stringify*>(this->value)) return v->to_string();
+                return "";
+            }
 
             bool is_number() { return this->type() == typeid(float); }
             float to_number() { return any_cast<float>(this->value); }

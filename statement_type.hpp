@@ -12,6 +12,7 @@ namespace statement {
         Class,
         Expression,
         If,
+        Print,
         Return,
         Let,
         For,

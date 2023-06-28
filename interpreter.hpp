@@ -3,8 +3,8 @@
 
 #include <any>
 #include <vector>
-#include <unordered_map>
 #include <iostream>
+#include <unordered_map>
 
 #include "scope.hpp"
 #include "return.hpp"
@@ -54,6 +54,7 @@ namespace interpreter {
             void visit_class(statement::Class*);
             void visit_expression(statement::Expression*);
             void visit_if(statement::If*);
+            void visit_print(statement::Print*);
             void visit_return(statement::Return*);
             void visit_let(statement::Let*);
             void visit_for(statement::For*);

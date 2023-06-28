@@ -54,6 +54,8 @@ namespace interpreter {
                 return this->visit_expression(dynamic_cast<statement::Expression*>(stmt));
             case statement::Type::If:
                 return this->visit_if(dynamic_cast<statement::If*>(stmt));
+            case statement::Type::Print:
+                return this->visit_print(dynamic_cast<statement::Print*>(stmt));
             case statement::Type::Return:
                 return this->visit_return(dynamic_cast<statement::Return*>(stmt));
             case statement::Type::Let:
@@ -140,16 +142,29 @@ namespace interpreter {
                 return new scope::Var(*left + *right);
             case token::Type::PlusEq:
                 this->check_number_ops(expr->op, left, right);
-                return new scope::Var(*left += *right);
+                *left += *right;
+                return left;
             case token::Type::Minus:
                 this->check_number_ops(expr->op, left, right);
                 return new scope::Var(*left - *right);
+            case token::Type::MinusEq:
+                this->check_number_ops(expr->op, left, right);
+                *left -= *right;
+                return left;
             case token::Type::Slash:
                 this->check_number_ops(expr->op, left, right);
                 return new scope::Var(*left / *right);
+            case token::Type::SlashEq:
+                this->check_number_ops(expr->op, left, right);
+                *left /= *right;
+                return left;
             case token::Type::Star:
                 this->check_number_ops(expr->op, left, right);
                 return new scope::Var(*left * *right);
+            case token::Type::StarEq:
+                this->check_number_ops(expr->op, left, right);
+                *left *= *right;
+                return left;
             default:
                 throw runtime_error("binary expression of type \"" + token::type_to_string(expr->op->type) + "\" is not supported");
         }
@@ -366,6 +381,10 @@ namespace interpreter {
         } else if (stmt->else_branch) {
             this->execute(stmt->else_branch);
         }
+    }
+
+    void Interpreter::visit_print(statement::Print* stmt) {
+        cout << this->evaluate(stmt->expr)->to_string();
     }
 
     void Interpreter::visit_return(statement::Return* stmt) {

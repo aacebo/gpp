@@ -1,11 +1,16 @@
 let a = 1;
 let b = 2;
 let c = a + b;
+c += b;
+c *= 2;
+c /= 3;
 
 class Test { }
 
 fn hello_world() {
-    return "hello world!";
+    return "hello world!\n";
 }
 
-hello_world();
+print hello_world();
+print c;
+print b >= a;
