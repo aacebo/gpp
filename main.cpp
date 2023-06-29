@@ -1,13 +1,10 @@
 #include "file_reader.hpp"
 #include "scanner.hpp"
-#include "parser.hpp"
-#include "interpreter.hpp"
 #include "error.hpp"
 
 using namespace std;
 
 int main() {
-    auto interpreter = new interpreter::Interpreter();
     auto reader = new file_reader::FileReader(".");
 
     for (auto f : reader->get_files()) {
@@ -21,38 +18,13 @@ int main() {
             return -1;
         }
 
-        // for (auto token : scanner->get_tokens()) {
-        //     cout << token->to_string() << endl;
-        // }
-
-        try {
-            auto parser = new parser::Parser(scanner->get_tokens());
-        
-            if (parser->get_errors().size() > 0) {
-                for (auto e : parser->get_errors()) {
-                    cout << e->what() << endl;
-                }
-
-                return -1;
-            }
-
-            try {
-                interpreter->run(parser->get_statements());
-            } catch (error::RuntimeError* e) {
-                cout << e->what() << endl;
-                return -1;
-            }
-
-            delete parser;
-        } catch (error::SyntaxError* e) {
-            cout << e->what() << endl;
-            return -1;
+        for (auto t : scanner->get_tokens()) {
+            cout << t->to_string() << endl;
         }
 
         delete scanner;
     }
 
-    delete interpreter;
     delete reader;
     return 0;
 }
