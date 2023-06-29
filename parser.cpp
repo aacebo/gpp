@@ -456,7 +456,11 @@ namespace parser {
     }
 
     statement::Function* Parser::_function(string kind) {
+        token::Token* indicator = NULL;
+        token::Token* return_type = NULL;
+        token::Token* optional = NULL;
         vector<token::Token*> params;
+
         auto name = this->consume(token::Type::Identifier, "expected \"" + kind + "\" name");
         this->consume(token::Type::LParen, "expected '(' after \"" + kind + "\" name");
 
@@ -471,8 +475,28 @@ namespace parser {
         }
 
         this->consume(token::Type::RParen, "expected ')' after parameters");
+
+        if (this->match({token::Type::ReturnType})) {
+            indicator = this->prev();
+
+            if (!this->match({token::Type::String, token::Type::Number, token::Type::Bool})) {
+                throw new error::SyntaxError(
+                    indicator->ln,
+                    indicator->start,
+                    indicator->end,
+                    "expected return type"
+                );
+            }
+
+            return_type = this->prev();
+
+            if (this->match({token::Type::Optional})) {
+                optional = this->prev();
+            }
+        }
+
         this->consume(token::Type::LBrace, "expected '{' before \"" + kind + "\" body");
-        return new statement::Function(name, params, this->_block());
+        return new statement::Function(name, return_type, optional, params, this->_block());
     }
 
     vector<statement::Statement*> Parser::_block() {

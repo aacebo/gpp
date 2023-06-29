@@ -29,10 +29,18 @@ namespace statement {
     class Function : public Statement {
         public:
             token::Token* name;
+            token::Token* return_type;
+            token::Token* optional;
             vector<token::Token*> params;
             vector<Statement*> body;
 
-            Function(token::Token* name, vector<token::Token*> params, vector<Statement*> body) : name(name), params(params), body(body) {
+            Function(
+                token::Token* name,
+                token::Token* return_type,
+                token::Token* optional,
+                vector<token::Token*> params,
+                vector<Statement*> body
+            ) : name(name), return_type(return_type), optional(optional), params(params), body(body) {
                 this->type = Type::Function;
             }
     };

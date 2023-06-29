@@ -181,9 +181,10 @@ namespace interpreter {
 
     class Return : exception {
         public:
+            statement::Return* stmt;
             Var* value;
 
-            Return(Var* value) : value(value) { }
+            Return(statement::Return* stmt, Var* value) : stmt(stmt), value(value) { }
 
             const string what() {
                 return "<return " + this->value->to_string() + ">";

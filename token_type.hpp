@@ -33,7 +33,7 @@ namespace token {
 
         // keywords
         If, Else, For, Let, Const,
-        Fn, Return,
+        Fn, Return, ReturnType,
         Class, Super, Self, Pub,
         Use, True, False,
         String, Number, Bool,

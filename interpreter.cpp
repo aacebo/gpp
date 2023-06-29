@@ -456,7 +456,7 @@ namespace interpreter {
 
     void Interpreter::visit_return(statement::Return* stmt) {
         auto var = (stmt->value) ? this->evaluate(stmt->value) : NULL;
-        throw new Return(var);
+        throw new Return(stmt, var);
     }
 
     void Interpreter::visit_let(statement::Let* stmt) {

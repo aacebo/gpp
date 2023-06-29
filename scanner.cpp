@@ -74,6 +74,9 @@ namespace scanner {
                     if (this->peek() == '=') {
                         this->_right++;
                         this->push(token::Type::MinusEq);
+                    } else if (this->peek() == '>') {
+                        this->_right++;
+                        this->push(token::Type::ReturnType);
                     } else {
                         this->push(token::Type::Minus);
                     }

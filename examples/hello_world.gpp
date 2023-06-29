@@ -20,7 +20,11 @@ class Test {
 }
 
 fn hello_world() {
-    return "hello world!\n";
+    print "hello world!\n";
+}
+
+fn sum(d, e) -> number {
+    return d + e;
 }
 
 print c;
@@ -28,3 +32,5 @@ print "\n";
 print hello_world;
 print "\n";
 print hello_world();
+print "\n";
+print sum(c, c);

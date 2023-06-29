@@ -125,6 +125,8 @@ namespace token {
                 return "fn";
             case Type::Return:
                 return "return";
+            case Type::ReturnType:
+                return "->";
             case Type::Class:
                 return "class";
             case Type::Super:
