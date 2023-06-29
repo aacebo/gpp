@@ -1,15 +1,16 @@
 #include "interpreter.hpp"
 
 namespace interpreter {
-    Var::Var(Type type) : type(type), value(any()) { }
+    Var::Var(Type type) : type(type), value(any(NULL)) { }
     Var::Var(Type type, any value) : type(type), value(value) { }
     Var::Var(Type type, any value, bool is_const, bool is_optional) : type(type), value(value), is_const(is_const), is_optional(is_optional) { }
 
-    void Var::nil() { this->value.reset(); }
-    bool Var::is_nil() { return !this->value.has_value(); }
+    void Var::nil() { this->value = any(NULL); }
+    bool Var::is_nil() { return this->value.type() == any(NULL).type(); }
 
     bool Var::is_string() { return this->type == Type::String; }
     string Var::to_string() {
+        if (this->is_nil()) return "<nil>";
         if (this->is_string()) return any_cast<string>(this->value);
         if (this->is_number()) return std::to_string(this->to_number());
         if (this->is_bool()) return this->to_bool() ? "true" : "false";

@@ -21,6 +21,10 @@ int main() {
             return -1;
         }
 
+        // for (auto token : scanner->get_tokens()) {
+        //     cout << token->to_string() << endl;
+        // }
+
         try {
             auto parser = new parser::Parser(scanner->get_tokens());
         

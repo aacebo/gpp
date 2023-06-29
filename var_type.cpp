@@ -14,6 +14,8 @@ namespace interpreter {
             return Type::Instance;
         } else if (type == typeid(Function*)) {
             return Type::Function;
+        } else if (type == typeid(NULL)) {
+            return Type::Nil;
         }
 
         throw runtime_error("invalid type info");
@@ -33,6 +35,8 @@ namespace interpreter {
                 return "instance";
             case Type::Function:
                 return "function";
+            case Type::Nil:
+                return "nil";
         }
     }
 
@@ -48,6 +52,8 @@ namespace interpreter {
                 return Type::Class;
             case token::Type::Fn:
                 return Type::Function;
+            case token::Type::Nil:
+                return Type::Nil;
             default:
                 throw runtime_error("invalid type \"" + token::type_to_string(type) + "\"");
         }

@@ -137,7 +137,7 @@ namespace interpreter {
             );
         }
 
-        if (var->type != existing->type) {
+        if (var->type != Type::Nil && var->type != existing->type) {
             throw new error::RuntimeError(
                 expr->name->ln,
                 expr->name->start,
@@ -147,7 +147,20 @@ namespace interpreter {
             );
         }
 
+        if (var->type == Type::Nil && !existing->is_optional) {
+            throw new error::RuntimeError(
+                expr->name->ln,
+                expr->name->start,
+                expr->name->end,
+                "variable of type \"" + type_to_string(existing->type) +
+                "\" is not optional"
+            );
+        }
+
+        var->is_const = existing->is_const;
+        var->is_optional = existing->is_optional;
         this->scope->assign(expr->name->value, var);
+
         return var;
     }
 
@@ -478,7 +491,7 @@ namespace interpreter {
         auto var = (stmt->init) ? this->evaluate(stmt->init) : new Var(token_type_to_type(stmt->_type->type));
 
         if (stmt->_type) {
-            if (token_type_to_type(stmt->_type->type) != var->type) {
+            if (var->type != Type::Nil && token_type_to_type(stmt->_type->type) != var->type) {
                 throw new error::RuntimeError(
                     stmt->_type->ln,
                     stmt->_type->start,
@@ -487,6 +500,18 @@ namespace interpreter {
                     "\", received \"" + type_to_string(var->type) + "\""
                 );
             }
+
+            if (var->type == Type::Nil && !stmt->optional) {
+                throw new error::RuntimeError(
+                    stmt->_type->ln,
+                    stmt->_type->start,
+                    stmt->_type->end,
+                    "variable of type \"" + type_to_string(token_type_to_type(stmt->_type->type)) +
+                    "\" is not optional"
+                );
+            }
+
+            var->type = token_type_to_type(stmt->_type->type);
         }
 
         if (stmt->keyword->type == token::Type::Const) {

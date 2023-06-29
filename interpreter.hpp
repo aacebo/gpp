@@ -105,7 +105,8 @@ namespace interpreter {
         Bool,
         Class,
         Function,
-        Instance
+        Instance,
+        Nil
     };
 
     Type type_info_to_type(const type_info&);
@@ -114,7 +115,7 @@ namespace interpreter {
 
     class Var {
         public:
-            const Type type;
+            Type type;
             bool is_const = false;
             bool is_optional = false;
             any value;

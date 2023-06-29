@@ -38,6 +38,8 @@ namespace token {
             return Type::False;
         } else if (keyword == "print") {
             return Type::Print;
+        } else if (keyword == "nil") {
+            return Type::Nil;
         }
 
         return Type::Invalid;

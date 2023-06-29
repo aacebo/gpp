@@ -6,8 +6,12 @@ c += b;
 c *= 2;
 c /= 3;
 
-let z number?;
+let z number? = nil;
+print z;
+print "\n";
 z = 1;
+print z;
+print "\n";
 
 class Test {
     my_test() {
