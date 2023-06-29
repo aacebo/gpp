@@ -6,47 +6,47 @@
 #include <iostream>
 #include <unordered_map>
 
-#include "scope.hpp"
-#include "return.hpp"
-#include "var.hpp"
 #include "expression.hpp"
 #include "statement.hpp"
+#include "error.hpp"
 
 using namespace std;
 
 namespace interpreter {
     class Instance;
+    class Var;
+    class Scope;
 
     class Interpreter {
-        scope::Scope* scope = new scope::Scope();
+        Scope* scope;
 
         public:
-            Interpreter() = default;
-            ~Interpreter() { delete this->scope; }
+            Interpreter();
+            ~Interpreter();
             void run(vector<statement::Statement*>);
 
         protected:
-            scope::Var* evaluate(expression::Expression*);
+            Var* evaluate(expression::Expression*);
             void execute(statement::Statement*);
-            void execute_block(vector<statement::Statement*>, scope::Scope*);
+            void execute_block(vector<statement::Statement*>, Scope*);
 
         private:
-            void check_number_ops(token::Token*, scope::Var*);
-            void check_number_ops(token::Token*, scope::Var*, scope::Var*);
+            void check_number_ops(token::Token*, Var*);
+            void check_number_ops(token::Token*, Var*, Var*);
 
             // Expressions
-            scope::Var* visit_assign(expression::Assign*);
-            scope::Var* visit_binary(expression::Binary*);
-            scope::Var* visit_call(expression::Call*);
-            scope::Var* visit_get(expression::Get*);
-            scope::Var* visit_set(expression::Set*);
-            scope::Var* visit_grouping(expression::Grouping*);
-            scope::Var* visit_literal(expression::Literal*);
-            scope::Var* visit_logical(expression::Logical*);
-            scope::Var* visit_super(expression::Super*);
-            scope::Var* visit_self(expression::Self*);
-            scope::Var* visit_unary(expression::Unary*);
-            scope::Var* visit_variable(expression::Variable*);
+            Var* visit_assign(expression::Assign*);
+            Var* visit_binary(expression::Binary*);
+            Var* visit_call(expression::Call*);
+            Var* visit_get(expression::Get*);
+            Var* visit_set(expression::Set*);
+            Var* visit_grouping(expression::Grouping*);
+            Var* visit_literal(expression::Literal*);
+            Var* visit_logical(expression::Logical*);
+            Var* visit_super(expression::Super*);
+            Var* visit_self(expression::Self*);
+            Var* visit_unary(expression::Unary*);
+            Var* visit_variable(expression::Variable*);
 
             // Statements
             void visit_block(statement::Block*);
@@ -64,41 +64,13 @@ namespace interpreter {
     class Function : public Interpreter {
         public:
             statement::Function* declaration;
-            scope::Scope* parent;
+            Scope* parent;
 
-            Function(
-                statement::Function* declaration,
-                scope::Scope* parent
-            ) : declaration(declaration), parent(parent) { }
+            Function(statement::Function*, Scope*);
 
-            string to_string() { return "<fn " + this->declaration->name->value + ">"; }
-
-            Function* bind(Instance* instance) {
-                auto scope = new scope::Scope(this->parent);
-                scope->define("self", new scope::Var(instance));
-                return new Function(this->declaration, scope);
-            }
-
-            scope::Var* call(vector<scope::Var*> args) {
-                auto scope = new scope::Scope(this->parent);
-
-                for (int i = 0; i < this->declaration->params.size(); i++) {
-                    scope->define(
-                        this->declaration->params[i]->value,
-                        args[i]
-                    );
-                }
-
-                try {
-                    this->execute_block(this->declaration->body, scope);
-                    delete scope;
-                } catch (scope::Return* r) {
-                    delete scope;
-                    return r->value;
-                }
-
-                return new scope::Var();
-            }
+            string to_string();
+            Function* bind(Instance*);
+            Var* call(vector<Var*>);
     };
 
     class Class : public Interpreter {
@@ -107,86 +79,113 @@ namespace interpreter {
             unordered_map<string, Function*> methods;
             Class* super;
 
-            Class(
-                string name,
-                Class* super,
-                unordered_map<string, Function*> methods
-            ) : name(name), super(super), methods(methods) { }
+            Class(string, Class*, unordered_map<string, Function*>);
+            ~Class();
 
-            ~Class() {
-                for (auto fn : this->methods) {
-                    delete fn.second;
-                }
-
-                this->methods.clear();
-            }
-
-            string to_string() { return "[class " + this->name + "]"; }
-
-            Function* get_method(string name) {
-                if (this->methods.count(name) > 0) {
-                    return this->methods.at(name);
-                }
-
-                if (this->super) {
-                    return this->super->get_method(name);
-                }
-
-                return NULL;
-            }
+            string to_string();
+            Function* get_method(string);
     };
 
     class Instance {
         Class* _class;
-        unordered_map<string, scope::Var*> _fields;
+        unordered_map<string, Var*> _fields;
 
         public:
-            Instance(Class* _class) : _class(_class) { }
-            ~Instance() {
-                for (auto var : this->_fields) {
-                    delete var.second;
-                }
+            Instance(Class*);
+            ~Instance();
 
-                this->_fields.clear();
-            }
+            string to_string();
+            void set(token::Token*, Var*);
+            Var* get(token::Token*);
+    };
 
-            string to_string() {
-                string res = this->_class->name + " {\n";
-                auto it = this->_fields.begin();
+    enum class Type {
+        String,
+        Number,
+        Bool,
+        Class,
+        Function,
+        Instance
+    };
 
-                while (it != this->_fields.end()) {
-                    res += "\t" + it->first + ": " + it->second->to_string() + "";
-                    it++;
+    Type type_info_to_type(const type_info&);
+    string type_to_string(Type);
+    Type token_type_to_type(token::Type);
 
-                    if (it != this->_fields.end()) {
-                        res += ",\n";
-                    }
-                }
+    class Var {
+        public:
+            const Type type;
+            bool is_const = false;
+            bool is_optional = false;
+            any value;
 
-                return res + "}";
-            }
+            Var(Type);
+            Var(Type, any);
+            Var(Type, any, bool, bool);
 
-            void set(token::Token* name, scope::Var* value) {
-                this->_fields[name->value] = value;
-            }
+            void nil();
+            bool is_nil();
+            
+            bool is_string();
+            string to_string();
+            
+            bool is_number();
+            float to_number();
 
-            scope::Var* get(token::Token* name) {
-                if (this->_fields.count(name->value) > 0) {
-                    return this->_fields.at(name->value);
-                }
+            bool is_bool();
+            bool to_bool();
 
-                auto method = this->_class->get_method(name->value);
+            bool is_class();
+            Class* to_class();
 
-                if (method) {
-                    return new scope::Var(method->bind(this));
-                }
+            bool is_instance();
+            Instance* to_instance();
 
-                throw new error::RuntimeError(
-                    name->ln,
-                    name->start,
-                    name->end,
-                    "undefined property \"" + name->value + "\""
-                );
+            bool is_function();
+            Function* to_function();
+
+            bool is_truthy();
+            bool operator==(Var&);
+            bool operator!=(Var&);
+            bool operator>(Var&);
+            bool operator>=(Var&);
+            bool operator<(Var&);
+            bool operator<=(Var&);
+            float operator+(Var&);
+            float operator+=(Var&);
+            float operator-();
+            float operator-(Var&);
+            float operator-=(Var&);
+            float operator*(Var&);
+            float operator*=(Var&);
+            float operator/(Var&);
+            float operator/=(Var&);
+    };
+
+    class Scope {
+        unordered_map<string, Var*> _values;
+
+        public:
+            Scope* parent;
+
+            Scope() { }
+            Scope(Scope* parent) : parent(parent) { }
+            ~Scope();
+
+            Var* get(string);
+            bool has(string);
+            void define(string, Var*);
+            void assign(string, Var*);
+    };
+
+    class Return : exception {
+        public:
+            Var* value;
+
+            Return(Var* value) : value(value) { }
+
+            const string what() {
+                return "<return " + this->value->to_string() + ">";
             }
     };
 };

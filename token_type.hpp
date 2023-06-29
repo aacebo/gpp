@@ -1,6 +1,7 @@
 #ifndef TOKEN_TYPE_H
 #define TOKEN_TYPE_H
 
+#include <any>
 #include <string>
 
 using namespace std;
@@ -12,6 +13,7 @@ namespace token {
         SemiColon,
         LParen, RParen,
         LBrace, RBrace,
+        Optional,
 
         // arithmetic
         Minus, MinusEq,
@@ -27,13 +29,14 @@ namespace token {
         And, Or,
 
         // literals
-        Identifier, String, Number, Nil,
+        Identifier, LString, LNumber, Nil,
 
         // keywords
-        If, Else, For, Let,
+        If, Else, For, Let, Const,
         Fn, Return,
         Class, Super, Self, Pub,
         Use, True, False,
+        String, Number, Bool,
         Print,
 
         Eof,

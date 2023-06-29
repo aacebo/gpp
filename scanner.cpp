@@ -67,6 +67,9 @@ namespace scanner {
                 case ';':
                     this->push(token::Type::SemiColon);
                     break;
+                case '?':
+                    this->push(token::Type::Optional);
+                    break;
                 case '-':
                     if (this->peek() == '=') {
                         this->_right++;
@@ -169,7 +172,7 @@ namespace scanner {
         auto value = this->_src.substr(this->_left, this->_right - this->_left);
 
         // handle escaped characters
-        if (type == token::Type::String) {
+        if (type == token::Type::LString) {
             for (int i = 0; i < value.length() - 1; i++) {
                 if (value[i] == '\\') {
                     value.erase(i, 1);
@@ -280,7 +283,7 @@ namespace scanner {
         }
 
         this->_left++;
-        this->push(token::Type::String);
+        this->push(token::Type::LString);
         this->_right++;
     }
 
@@ -297,7 +300,7 @@ namespace scanner {
             }
         }
 
-        this->push(token::Type::Number);
+        this->push(token::Type::LNumber);
     }
 
     void Scanner::on_identifier() {

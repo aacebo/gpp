@@ -10,6 +10,8 @@ namespace token {
             return Type::For;
         } else if (keyword == "let") {
             return Type::Let;
+        } else if (keyword == "const") {
+            return Type::Const;
         } else if (keyword == "fn") {
             return Type::Fn;
         } else if (keyword == "return") {
@@ -24,6 +26,12 @@ namespace token {
             return Type::Pub;
         } else if (keyword == "use") {
             return Type::Use;
+        } else if (keyword == "string") {
+            return Type::String;
+        } else if (keyword == "number") {
+            return Type::Number;
+        } else if (keyword == "bool") {
+            return Type::Bool;
         } else if (keyword == "true") {
             return Type::True;
         } else if (keyword == "false") {
@@ -51,6 +59,8 @@ namespace token {
                 return "{";
             case Type::RBrace:
                 return "}";
+            case Type::Optional:
+                return "?";
             case Type::Minus:
                 return "-";
             case Type::MinusEq:
@@ -91,8 +101,12 @@ namespace token {
                 return "identifier";
             case Type::String:
                 return "string";
+            case Type::LString:
+                return "literal string";
             case Type::Number:
                 return "number";
+            case Type::LNumber:
+                return "literal number";
             case Type::Nil:
                 return "nil";
             case Type::If:
@@ -103,6 +117,8 @@ namespace token {
                 return "for";
             case Type::Let:
                 return "let";
+            case Type::Const:
+                return "const";
             case Type::Fn:
                 return "fn";
             case Type::Return:
@@ -117,6 +133,8 @@ namespace token {
                 return "pub";
             case Type::Use:
                 return "use";
+            case Type::Bool:
+                return "bool";
             case Type::True:
                 return "true";
             case Type::False:

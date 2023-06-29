@@ -89,10 +89,19 @@ namespace statement {
 
     class Let : public Statement {
         public:
+            token::Token* keyword;
             token::Token* name;
+            token::Token* _type;
+            token::Token* optional;
             expression::Expression* init;
 
-            Let(token::Token* name, expression::Expression* init) : name(name), init(init) {
+            Let(
+                token::Token* keyword,
+                token::Token* name,
+                token::Token* _type,
+                token::Token* optional,
+                expression::Expression* init
+            ) : keyword(keyword), name(name), _type(_type), optional(optional), init(init) {
                 this->type = Type::Let;
             }
     };

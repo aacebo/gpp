@@ -1,6 +1,6 @@
-#include "scope.hpp"
+#include "interpreter.hpp"
 
-namespace scope {
+namespace interpreter {
     Scope::~Scope() {
         for (auto v : this->_values) {
             delete v.second;

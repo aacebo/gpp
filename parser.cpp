@@ -98,6 +98,7 @@ namespace parser {
                 case token::Type::Class:
                 case token::Type::Fn:
                 case token::Type::Let:
+                case token::Type::Const:
                 case token::Type::For:
                 case token::Type::If:
                 case token::Type::Return:
@@ -139,8 +140,8 @@ namespace parser {
         if (this->match({token::Type::True})) return new expression::Literal(true);
         if (this->match({token::Type::False})) return new expression::Literal(false);
         if (this->match({token::Type::Nil})) return new expression::Literal();
-        if (this->match({token::Type::Number})) return new expression::Literal(this->prev()->to_float());
-        if (this->match({token::Type::String})) return new expression::Literal(this->prev()->value);
+        if (this->match({token::Type::LNumber})) return new expression::Literal(this->prev()->to_float());
+        if (this->match({token::Type::LString})) return new expression::Literal(this->prev()->value);
         if (this->match({token::Type::Self})) return new expression::Self(this->prev());
         if (this->match({token::Type::Identifier})) return new expression::Variable(this->prev());
 
@@ -300,7 +301,7 @@ namespace parser {
         try {
             if (this->match({token::Type::Class})) return this->_class();
             if (this->match({token::Type::Fn})) return this->_function("function");
-            if (this->match({token::Type::Let})) return this->_var();
+            if (this->match({token::Type::Let, token::Type::Const})) return this->_let();
             if (this->match({token::Type::Use})) return this->_use();
         } catch (error::SyntaxError err) {
             this->sync();
@@ -344,8 +345,8 @@ namespace parser {
 
         if (this->match({token::Type::SemiColon})) {
             init = NULL;
-        } else if (this->match({token::Type::Let})) {
-            init = this->_var();
+        } else if (this->match({token::Type::Let, token::Type::Const})) {
+            init = this->_let();
         } else {
             init = this->_expr();
         }
@@ -418,16 +419,28 @@ namespace parser {
         return new statement::Return(keyword, value);
     }
 
-    statement::Statement* Parser::_var() {
+    statement::Statement* Parser::_let() {
+        token::Token* type = NULL;
+        token::Token* optional = NULL;
         expression::Expression* init = NULL;
+
+        auto keyword = this->prev();
         auto name = this->consume(token::Type::Identifier, "expected variable name");
+
+        if (this->match({token::Type::String, token::Type::Number, token::Type::Bool})) {
+            type = this->prev();
+
+            if (this->match({token::Type::Optional})) {
+                optional = this->prev();
+            }
+        }
 
         if (this->match({token::Type::Eq})) {
             init = this->_expression();
         }
 
         this->consume(token::Type::SemiColon, "expected ';' after variable declaration");
-        return new statement::Let(name, init);
+        return new statement::Let(keyword, name, type, optional, init);
     }
 
     statement::Statement* Parser::_expr() {

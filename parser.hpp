@@ -57,7 +57,7 @@ namespace parser {
             statement::Statement* _if();
             statement::Statement* _print();
             statement::Statement* _return();
-            statement::Statement* _var();
+            statement::Statement* _let();
             statement::Statement* _expr();
             statement::Statement* _use();
             statement::Function* _function(string);

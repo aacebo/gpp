@@ -1,4 +1,5 @@
-let a = 1;
+const a = 1;
+a = 24;
 let b = 2;
 let c = a + b;
 
@@ -6,9 +7,8 @@ c += b;
 c *= 2;
 c /= 3;
 
-let z;
+let z number?;
 z = 1;
-z = "test";
 
 class Test {
     my_test() {
