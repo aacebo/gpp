@@ -23,7 +23,7 @@ fn hello_world() {
     print "hello world!\n";
 }
 
-fn sum(d, e) -> number {
+fn sum(d string?, e number) -> number {
     return d + e;
 }
 

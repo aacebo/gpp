@@ -32,6 +32,7 @@ namespace statement {
             token::Token* return_type;
             token::Token* optional;
             vector<token::Token*> params;
+            vector<token::Token*> param_types;
             vector<Statement*> body;
 
             Function(
@@ -39,8 +40,9 @@ namespace statement {
                 token::Token* return_type,
                 token::Token* optional,
                 vector<token::Token*> params,
+                vector<token::Token*> param_types,
                 vector<Statement*> body
-            ) : name(name), return_type(return_type), optional(optional), params(params), body(body) {
+            ) : name(name), return_type(return_type), optional(optional), params(params), param_types(param_types), body(body) {
                 this->type = Type::Function;
             }
     };

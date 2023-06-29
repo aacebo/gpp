@@ -247,6 +247,18 @@ namespace interpreter {
             );
         }
 
+        for (int i = 0; i < args.size(); i++) {
+            if (args[i]->type != Type::Nil && args[i]->type != token_type_to_type(fn->declaration->param_types[i]->type)) {
+                throw new error::RuntimeError(
+                    expr->paren->ln,
+                    expr->paren->start,
+                    expr->paren->end,
+                    "expected argument type \"" + fn->declaration->param_types[i]->value +
+                    "\", received \"" + type_to_string(args[i]->type) + "\""
+                );
+            }
+        }
+        
         return fn->call(args);
     }
 

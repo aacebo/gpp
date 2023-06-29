@@ -460,6 +460,7 @@ namespace parser {
         token::Token* return_type = NULL;
         token::Token* optional = NULL;
         vector<token::Token*> params;
+        vector<token::Token*> param_types;
 
         auto name = this->consume(token::Type::Identifier, "expected \"" + kind + "\" name");
         this->consume(token::Type::LParen, "expected '(' after \"" + kind + "\" name");
@@ -471,6 +472,17 @@ namespace parser {
                 }
 
                 params.push_back(this->consume(token::Type::Identifier, "expected parameter name"));
+                
+                if (!this->match({token::Type::String, token::Type::Number, token::Type::Bool})) {
+                    throw new error::SyntaxError(
+                        params[params.size() - 1]->ln,
+                        params[params.size() - 1]->start,
+                        params[params.size() - 1]->end,
+                        "expected argument type"
+                    );
+                }
+
+                param_types.push_back(this->prev());
             } while (this->match({token::Type::Comma}));
         }
 
@@ -496,7 +508,14 @@ namespace parser {
         }
 
         this->consume(token::Type::LBrace, "expected '{' before \"" + kind + "\" body");
-        return new statement::Function(name, return_type, optional, params, this->_block());
+        return new statement::Function(
+            name,
+            return_type,
+            optional,
+            params,
+            param_types,
+            this->_block()
+        );
     }
 
     vector<statement::Statement*> Parser::_block() {
