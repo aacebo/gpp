@@ -25,4 +25,6 @@ fn hello_world() {
 
 print c;
 print "\n";
+print hello_world;
+print "\n";
 print hello_world();
