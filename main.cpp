@@ -10,16 +10,14 @@ int main() {
     for (auto f : reader->get_files()) {
         auto scanner = new scanner::Scanner(f.second);
 
-        if (scanner->get_errors().size() > 0) {
-            for (auto e : scanner->get_errors()) {
-                cout << e->what() << endl;
+        for (;;) {
+            auto token = scanner->scan();
+
+            if (token.type == token::Type::Eof) {
+                break;
             }
 
-            return -1;
-        }
-
-        for (auto t : scanner->get_tokens()) {
-            cout << t->to_string() << endl;
+            cout << token.to_string() << endl;
         }
 
         delete scanner;

@@ -15,26 +15,21 @@ namespace scanner {
         int _left;
         int _right;
         int _ln;
-        vector<token::Token*> _tokens;
-        vector<error::Error*> _errors;
 
         public:
             Scanner(string);
-            ~Scanner();
-            const vector<token::Token*> get_tokens();
-            const vector<error::Error*> get_errors();
+            token::Token scan();
 
         private:
-            void scan();
-            void push(token::Type);
+            token::Token create(token::Type);
             char peek();
             bool is_escaped();
             bool is_integer(char);
             bool is_alpha(char);
-            void on_comment();
-            void on_string();
-            void on_number();
-            void on_identifier();
+            token::Token on_comment();
+            token::Token on_string();
+            token::Token on_number();
+            token::Token on_identifier();
     };
 };
 
