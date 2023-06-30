@@ -1,6 +1,6 @@
 #include "token_type.hpp"
 
-namespace token {
+namespace scanner {
     Type keyword_to_type(string keyword) {
         if (keyword == "if") {
             return Type::If;

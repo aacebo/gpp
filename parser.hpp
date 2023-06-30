@@ -1,10 +1,12 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include <string>
 #include <vector>
 
-#include "token.hpp"
+#include "scanner.hpp"
 #include "chunk.hpp"
+#include "error.hpp"
 
 using namespace std;
 
@@ -24,11 +26,19 @@ namespace parser {
     };
 
     class Parser {
-        public:
-            const vector<token::Token> tokens;
-            vector<Chunk> chunks;
+        scanner::Scanner* scanner;
 
-            Parser(vector<token::Token>);
+        public:
+            scanner::Token* curr;
+            scanner::Token* prev;
+            vector<error::Error> errors;
+
+            Parser(string);
+            ~Parser();
+
+            bool next();
+            bool match(scanner::Type);
+            void consume(scanner::Type, string);
     };
 };
 

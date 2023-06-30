@@ -1,7 +1,6 @@
 #include "token.hpp"
-#include "error.hpp"
 
-namespace token {
+namespace scanner {
     Token::Token(
         Type type,
         int ln,
@@ -27,7 +26,7 @@ namespace token {
         if (this->value == "true") return true;
         else if (this->value == "false") return false;
 
-        throw new error::RuntimeError(
+        throw error::RuntimeError(
             this->ln,
             this->start,
             this->end,

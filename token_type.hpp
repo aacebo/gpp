@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace token {
+namespace scanner {
     enum class Type {
         Comma,
         Dot,

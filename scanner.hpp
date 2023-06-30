@@ -2,7 +2,6 @@
 #define SCANNER_H
 
 #include <string>
-#include <vector>
 
 #include "token.hpp"
 #include "error.hpp"
@@ -18,18 +17,18 @@ namespace scanner {
 
         public:
             Scanner(string);
-            token::Token scan();
+            Token* scan();
 
         private:
-            token::Token create(token::Type);
+            Token* create(Type);
             char peek();
             bool is_escaped();
             bool is_integer(char);
             bool is_alpha(char);
-            token::Token on_comment();
-            token::Token on_string();
-            token::Token on_number();
-            token::Token on_identifier();
+            Token* on_comment();
+            Token* on_string();
+            Token* on_number();
+            Token* on_identifier();
     };
 };
 

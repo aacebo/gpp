@@ -8,9 +8,9 @@ namespace scanner {
         this->_ln = 0;
     }
 
-    token::Token Scanner::scan() {
+    Token* Scanner::scan() {
         if (this->_right == this->_src.length() - 1) {
-            return this->create(token::Type::Eof);
+            return this->create(Type::Eof);
         }
 
         this->_left = this->_right;
@@ -27,82 +27,82 @@ namespace scanner {
                 this->_ln++;
                 break;
             case '(':
-                return this->create(token::Type::LParen);
+                return this->create(Type::LParen);
             case ')':
-                return this->create(token::Type::RParen);
+                return this->create(Type::RParen);
             case '{':
-                return this->create(token::Type::LBrace);
+                return this->create(Type::LBrace);
             case '}':
-                return this->create(token::Type::RBrace);
+                return this->create(Type::RBrace);
             case ',':
-                return this->create(token::Type::Comma);
+                return this->create(Type::Comma);
             case '.':
-                return this->create(token::Type::Dot);
+                return this->create(Type::Dot);
             case ';':
-                return this->create(token::Type::SemiColon);
+                return this->create(Type::SemiColon);
             case '?':
-                return this->create(token::Type::Optional);
+                return this->create(Type::Optional);
             case '-':
                 if (this->peek() == '=') {
                     this->_right++;
-                    return this->create(token::Type::MinusEq);
+                    return this->create(Type::MinusEq);
                 } else if (this->peek() == '>') {
                     this->_right++;
-                    return this->create(token::Type::ReturnType);
+                    return this->create(Type::ReturnType);
                 }
 
-                return this->create(token::Type::Minus);
+                return this->create(Type::Minus);
             case '+':
                 if (this->peek() == '=') {
                     this->_right++;
-                    return this->create(token::Type::PlusEq);
+                    return this->create(Type::PlusEq);
                 }
 
-                return this->create(token::Type::Plus);
+                return this->create(Type::Plus);
             case '*':
                 if (this->peek() == '=') {
                     this->_right++;
-                    return this->create(token::Type::StarEq);
+                    return this->create(Type::StarEq);
                 }
 
-                return this->create(token::Type::Star);
+                return this->create(Type::Star);
             case '/':
                 if (this->peek() == '/') {
                     return this->on_comment();
                 } else if (this->peek() == '=') {
                     this->_right++;
-                    return this->create(token::Type::SlashEq);
+                    return this->create(Type::SlashEq);
                 }
 
-                return this->create(token::Type::Slash);
+                return this->create(Type::Slash);
             case '!':
                 if (this->peek() == '=') {
                     this->_right++;
-                    return this->create(token::Type::NotEq);
+                    return this->create(Type::NotEq);
                 }
 
-                return this->create(token::Type::Not);
+                return this->create(Type::Not);
             case '=':
                 if (this->peek() == '=') {
                     this->_right++;
-                    return this->create(token::Type::EqEq);
+                    return this->create(Type::EqEq);
                 }
 
-                return this->create(token::Type::Eq);
+                return this->create(Type::Eq);
             case '<':
                 if (this->peek() == '=') {
                     this->_right++;
-                    return this->create(token::Type::LtEq);
+                    return this->create(Type::LtEq);
                 }
 
-                return this->create(token::Type::Lt);
+                return this->create(Type::Lt);
             case '>':
                 if (this->peek() == '=') {
                     this->_right++;
-                    return this->create(token::Type::GtEq);
+                    return this->create(Type::GtEq);
                 }
 
-                return this->create(token::Type::Gt);
+                return this->create(Type::Gt);
             case '"':
                 return this->on_string();
             default:
@@ -123,11 +123,11 @@ namespace scanner {
         return this->scan();
     }
 
-    token::Token Scanner::create(token::Type type) {
+    Token* Scanner::create(Type type) {
         auto value = this->_src.substr(this->_left, this->_right - this->_left);
 
         // handle escaped characters
-        if (type == token::Type::LString) {
+        if (type == Type::LString) {
             for (int i = 0; i < value.length() - 1; i++) {
                 if (value[i] == '\\') {
                     value.erase(i, 1);
@@ -167,7 +167,7 @@ namespace scanner {
             }
         }
 
-        return token::Token(
+        return new Token(
             type,
             this->_ln,
             this->_left / this->_ln,
@@ -208,7 +208,7 @@ namespace scanner {
         );
     }
 
-    token::Token Scanner::on_comment() {
+    Token* Scanner::on_comment() {
         while (this->peek() != '\n' && this->peek() != '\0') {
             this->_right++;
         }
@@ -218,7 +218,7 @@ namespace scanner {
         return this->scan();
     }
 
-    token::Token Scanner::on_string() {
+    Token* Scanner::on_string() {
         while ((this->peek() != '"' || this->is_escaped()) && this->peek() != '\0') {
             if (this->peek() == '\n') {
                 this->_ln++;
@@ -237,12 +237,12 @@ namespace scanner {
         }
 
         this->_left++;
-        auto token = this->create(token::Type::LString);
+        auto token = this->create(Type::LString);
         this->_right++;
         return token;
     }
 
-    token::Token Scanner::on_number() {
+    Token* Scanner::on_number() {
         while (this->is_integer(this->peek())) {
             this->_right++;
         }
@@ -255,10 +255,10 @@ namespace scanner {
             }
         }
 
-        return this->create(token::Type::LNumber);
+        return this->create(Type::LNumber);
     }
 
-    token::Token Scanner::on_identifier() {
+    Token* Scanner::on_identifier() {
         while (this->is_alpha(this->peek()) || this->is_integer(this->peek())) {
             this->_right++;
         }
@@ -268,10 +268,10 @@ namespace scanner {
             this->_right - this->_left
         );
 
-        if (token::keyword_to_type(identifier) != token::Type::Invalid) {
-            return this->create(token::keyword_to_type(identifier));
+        if (keyword_to_type(identifier) != Type::Invalid) {
+            return this->create(keyword_to_type(identifier));
         }
 
-        return this->create(token::Type::Identifier);
+        return this->create(Type::Identifier);
     }
 };

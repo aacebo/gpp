@@ -5,10 +5,11 @@
 #include <map>
 
 #include "token_type.hpp"
+#include "error.hpp"
 
 using namespace std;
 
-namespace token {
+namespace scanner {
     class Token {
         public:
             const Type type;

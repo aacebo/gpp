@@ -1,5 +1,5 @@
 #include "file_reader.hpp"
-#include "scanner.hpp"
+#include "parser.hpp"
 #include "error.hpp"
 
 using namespace std;
@@ -8,19 +8,13 @@ int main() {
     auto reader = new file_reader::FileReader(".");
 
     for (auto f : reader->get_files()) {
-        auto scanner = new scanner::Scanner(f.second);
+        auto parser = new parser::Parser(f.second);
 
-        for (;;) {
-            auto token = scanner->scan();
-
-            if (token.type == token::Type::Eof) {
-                break;
-            }
-
-            cout << token.to_string() << endl;
+        while (parser->next()) {
+            cout << parser->curr->to_string() << endl;
         }
 
-        delete scanner;
+        delete parser;
     }
 
     delete reader;

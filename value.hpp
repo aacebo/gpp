@@ -1,6 +1,7 @@
 #ifndef VALUE_H
 #define VALUE_H
 
+#include <string>
 #include <variant>
 
 using namespace std;
@@ -9,6 +10,7 @@ namespace value {
     class Object;
 
     enum class Type {
+        String,
         Bool,
         Number,
         Nil,
@@ -16,15 +18,18 @@ namespace value {
     };
 
     class Value {
-        variant<bool, float, nullptr_t, Object*> _value;
-
         public:
             const Type type;
+            variant<string, bool, float, nullptr_t, Object*> value;
 
             Value();
+            Value(string);
             Value(bool);
             Value(float);
             Value(Object*);
+
+            bool is_string();
+            string to_string();
 
             bool is_bool();
             bool to_bool();
