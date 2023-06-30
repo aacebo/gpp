@@ -21,6 +21,12 @@ namespace value {
         this->value = value;
     }
 
+    Value::~Value() {
+        if (this->is_object()) {
+            delete this->to_object();
+        }
+    }
+
     bool Value::is_string() {
         return this->type == Type::String;
     }

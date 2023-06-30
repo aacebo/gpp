@@ -19,6 +19,7 @@ namespace value {
             Object* next;
 
             Object(ObjectType);
+            virtual ~Object() = default;
 
             bool is_class();
             bool is_instance();

@@ -4,11 +4,11 @@
 #include <string>
 #include <variant>
 
+#include "object.hpp"
+
 using namespace std;
 
 namespace value {
-    class Object;
-
     enum class Type {
         String,
         Bool,
@@ -27,6 +27,7 @@ namespace value {
             Value(bool);
             Value(float);
             Value(Object*);
+            ~Value();
 
             bool is_string();
             string to_string();
