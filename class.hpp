@@ -14,6 +14,8 @@ namespace value {
             unordered_map<string, Type> members;
 
             Class(string, unordered_map<string, Type>);
+
+            string to_string();
     };
 
     class Instance : public Object {
@@ -27,6 +29,7 @@ namespace value {
             bool has(string);
             Value* get(string);
             void set(string, Value*);
+            string to_string();
     };
 };
 

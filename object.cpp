@@ -2,7 +2,6 @@
 
 namespace value {
     Object::Object(ObjectType type) : type(type) { }
-    UpValue::UpValue() : Object(ObjectType::UpValue) { }
 
     bool Object::is_class() {
         return this->type == ObjectType::Class;
