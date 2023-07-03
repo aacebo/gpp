@@ -17,7 +17,7 @@ namespace vm {
     void VM::run() {
         while (!this->frames.empty()) {
             while (!this->frames.front()->is_empty()) {
-                auto code = this->frames.front()->next();
+                auto code = this->frames.front()->next_code();
 
                 switch (code) {
                     case compiler::OpCode::Const:

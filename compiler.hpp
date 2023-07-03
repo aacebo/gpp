@@ -17,6 +17,7 @@ using namespace std;
 
 namespace compiler {
     class Compiler {
+        Compiler* parent;
         value::Function* fn;
         parser::Parser* parser;
         unordered_map<string, value::Type> variables;
@@ -24,18 +25,29 @@ namespace compiler {
 
         public:
             Compiler() = default;
+            Compiler(Compiler*);
+            Compiler(string, Compiler*);
 
             value::Function* compile(const string&);
 
         private:
             value::Type token_to_value_type(parser::Type);
-            compiler::Rule get_token_rule(parser::Type);
+            void expression();
+            int jump(OpCode);
+            void patch_jump(int);
 
+            // expressions
+            void _block();
+            void _method();
+            void _function(value::FunctionType);
+
+            // declarations
             void _declaration();
             void _class();
             void _fn();
             void _let();
 
+            // statements
             void _statement();
             void _print();
             void _for();
@@ -43,6 +55,26 @@ namespace compiler {
             void _return();
             void _block();
             void _expression();
+
+            // precedence
+            void _precedence(Precedence);
+            void _prefix(parser::Type, bool);
+            void _infix(parser::Type, bool);
+
+            // rules
+            void _and(bool);
+            void _binary(bool);
+            void _call(bool);
+            void _dot(bool);
+            void _literal(bool);
+            void _grouping(bool);
+            void _number(bool);
+            void _or(bool);
+            void _string(bool);
+            void _variable(bool);
+            void _super(bool);
+            void _self(bool);
+            void _unary(bool);
     };
 };
 

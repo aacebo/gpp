@@ -3,7 +3,6 @@
 namespace vm {
     Frame::Frame(value::Closure* closure) : closure(closure) {
         this->ip = -1;
-        this->lp = -1;
     }
 
     Frame::~Frame() {
@@ -11,16 +10,20 @@ namespace vm {
     }
 
     bool Frame::is_empty() {
-        return this->ip == this->closure->chunk.size() - 1;
+        return this->ip == this->closure->chunk.size_bytes() - 1;
     }
 
-    compiler::OpCode Frame::next() {
+    compiler::OpCode Frame::next_code() {
+        this->ip++;
+        return static_cast<compiler::OpCode>(this->closure->chunk.at(this->ip));
+    }
+
+    uint8_t Frame::next_byte() {
         this->ip++;
         return this->closure->chunk.at(this->ip);
     }
 
     value::Value Frame::next_const() {
-        this->lp++;
-        return this->closure->chunk.const_at(this->lp);
+        return this->closure->chunk.const_at(this->next_byte());
     }
 };

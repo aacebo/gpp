@@ -7,7 +7,6 @@
 namespace vm {
     class Frame {
         uint8_t ip; // instruction pointer
-        uint8_t lp; // const location pointer
         value::Closure* closure;
 
         public:
@@ -15,7 +14,8 @@ namespace vm {
             ~Frame();
 
             bool is_empty();
-            compiler::OpCode next();
+            compiler::OpCode next_code();
+            uint8_t next_byte();
             value::Value next_const();
     };
 };

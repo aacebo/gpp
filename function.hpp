@@ -25,6 +25,7 @@ namespace value {
             const value::Type return_type;
             compiler::Chunk chunk;
 
+            Function(string);
             Function(FunctionType);
             Function(FunctionType, string, vector<value::Type>, value::Type);
             Function(string, vector<value::Type>, value::Type);

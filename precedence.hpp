@@ -1,6 +1,8 @@
 #ifndef PRECEDENCE_H
 #define PRECEDENCE_H
 
+#include "token_type.hpp"
+
 namespace compiler {
     enum class Precedence {
         None,
@@ -16,16 +18,7 @@ namespace compiler {
         Primary
     };
 
-    typedef void (*ParseFn)(bool canAssign);
-
-    class Rule {
-        const ParseFn prefix;
-        const ParseFn infix;
-        const Precedence precedence;
-
-        public:
-            Rule(ParseFn, ParseFn, Precedence);
-    };
+    Precedence get_precedence(parser::Type);
 };
 
 #endif

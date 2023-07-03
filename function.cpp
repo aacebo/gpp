@@ -2,6 +2,14 @@
 
 namespace value {
     Function::Function(
+        string name
+    ) : Object(ObjectType::Function),
+        fn_type(FunctionType::Default),
+        return_type(value::Type::Nil) {
+
+    }
+
+    Function::Function(
         FunctionType type
     ) : Object(ObjectType::Function),
         fn_type(type),
@@ -51,7 +59,7 @@ namespace value {
     }
 
     Closure::Closure() : Function(FunctionType::Closure) {
-        
+
     }
 
     Closure::Closure(
