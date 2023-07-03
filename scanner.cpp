@@ -1,7 +1,6 @@
 #include "scanner.hpp"
-#include "error.hpp"
 
-namespace scanner {
+namespace parser {
     Scanner::Scanner(const string& src) : _src(src) {
         this->_left = 0;
         this->_right = 0;

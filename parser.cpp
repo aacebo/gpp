@@ -2,7 +2,7 @@
 
 namespace parser {
     Parser::Parser(const string& src) {
-        this->scanner = new scanner::Scanner(src);
+        this->scanner = new Scanner(src);
     }
 
     Parser::~Parser() {
@@ -29,7 +29,7 @@ namespace parser {
             try {
                 this->curr = this->scanner->scan();
 
-                if (this->curr->type == scanner::Type::Eof) {
+                if (this->curr->type == Type::Eof) {
                     return false;
                 }
 
@@ -40,13 +40,13 @@ namespace parser {
         }
     }
 
-    bool Parser::match(scanner::Type type) {
+    bool Parser::match(Type type) {
         if (this->curr->type != type) return false;
         this->next();
         return true;
     }
 
-    void Parser::consume(scanner::Type type, const string& message) {
+    void Parser::consume(Type type, const string& message) {
         if (this->curr->type == type) {
             this->next();
             return;
@@ -61,19 +61,19 @@ namespace parser {
     }
 
     void Parser::sync() {
-        while (this->curr->type != scanner::Type::Eof) {
-            if (this->prev->type == scanner::Type::SemiColon) {
+        while (this->curr->type != Type::Eof) {
+            if (this->prev->type == Type::SemiColon) {
                 return;
             }
 
             switch (this->curr->type) {
-                case scanner::Type::Class:
-                case scanner::Type::Fn:
-                case scanner::Type::Let:
-                case scanner::Type::For:
-                case scanner::Type::If:
-                case scanner::Type::Print:
-                case scanner::Type::Return:
+                case Type::Class:
+                case Type::Fn:
+                case Type::Let:
+                case Type::For:
+                case Type::If:
+                case Type::Print:
+                case Type::Return:
                     return;
                 default:
             }
@@ -82,83 +82,83 @@ namespace parser {
         }
     }
 
-    Rule Parser::get_token_rule(scanner::Type type) {
+    Rule Parser::get_token_rule(Type type) {
         switch (type) {
-            case scanner::Type::LParen:
+            case Type::LParen:
                 return Rule(NULL, NULL, Precedence::Call);
-            case scanner::Type::RParen:
+            case Type::RParen:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::LBrace:
+            case Type::LBrace:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::RBrace:
+            case Type::RBrace:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::Comma:
+            case Type::Comma:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::Dot:
+            case Type::Dot:
                 return Rule(NULL, NULL, Precedence::Call);
-            case scanner::Type::Plus:
+            case Type::Plus:
                 return Rule(NULL, NULL, Precedence::Term);
-            case scanner::Type::Minus:
+            case Type::Minus:
                 return Rule(NULL, NULL, Precedence::Term);
-            case scanner::Type::Star:
+            case Type::Star:
                 return Rule(NULL, NULL, Precedence::Factor);
-            case scanner::Type::Slash:
+            case Type::Slash:
                 return Rule(NULL, NULL, Precedence::Factor);
-            case scanner::Type::SemiColon:
+            case Type::SemiColon:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::Not:
+            case Type::Not:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::Eq:
+            case Type::Eq:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::NotEq:
+            case Type::NotEq:
                 return Rule(NULL, NULL, Precedence::Equality);
-            case scanner::Type::EqEq:
+            case Type::EqEq:
                 return Rule(NULL, NULL, Precedence::Equality);
-            case scanner::Type::Gt:
+            case Type::Gt:
                 return Rule(NULL, NULL, Precedence::Comparison);
-            case scanner::Type::GtEq:
+            case Type::GtEq:
                 return Rule(NULL, NULL, Precedence::Comparison);
-            case scanner::Type::Lt:
+            case Type::Lt:
                 return Rule(NULL, NULL, Precedence::Comparison);
-            case scanner::Type::LtEq:
+            case Type::LtEq:
                 return Rule(NULL, NULL, Precedence::Comparison);
-            case scanner::Type::Identifier:
+            case Type::Identifier:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::LString:
+            case Type::LString:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::LNumber:
+            case Type::LNumber:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::And:
+            case Type::And:
                 return Rule(NULL, NULL, Precedence::And);
-            case scanner::Type::Or:
+            case Type::Or:
                 return Rule(NULL, NULL, Precedence::Or);
-            case scanner::Type::Class:
+            case Type::Class:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::If:
+            case Type::If:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::Else:
+            case Type::Else:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::True:
+            case Type::True:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::False:
+            case Type::False:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::For:
+            case Type::For:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::Fn:
+            case Type::Fn:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::Nil:
+            case Type::Nil:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::Print:
+            case Type::Print:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::Return:
+            case Type::Return:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::Super:
+            case Type::Super:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::Self:
+            case Type::Self:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::Let:
+            case Type::Let:
                 return Rule(NULL, NULL, Precedence::None);
-            case scanner::Type::Eof:
+            case Type::Eof:
                 return Rule(NULL, NULL, Precedence::None);
             default:
                 throw runtime_error("unsupported token type found while parsing");

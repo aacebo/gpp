@@ -8,7 +8,7 @@
 
 using namespace std;
 
-namespace scanner {
+namespace parser {
     class Scanner {
         const string _src;
         int _left;

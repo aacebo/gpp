@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace scanner {
+namespace parser {
     enum class Type {
         Comma,
         Dot,

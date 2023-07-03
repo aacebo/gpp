@@ -1,6 +1,6 @@
 #include "token.hpp"
 
-namespace scanner {
+namespace parser {
     Token::Token(
         Type type,
         int ln,

@@ -27,7 +27,7 @@ namespace compiler {
             value::Function* compile(const string&);
 
         private:
-            value::Type token_to_value_type(scanner::Type);
+            value::Type token_to_value_type(parser::Type);
 
             void _declaration();
             void _class();

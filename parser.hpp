@@ -37,21 +37,21 @@ namespace parser {
     };
 
     class Parser {
-        scanner::Scanner* scanner;
+        Scanner* scanner;
         vector<error::Error> errors;
 
         public:
-            scanner::Token* curr;
-            scanner::Token* prev;
+            Token* curr;
+            Token* prev;
 
             Parser(const string&);
             ~Parser();
 
             bool next();
-            bool match(scanner::Type);
-            void consume(scanner::Type, const string&);
+            bool match(Type);
+            void consume(Type, const string&);
             void sync();
-            Rule get_token_rule(scanner::Type);
+            Rule get_token_rule(Type);
     };
 };
 

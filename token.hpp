@@ -9,7 +9,7 @@
 
 using namespace std;
 
-namespace scanner {
+namespace parser {
     class Token {
         public:
             const Type type;
