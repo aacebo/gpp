@@ -27,6 +27,89 @@ namespace compiler {
         }
     }
 
+    compiler::Rule Compiler::get_token_rule(parser::Type type) {
+        switch (type) {
+            case parser::Type::LParen:
+                return Rule(NULL, NULL, Precedence::Call);
+            case parser::Type::RParen:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::LBrace:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::RBrace:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::Comma:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::Dot:
+                return Rule(NULL, NULL, Precedence::Call);
+            case parser::Type::Plus:
+                return Rule(NULL, NULL, Precedence::Term);
+            case parser::Type::Minus:
+                return Rule(NULL, NULL, Precedence::Term);
+            case parser::Type::Star:
+                return Rule(NULL, NULL, Precedence::Factor);
+            case parser::Type::Slash:
+                return Rule(NULL, NULL, Precedence::Factor);
+            case parser::Type::SemiColon:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::Not:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::Eq:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::NotEq:
+                return Rule(NULL, NULL, Precedence::Equality);
+            case parser::Type::EqEq:
+                return Rule(NULL, NULL, Precedence::Equality);
+            case parser::Type::Gt:
+                return Rule(NULL, NULL, Precedence::Comparison);
+            case parser::Type::GtEq:
+                return Rule(NULL, NULL, Precedence::Comparison);
+            case parser::Type::Lt:
+                return Rule(NULL, NULL, Precedence::Comparison);
+            case parser::Type::LtEq:
+                return Rule(NULL, NULL, Precedence::Comparison);
+            case parser::Type::Identifier:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::LString:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::LNumber:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::And:
+                return Rule(NULL, NULL, Precedence::And);
+            case parser::Type::Or:
+                return Rule(NULL, NULL, Precedence::Or);
+            case parser::Type::Class:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::If:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::Else:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::True:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::False:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::For:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::Fn:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::Nil:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::Print:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::Return:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::Super:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::Self:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::Let:
+                return Rule(NULL, NULL, Precedence::None);
+            case parser::Type::Eof:
+                return Rule(NULL, NULL, Precedence::None);
+            default:
+                throw runtime_error("unsupported token type found while parsing");
+        }
+    }
+
     void Compiler::_declaration() {
         if (this->parser->match(parser::Type::Class)) {
             this->_class();

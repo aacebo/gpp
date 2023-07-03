@@ -11,31 +11,6 @@
 using namespace std;
 
 namespace parser {
-    enum class Precedence {
-        None,
-        Assignment, // =
-        Or,         // ||
-        And,        // &&
-        Equality,   // ==, !=
-        Comparison, // <, <=, >, >=
-        Term,       // +, +=, -, -=
-        Factor,     // *, *=, /, /=
-        Unary,      // !, -
-        Call,       // ., ()
-        Primary
-    };
-
-    typedef void (*ParseFn)(bool canAssign);
-
-    class Rule {
-        const ParseFn prefix;
-        const ParseFn infix;
-        const Precedence precedence;
-
-        public:
-            Rule(ParseFn, ParseFn, Precedence);
-    };
-
     class Parser {
         Scanner* scanner;
         vector<error::Error> errors;
@@ -51,7 +26,6 @@ namespace parser {
             bool match(Type);
             void consume(Type, const string&);
             void sync();
-            Rule get_token_rule(Type);
     };
 };
 

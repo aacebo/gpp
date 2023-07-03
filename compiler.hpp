@@ -11,6 +11,7 @@
 #include "scanner.hpp"
 #include "value.hpp"
 #include "op_code.hpp"
+#include "precedence.hpp"
 
 using namespace std;
 
@@ -28,6 +29,7 @@ namespace compiler {
 
         private:
             value::Type token_to_value_type(parser::Type);
+            compiler::Rule get_token_rule(parser::Type);
 
             void _declaration();
             void _class();
