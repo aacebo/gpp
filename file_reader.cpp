@@ -21,4 +21,14 @@ namespace file_reader {
     const map<path, string> FileReader::get_files() {
         return this->_files;
     }
+
+    const string FileReader::get_src() {
+        string src = "";
+
+        for (auto file : this->_files) {
+            src += file.second;
+        }
+
+        return src;
+    }
 };

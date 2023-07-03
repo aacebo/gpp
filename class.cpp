@@ -40,7 +40,7 @@ namespace value {
         string s = "{ ";
 
         for (auto it = this->values.begin(); it != this->values.end(); ++it) {
-            s += (it->first + ": " + it->second->to_string());
+            s += (it->first + ": " + it->second->as_string());
 
             if (it != this->values.end()) {
                 s += ", ";

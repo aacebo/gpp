@@ -5,12 +5,12 @@
 #include <variant>
 
 #include "object.hpp"
+#include "string.hpp"
 
 using namespace std;
 
 namespace value {
     enum class Type {
-        String,
         Bool,
         Number,
         Nil,
@@ -20,17 +20,14 @@ namespace value {
     class Value {
         public:
             const Type type;
-            variant<string, bool, float, nullptr_t, Object*> value;
+            variant<bool, float, nullptr_t, Object*> value;
 
             Value();
-            Value(string);
             Value(bool);
             Value(float);
             Value(Object*);
+            Value(const Value&);
             ~Value();
-
-            bool is_string();
-            string to_string();
 
             bool is_bool();
             bool to_bool();
@@ -43,6 +40,28 @@ namespace value {
 
             bool is_object();
             Object* to_object();
+
+            bool is_string();
+            String* to_string();
+
+            string as_string();
+
+            Value& operator=(Value&);
+            bool operator==(Value&);
+            bool operator!=(Value&);
+            bool operator>(Value&);
+            bool operator>=(Value&);
+            bool operator<(Value&);
+            bool operator<=(Value&);
+            float operator+(Value&);
+            float operator+=(Value&);
+            float operator-();
+            float operator-(Value&);
+            float operator-=(Value&);
+            float operator*(Value&);
+            float operator*=(Value&);
+            float operator/(Value&);
+            float operator/=(Value&);
     };
 };
 

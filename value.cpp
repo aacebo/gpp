@@ -5,10 +5,6 @@ namespace value {
         this->value = nullptr;
     }
 
-    Value::Value(string value) : type(Type::String) {
-        this->value = value;
-    }
-
     Value::Value(bool value) : type(Type::Bool) {
         this->value = value;
     }
@@ -21,18 +17,14 @@ namespace value {
         this->value = value;
     }
 
+    Value::Value(const Value& other) : type(other.type) {
+        this->value = other.value;
+    }
+
     Value::~Value() {
         if (this->is_object()) {
             delete this->to_object();
         }
-    }
-
-    bool Value::is_string() {
-        return this->type == Type::String;
-    }
-
-    string Value::to_string() {
-        return get<string>(this->value);
     }
 
     bool Value::is_bool() {
@@ -65,5 +57,158 @@ namespace value {
 
     Object* Value::to_object() {
         return get<Object*>(this->value);
+    }
+
+    bool Value::is_string() {
+        return this->to_object()->is_string();
+    }
+
+    String* Value::to_string() {
+        return dynamic_cast<String*>(this->to_object());
+    }
+
+    string Value::as_string() {
+        if (this->is_nil()) return "<nil>";
+        if (this->is_bool()) return this->to_bool() == true ? "true" : "false";
+        if (this->is_number()) return std::to_string(this->to_number());
+        if (this->is_object()) return this->to_object()->to_string();
+        return "";
+    }
+
+    Value& Value::operator=(Value& other) {
+        return other;
+    }
+
+    bool Value::operator==(Value& other) {
+        if (this->type != other.type) return false;
+        if (this->is_nil() && other.is_nil()) return true;
+
+        if (this->is_object() && this->is_string() && other.is_string()) {
+            return *this->to_string() == *other.to_string();
+        }
+
+        if (this->is_number()) {
+            return this->to_number() == other.to_number();
+        } else if (this->is_bool()) {
+            return this->to_bool() == other.to_bool();
+        }
+
+        return false;
+    }
+
+    bool Value::operator!=(Value& other) {
+        return !this->operator==(other);
+    }
+
+    bool Value::operator>(Value& other) {
+        if (!this->is_number() || !other.is_number()) {
+            throw runtime_error("both operands must be numbers");
+        }
+
+        return this->to_number() > other.to_number();
+    }
+
+    bool Value::operator>=(Value& other) {
+        if (!this->is_number() || !other.is_number()) {
+            throw runtime_error("both operands must be numbers");
+        }
+
+        return this->to_number() >= other.to_number();
+    }
+
+    bool Value::operator<(Value& other) {
+        if (!this->is_number() || !other.is_number()) {
+            throw runtime_error("both operands must be numbers");
+        }
+
+        return this->to_number() < other.to_number();
+    }
+
+    bool Value::operator<=(Value& other) {
+        if (!this->is_number() || !other.is_number()) {
+            throw runtime_error("both operands must be numbers");
+        }
+
+        return this->to_number() <= other.to_number();
+    }
+
+    float Value::operator+(Value& other) {
+        if (!this->is_number() || !other.is_number()) {
+            throw runtime_error("both operands must be numbers");
+        }
+
+        return this->to_number() + other.to_number();
+    }
+
+    float Value::operator+=(Value& other) {
+        if (!this->is_number() || !other.is_number()) {
+            throw runtime_error("both operands must be numbers");
+        }
+
+        auto value = this->to_number() + other.to_number();
+        this->value = value;
+        return value;
+    }
+
+    float Value::operator-() {
+        if (!this->is_number()) {
+            throw runtime_error("operand must be a number");
+        }
+
+        return -this->to_number();
+    }
+
+    float Value::operator-(Value& other) {
+        if (!this->is_number() || !other.is_number()) {
+            throw runtime_error("both operands must be numbers");
+        }
+
+        return this->to_number() - other.to_number();
+    }
+
+    float Value::operator-=(Value& other) {
+        if (!this->is_number() || !other.is_number()) {
+            throw runtime_error("both operands must be numbers");
+        }
+
+        auto value = this->to_number() - other.to_number();
+        this->value = value;
+        return value;
+    }
+
+    float Value::operator*(Value& other) {
+        if (!this->is_number() || !other.is_number()) {
+            throw runtime_error("both operands must be numbers");
+        }
+
+        return this->to_number() * other.to_number();
+    }
+
+    float Value::operator*=(Value& other) {
+        if (!this->is_number() || !other.is_number()) {
+            throw runtime_error("both operands must be numbers");
+        }
+
+        auto value = this->to_number() * other.to_number();
+        this->value = value;
+        return value;
+    }
+
+    float Value::operator/(Value& other) {
+        if (!this->is_number() || !other.is_number()) {
+            throw runtime_error("both operands must be numbers");
+        }
+
+        return this->to_number() / other.to_number();
+    }
+
+    float Value::operator/=(Value& other) {
+        if (!this->is_number() || !other.is_number()) {
+            throw runtime_error("both operands must be numbers");
+        }
+
+        auto value = this->to_number() / other.to_number();
+        this->value = value;
+        return value;
     }
 };

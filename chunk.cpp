@@ -1,16 +1,28 @@
 #include "chunk.hpp"
 
-namespace parser {
-    Operation::Operation(uint8_t code, int ln) : code(code), ln(ln) {
-
+namespace compiler {
+    OpCode Chunk::at(size_t i) {
+        return this->codes[i];
     }
 
-    void Chunk::push(uint8_t byte, int ln) {
-        this->ops.push_back(Operation(byte, ln));
+    value::Value Chunk::const_at(size_t i) {
+        return this->consts[i];
     }
 
-    int Chunk::push(value::Value value) {
-        this->values.push_back(value);
-        return this->values.size() - 1;
+    int Chunk::size() {
+        return this->codes.size();
+    }
+
+    void Chunk::push(uint8_t byte) {
+        this->locations.push_back(byte);
+    }
+
+    void Chunk::push(OpCode code) {
+        this->codes.push_back(code);
+    }
+
+    void Chunk::push_const(value::Value value) {
+        this->consts.push_back(value);
+        this->locations.push_back(this->consts.size() - 1);
     }
 };

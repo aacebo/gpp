@@ -18,7 +18,9 @@ namespace scanner {
             const int end;
             const string value;
 
-            Token(Type, int, int, int, string);
+            Token(Type, int, int, int, string&);
+            Token(const Token&);
+
             const string to_string();
             const float to_float();
             const bool to_bool();

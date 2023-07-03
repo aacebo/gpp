@@ -2,6 +2,15 @@
 
 namespace value {
     Function::Function(
+        FunctionType type
+    ) : Object(ObjectType::Function),
+        fn_type(type),
+        name(""),
+        return_type(value::Type::Nil) {
+
+    }
+
+    Function::Function(
         FunctionType type,
         string name,
         vector<value::Type> arg_types,
@@ -39,6 +48,10 @@ namespace value {
 
     string Function::to_string() {
         return "<fn " + this->name + ">";
+    }
+
+    Closure::Closure() : Function(FunctionType::Closure) {
+        
     }
 
     Closure::Closure(

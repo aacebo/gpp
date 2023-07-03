@@ -23,8 +23,9 @@ namespace value {
             const string name;
             const vector<value::Type> arg_types;
             const value::Type return_type;
-            parser::Chunk chunk;
+            compiler::Chunk chunk;
 
+            Function(FunctionType);
             Function(FunctionType, string, vector<value::Type>, value::Type);
             Function(string, vector<value::Type>, value::Type);
 
@@ -36,6 +37,7 @@ namespace value {
 
     class Closure : public Function {
         public:
+            Closure();
             Closure(vector<value::Type>, value::Type);
 
             string to_string();

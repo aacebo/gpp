@@ -16,7 +16,7 @@ namespace scanner {
         int _ln;
 
         public:
-            Scanner(string);
+            Scanner(const string&);
             Token* scan();
 
         private:

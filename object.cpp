@@ -3,6 +3,10 @@
 namespace value {
     Object::Object(ObjectType type) : type(type) { }
 
+    bool Object::is_string() {
+        return this->type == ObjectType::String;
+    }
+
     bool Object::is_class() {
         return this->type == ObjectType::Class;
     }

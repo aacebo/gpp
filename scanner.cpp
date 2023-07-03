@@ -2,7 +2,7 @@
 #include "error.hpp"
 
 namespace scanner {
-    Scanner::Scanner(string src) : _src(src) {
+    Scanner::Scanner(const string& src) : _src(src) {
         this->_left = 0;
         this->_right = 0;
         this->_ln = 0;

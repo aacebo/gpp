@@ -7,6 +7,7 @@ using namespace std;
 
 namespace value {
     enum class ObjectType {
+        String,
         Class,
         Instance,
         UpValue,
@@ -21,6 +22,7 @@ namespace value {
             Object(ObjectType);
             virtual ~Object() = default;
 
+            bool is_string();
             bool is_class();
             bool is_instance();
             bool is_up_value();

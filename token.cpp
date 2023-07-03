@@ -6,8 +6,22 @@ namespace scanner {
         int ln,
         int start,
         int end,
-        string value
-    ) : type(type), ln(ln), start(start), end(end), value(value) {
+        string& value
+    ) : type(type),
+        ln(ln),
+        start(start),
+        end(end),
+        value(value) {
+
+    }
+
+    Token::Token(
+        const Token& token
+    ) : type(token.type),
+        ln(token.ln),
+        start(token.start),
+        end(token.end),
+        value(token.value) {
 
     }
 

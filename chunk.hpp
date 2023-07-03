@@ -4,71 +4,25 @@
 #include <vector>
 
 #include "value.hpp"
+#include "op_code.hpp"
 
 using namespace std;
 
-namespace parser {
-    enum class Type {
-        Const,
-        Nil,
-        True,
-        False,
-
-        Pop,
-        GetLocal,
-        SetLocal,
-        DefineGlobal,
-        GetGlobal,
-        SetGlobal,
-        GetUpValue,
-        SetUpValue,
-        GetProperty,
-        SetProperty,
-        GetSuper,
-
-        Eq,
-        Gt,
-        Lt,
-
-        Add,
-        Subtract,
-        Multiply,
-        Divide,
-
-        Not,
-        Negate,
-        Print,
-        Jump,
-        JumpIfFalse,
-        Loop,
-        Call,
-        Invoke,
-        SuperInvoke,
-        Closure,
-        ClosureUpValue,
-        Return,
-        Class,
-        Inherit,
-        Method
-    };
-
-    class Operation {
-        public:
-            const uint8_t code;
-            const int ln;
-
-            Operation(uint8_t, int);
-    };
-
+namespace compiler {
     class Chunk {
-        public:
-            vector<Operation> ops;
-            vector<value::Value> values;
+        vector<compiler::OpCode> codes;
+        vector<uint8_t> locations;
+        vector<value::Value> consts;
 
+        public:
             Chunk() = default;
 
-            void push(uint8_t, int);
-            int push(value::Value);
+            OpCode at(size_t);
+            value::Value const_at(size_t);
+            int size();
+            void push(uint8_t);
+            void push(OpCode);
+            void push_const(value::Value);
     };
 };
 
