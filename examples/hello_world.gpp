@@ -5,6 +5,6 @@ print (5 + a) * b;
 print "\n";
 print "hello" + ", world\n";
 
-if (false) {
+if (a == -10) {
     print "testing123\n";
 }

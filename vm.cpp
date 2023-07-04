@@ -33,14 +33,14 @@ namespace vm {
                 cout << "code: " << compiler::code_to_string(code) << endl;
 
                 switch (code) {
+                    case compiler::OpCode::Pop:
+                        this->_pop();
+                        break;
                     case compiler::OpCode::Const:
                         this->_const();
                         break;
                     case compiler::OpCode::Nil:
                         this->_nil();
-                        break;
-                    case compiler::OpCode::Negate:
-                        this->_negate();
                         break;
                     case compiler::OpCode::True:
                         this->_true();
@@ -63,9 +63,6 @@ namespace vm {
                     case compiler::OpCode::Assign:
                         this->_assign();
                         break;
-                    case compiler::OpCode::Pop:
-                        this->_pop();
-                        break;
                     case compiler::OpCode::Add:
                         this->_add();
                         break;
@@ -77,6 +74,21 @@ namespace vm {
                         break;
                     case compiler::OpCode::Divide:
                         this->_divide();
+                        break;
+                    case compiler::OpCode::Negate:
+                        this->_negate();
+                        break;
+                    case compiler::OpCode::Not:
+                        this->_not();
+                        break;
+                    case compiler::OpCode::Eq:
+                        this->_eq();
+                        break;
+                    case compiler::OpCode::Gt:
+                        this->_gt();
+                        break;
+                    case compiler::OpCode::Lt:
+                        this->_lt();
                         break;
                     case compiler::OpCode::Print:
                         this->_print();
@@ -93,6 +105,10 @@ namespace vm {
         }
     }
 
+    void VM::_pop() {
+        this->stack.pop();
+    }
+
     void VM::_const() {
         auto value = this->frames.front()->next_const();
         cout << "const: " << value.as_string() << endl;
@@ -102,17 +118,6 @@ namespace vm {
     void VM::_nil() {
         cout << "nil" << endl;
         this->stack.push(value::Value());
-    }
-
-    void VM::_negate() {
-        auto value = this->stack.top();
-
-        if (!value.is_number()) {
-            throw runtime_error("cannot negate non number types");
-        }
-
-        this->stack.pop();
-        this->stack.push(value::Value(-value.to_number()));
     }
 
     void VM::_true() {
@@ -180,10 +185,6 @@ namespace vm {
         this->scope->assign(name.to_string()->to_string(), value);
     }
 
-    void VM::_pop() {
-        this->stack.pop();
-    }
-
     void VM::_add() {
         auto b = this->stack.top();
         this->stack.pop();
@@ -219,6 +220,47 @@ namespace vm {
         auto a = this->stack.top();
         this->stack.pop();
         this->stack.push(value::Value(a / b));
+    }
+
+    void VM::_negate() {
+        auto value = this->stack.top();
+
+        if (!value.is_number()) {
+            throw runtime_error("cannot negate non number types");
+        }
+
+        this->stack.pop();
+        this->stack.push(value::Value(-value.to_number()));
+    }
+
+    void VM::_not() {
+        auto value = this->stack.top();
+        this->stack.pop();
+        this->stack.push(value::Value(!value.is_truthy()));
+    }
+
+    void VM::_eq() {
+        auto b = this->stack.top();
+        this->stack.pop();
+        auto a = this->stack.top();
+        this->stack.pop();
+        this->stack.push(value::Value(a == b));
+    }
+
+    void VM::_gt() {
+        auto b = this->stack.top();
+        this->stack.pop();
+        auto a = this->stack.top();
+        this->stack.pop();
+        this->stack.push(value::Value(a > b));
+    }
+
+    void VM::_lt() {
+        auto b = this->stack.top();
+        this->stack.pop();
+        auto a = this->stack.top();
+        this->stack.pop();
+        this->stack.push(value::Value(a < b));
     }
 
     void VM::_print() {

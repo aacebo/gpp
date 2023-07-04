@@ -30,10 +30,9 @@ namespace vm {
             void run();
 
         private:
+            void _pop();
             void _const();
             void _nil();
-            void _negate();
-
             void _true();
             void _false();
 
@@ -43,11 +42,18 @@ namespace vm {
             void _define();
             void _resolve();
             void _assign();
-            void _pop();
+
             void _add();
             void _subtract();
             void _multiply();
             void _divide();
+            void _negate();
+
+            void _not();
+            void _eq();
+            void _gt();
+            void _lt();
+
             void _print();
     };
 };
