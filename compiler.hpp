@@ -68,13 +68,13 @@ namespace compiler {
             void _infix(parser::Type, bool);
 
             // rules
-            // void _and(bool);
             void _binary(bool);
             // void _call(bool);
             // void _dot(bool);
             void _literal(bool);
             void _grouping(bool);
             void _number(bool);
+            void _and(bool);
             void _or(bool);
             void _string(bool);
             void _variable(bool);

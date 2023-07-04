@@ -41,6 +41,30 @@ namespace parser {
                 return this->create(Type::SemiColon);
             case '?':
                 return this->create(Type::Optional);
+            case '|':
+                if (this->peek() != '|') {
+                    throw error::SyntaxError(
+                        this->_ln,
+                        this->_left,
+                        this->_right,
+                        "unexpected character"
+                    );
+                }
+
+                this->_right++;
+                return this->create(Type::Or);
+            case '&':
+                if (this->peek() != '&') {
+                    throw error::SyntaxError(
+                        this->_ln,
+                        this->_left,
+                        this->_right,
+                        "unexpected character"
+                    );
+                }
+
+                this->_right++;
+                return this->create(Type::And);
             case '-':
                 if (this->peek() == '=') {
                     this->_right++;

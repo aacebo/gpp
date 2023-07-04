@@ -103,7 +103,9 @@ namespace compiler {
             this->_statement();
         }
 
-        this->parser->sync();
+        if (this->parser->errors.size() > 0) {
+            this->parser->sync();
+        }
     }
 
     void Compiler::_let() {
@@ -143,7 +145,7 @@ namespace compiler {
         this->fn->chunk.push((int)type);
     }
 
-    void Compiler::_statement() {  
+    void Compiler::_statement() {
         if (this->parser->match(parser::Type::Print)) {
             return this->_print();
         } else if (this->parser->match(parser::Type::For)) {
@@ -268,7 +270,7 @@ namespace compiler {
             // case parser::Type::Self:
             //     return this->_self(can_assign);
             default:
-                throw runtime_error("expected expression");
+                throw runtime_error("token type '" + parser::type_to_string(type) + "' is not supported");
         }
     }
 
@@ -278,8 +280,8 @@ namespace compiler {
             //     return this->_call(can_assign);
             // case parser::Type::Dot:
             //     return this->_dot(can_assign);
-            // case parser::Type::And:
-            //     return this->_and(can_assign);
+            case parser::Type::And:
+                return this->_and(can_assign);
             case parser::Type::Or:
                 return this->_or(can_assign);
             case parser::Type::Minus:
@@ -294,7 +296,7 @@ namespace compiler {
             case parser::Type::LtEq:
                 return this->_binary(can_assign);
             default:
-                break;
+                return;
         }
     }
 
@@ -367,6 +369,14 @@ namespace compiler {
         auto value = this->parser->prev->to_float();
         this->fn->chunk.push(OpCode::Const);
         this->fn->chunk.push_const(value::Value(value));
+    }
+
+    void Compiler::_and(bool can_assign) {
+        int end_jump = this->jump(OpCode::JumpIfFalse);
+
+        this->fn->chunk.push(OpCode::Pop);
+        this->_precedence(Precedence::And);
+        this->patch_jump(end_jump);
     }
 
     void Compiler::_or(bool can_assign) {
