@@ -2,8 +2,9 @@ const a number = -10;
 let b number? = 5;
 
 print (5 + a) * b;
-print "hello" + ", world";
+print "\n";
+print "hello" + ", world\n";
 
 if (false) {
-    print "testing123";
+    print "testing123\n";
 }

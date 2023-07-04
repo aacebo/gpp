@@ -224,6 +224,6 @@ namespace vm {
     void VM::_print() {
         auto value = this->stack.top();
         this->stack.pop();
-        cout << value.as_string() << endl;
+        cout << value.as_string();
     }
 };
