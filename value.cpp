@@ -75,6 +75,12 @@ namespace value {
         return "";
     }
 
+    bool Value::is_truthy() {
+        if (this->is_nil()) return false;
+        if (this->is_bool()) return this->to_bool();
+        return true;
+    }
+
     Value& Value::operator=(const Value& other) {
         this->type = other.type;
         this->value = other.value;

@@ -6,7 +6,7 @@
 
 namespace vm {
     class Frame {
-        uint8_t ip; // instruction pointer
+        int ip; // instruction pointer
         value::Closure* closure;
 
         public:
@@ -17,6 +17,8 @@ namespace vm {
             compiler::OpCode next_code();
             uint8_t next_byte();
             value::Value next_const();
+            uint16_t next_short();
+            void jump_to(int);
     };
 };
 

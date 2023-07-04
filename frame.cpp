@@ -26,4 +26,14 @@ namespace vm {
     value::Value Frame::next_const() {
         return this->closure->chunk.const_at(this->next_byte());
     }
+
+    uint16_t Frame::next_short() {
+        auto a = this->next_byte();
+        auto b = this->next_byte();
+        return (a << 8) | b;
+    }
+
+    void Frame::jump_to(int offset) {
+        this->ip += offset;
+    }
 };

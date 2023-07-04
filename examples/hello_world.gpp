@@ -3,3 +3,7 @@ let b number? = 5;
 
 print (5 + a) * b;
 print "hello" + ", world";
+
+if (false) {
+    print "testing123";
+}

@@ -42,6 +42,18 @@ namespace vm {
                     case compiler::OpCode::Negate:
                         this->_negate();
                         break;
+                    case compiler::OpCode::True:
+                        this->_true();
+                        break;
+                    case compiler::OpCode::False:
+                        this->_false();
+                        break;
+                    case compiler::OpCode::Jump:
+                        this->_jump();
+                        break;
+                    case compiler::OpCode::JumpIfFalse:
+                        this->_jump_if_false();
+                        break;
                     case compiler::OpCode::Define:
                         this->_define();
                         break;
@@ -101,6 +113,27 @@ namespace vm {
 
         this->stack.pop();
         this->stack.push(value::Value(-value.to_number()));
+    }
+
+    void VM::_true() {
+        this->stack.push(value::Value(true));
+    }
+
+    void VM::_false() {
+        this->stack.push(value::Value(false));
+    }
+
+    void VM::_jump() {
+        auto offset = this->frames.front()->next_short();
+        this->frames.front()->jump_to(offset);
+    }
+
+    void VM::_jump_if_false() {
+        auto offset = this->frames.front()->next_short();
+        
+        if (!this->stack.top().is_truthy()) {
+            this->frames.front()->jump_to(offset);
+        }
     }
 
     void VM::_define() {

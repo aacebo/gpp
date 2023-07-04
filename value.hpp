@@ -39,6 +39,7 @@ namespace value {
             String* to_string();
 
             string as_string();
+            bool is_truthy();
 
             Value& operator=(const Value&);
             bool operator==(Value&);

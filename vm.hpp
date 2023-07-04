@@ -34,6 +34,12 @@ namespace vm {
             void _nil();
             void _negate();
 
+            void _true();
+            void _false();
+
+            void _jump();
+            void _jump_if_false();
+
             void _define();
             void _resolve();
             void _assign();
