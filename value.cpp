@@ -22,9 +22,9 @@ namespace value {
     }
 
     Value::~Value() {
-        if (this->is_object()) {
-            delete this->to_object();
-        }
+        // if (this->is_object()) {
+        //     delete this->to_object();
+        // }
     }
 
     bool Value::is_bool() {
@@ -71,7 +71,7 @@ namespace value {
         if (this->is_nil()) return "<nil>";
         if (this->is_bool()) return this->to_bool() == true ? "true" : "false";
         if (this->is_number()) return std::to_string(this->to_number());
-        if (this->is_object()) return this->to_object()->to_string();
+        if (this->is_object() && this->is_string()) return this->to_string()->to_string();
         return "";
     }
 

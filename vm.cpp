@@ -11,6 +11,16 @@ namespace vm {
 
     void VM::compile(const string& src) {
         auto fn = this->compiler->compile(src);
+        auto errors = this->compiler->get_errors();
+
+        if (errors.size() > 0) {
+            for (auto e : errors) {
+                cout << e.what() << endl;
+            }
+
+            return;
+        }
+
         this->frames.push(new Frame(dynamic_cast<value::Closure*>(fn)));
     }
 
@@ -22,6 +32,9 @@ namespace vm {
                 switch (code) {
                     case compiler::OpCode::Const:
                         this->_const();
+                        break;
+                    case compiler::OpCode::Pop:
+                        this->_pop();
                         break;
                     case compiler::OpCode::Add:
                         this->_add();
@@ -53,10 +66,14 @@ namespace vm {
         this->stack.push(value);
     }
 
-    void VM::_add() {
-        auto a = this->stack.top();
+    void VM::_pop() {
         this->stack.pop();
+    }
+
+    void VM::_add() {
         auto b = this->stack.top();
+        this->stack.pop();
+        auto a = this->stack.top();
         this->stack.pop();
 
         if (a.is_number()) {
@@ -75,9 +92,9 @@ namespace vm {
     }
 
     void VM::_multiply() {
-        auto a = this->stack.top();
-        this->stack.pop();
         auto b = this->stack.top();
+        this->stack.pop();
+        auto a = this->stack.top();
         this->stack.pop();
         this->stack.push(value::Value(a * b));
     }

@@ -6,7 +6,21 @@ namespace error {
         int start,
         int end,
         string message
-    ) : ln(ln), start(start), end(end), message(message) {
+    ) : ln(ln),
+        start(start),
+        end(end),
+        message(message) {
+
+    }
+
+    Error::Error(
+        const Error& other
+    ) : Error(
+        other.ln,
+        other.start,
+        other.end,
+        other.message
+    ) {
 
     }
 

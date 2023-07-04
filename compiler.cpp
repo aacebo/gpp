@@ -14,10 +14,25 @@ namespace compiler {
         this->fn = new value::Function(name);
     }
 
+    vector<error::Error> Compiler::get_errors() {
+        vector<error::Error> errors;
+
+        for (auto e : this->parser->errors) {
+            errors.push_back(e);
+        }
+
+        for (auto e : this->errors) {
+            errors.push_back(e);
+        }
+
+        return errors;
+    }
+
     value::Function* Compiler::compile(const string& src) {
         this->parser = new parser::Parser(src);
+        this->parser->next();
 
-        while (this->parser->next()) {
+        while (!this->parser->match(parser::Type::Eof)) {
             this->_declaration();
         }
 
@@ -107,11 +122,12 @@ namespace compiler {
         this->fn->chunk.push(c);
     }
 
-    void Compiler::_statement() {
+    void Compiler::_statement() {  
         if (this->parser->match(parser::Type::Print)) {
             return this->_print();
         } else if (this->parser->match(parser::Type::For)) {
             // return this->_for();
+            return;
         } else if (this->parser->match(parser::Type::If)) {
             return this->_if();
         } else if (this->parser->match(parser::Type::Return)) {
@@ -343,7 +359,9 @@ namespace compiler {
     }
 
     void Compiler::_string(bool can_assign) {
-        this->fn->chunk.push_const(new value::String(this->parser->prev->value));
+        auto value = dynamic_cast<value::Object*>(new value::String(this->parser->prev->value));
+        this->fn->chunk.push(OpCode::Const);
+        this->fn->chunk.push_const(value::Value(value));
     }
 
     // void Compiler::_variable(bool can_assign) {

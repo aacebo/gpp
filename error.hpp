@@ -15,6 +15,7 @@ namespace error {
             const string message;
 
             Error(int, int, int, string);
+            Error(const Error&);
             const string what();
     };
 

@@ -60,13 +60,14 @@ namespace parser {
                 case Type::Class:
                 case Type::Fn:
                 case Type::Let:
+                case Type::Const:
                 case Type::For:
                 case Type::If:
                 case Type::Print:
                 case Type::Return:
                     return;
                 default:
-                    break;
+                    ;
             }
 
             this->next();

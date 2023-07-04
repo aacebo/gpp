@@ -12,6 +12,7 @@
 #include "value.hpp"
 #include "op_code.hpp"
 #include "precedence.hpp"
+#include "object.hpp"
 #include "string.hpp"
 
 using namespace std;
@@ -29,6 +30,7 @@ namespace compiler {
             Compiler(Compiler*);
             Compiler(string, Compiler*);
 
+            vector<error::Error> get_errors();
             value::Function* compile(const string&);
 
         private:

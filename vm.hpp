@@ -29,6 +29,7 @@ namespace vm {
 
         private:
             void _const();
+            void _pop();
             void _add();
             void _subtract();
             void _multiply();

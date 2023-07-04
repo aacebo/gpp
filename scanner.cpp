@@ -8,7 +8,7 @@ namespace parser {
     }
 
     Token* Scanner::scan() {
-        if (this->_right == this->_src.length() - 1) {
+        if (this->_right == this->_src.length()) {
             return this->create(Type::Eof);
         }
 

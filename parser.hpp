@@ -13,11 +13,11 @@ using namespace std;
 namespace parser {
     class Parser {
         Scanner* scanner;
-        vector<error::Error> errors;
 
         public:
             Token* curr;
             Token* prev;
+            vector<error::Error> errors;
 
             Parser(const string&);
             ~Parser();
