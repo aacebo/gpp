@@ -11,11 +11,13 @@
 #include "string.hpp"
 #include "frame.hpp"
 #include "op_code.hpp"
+#include "scope.hpp"
 
 using namespace std;
 
 namespace vm {
     class VM {
+        value::Scope* scope;
         compiler::Compiler* compiler;
         queue<Frame*> frames;
         stack<value::Value> stack;
@@ -29,6 +31,10 @@ namespace vm {
 
         private:
             void _const();
+            void _nil();
+            void _define();
+            void _resolve();
+            void _assign();
             void _pop();
             void _add();
             void _subtract();

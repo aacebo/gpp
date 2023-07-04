@@ -1,6 +1,10 @@
 #ifndef OPCODE_H
 #define OPCODE_H
 
+#include <string>
+
+using namespace std;
+
 namespace compiler {
     enum class OpCode {
         Const,
@@ -9,16 +13,9 @@ namespace compiler {
         False,
 
         Pop,
-        GetLocal,
-        SetLocal,
-        DefineGlobal,
-        GetGlobal,
-        SetGlobal,
-        GetUpValue,
-        SetUpValue,
-        GetProperty,
-        SetProperty,
-        GetSuper,
+        Define,
+        Resolve,
+        Assign,
 
         Eq,
         Gt,
@@ -37,14 +34,14 @@ namespace compiler {
         Loop,
         Call,
         Invoke,
-        SuperInvoke,
         Closure,
-        ClosureUpValue,
         Return,
         Class,
         Inherit,
         Method
     };
+
+    string code_to_string(OpCode);
 };
 
 #endif

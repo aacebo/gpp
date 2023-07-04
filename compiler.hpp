@@ -41,6 +41,7 @@ namespace compiler {
             int jump(OpCode);
             void patch_jump(int);
             void loop(int);
+            bool has_variable(string);
 
             // expressions
             // void _method();
@@ -76,7 +77,7 @@ namespace compiler {
             void _number(bool);
             void _or(bool);
             void _string(bool);
-            // void _variable(bool);
+            void _variable(bool);
             // void _super(bool);
             // void _self(bool);
             void _unary(bool);

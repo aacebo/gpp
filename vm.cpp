@@ -3,10 +3,12 @@
 namespace vm {
     VM::VM() {
         this->compiler = new compiler::Compiler();
+        this->scope = new value::Scope();
     }
 
     VM::~VM() {
         delete this->compiler;
+        delete this->scope;
     }
 
     void VM::compile(const string& src) {
@@ -28,10 +30,23 @@ namespace vm {
         while (!this->frames.empty()) {
             while (!this->frames.front()->is_empty()) {
                 auto code = this->frames.front()->next_code();
+                cout << "code: " << compiler::code_to_string(code) << endl;
 
                 switch (code) {
                     case compiler::OpCode::Const:
                         this->_const();
+                        break;
+                    case compiler::OpCode::Nil:
+                        this->_nil();
+                        break;
+                    case compiler::OpCode::Define:
+                        this->_define();
+                        break;
+                    case compiler::OpCode::Resolve:
+                        this->_resolve();
+                        break;
+                    case compiler::OpCode::Assign:
+                        this->_assign();
                         break;
                     case compiler::OpCode::Pop:
                         this->_pop();
@@ -54,6 +69,8 @@ namespace vm {
                     default:
                         break;
                 }
+
+                cout << endl;
             }
 
             delete this->frames.front();
@@ -63,7 +80,53 @@ namespace vm {
 
     void VM::_const() {
         auto value = this->frames.front()->next_const();
+        cout << "const: " << value.as_string() << endl;
         this->stack.push(value);
+    }
+
+    void VM::_nil() {
+        cout << "nil" << endl;
+        this->stack.push(value::Value());
+    }
+
+    void VM::_define() {
+        auto name = this->frames.front()->next_const();
+        auto is_const = this->frames.front()->next_const();
+        auto type = this->frames.front()->next_byte();
+        auto value = this->stack.top();
+        this->stack.pop();
+        auto def = value::Definition(
+            (value::Type)type,
+            is_const.to_bool(),
+            false
+        );
+
+        cout << "define: " << name.as_string() << " -> "
+             << value.as_string() << " ("
+             << value::type_to_string((value::Type)type);
+
+        if (is_const.to_bool()) {
+            cout << " (const)";
+        }
+
+        cout << ")" << endl;
+
+        this->scope->define(name.to_string()->to_string(), def, value);
+    }
+
+    void VM::_resolve() {
+        auto name = this->frames.front()->next_const();
+        auto value = this->scope->resolve(name.to_string()->to_string());
+        cout << "resolve: " << name.as_string() << " -> " << value.as_string() << endl;
+        this->stack.push(value);
+    }
+
+    void VM::_assign() {
+        auto name = this->frames.front()->next_const();
+        auto value = this->stack.top();
+        this->stack.pop();
+        cout << "assign: " << name.as_string() << " -> " << value.as_string() << endl;
+        this->scope->assign(name.to_string()->to_string(), value);
     }
 
     void VM::_pop() {

@@ -4,19 +4,13 @@
 #include <string>
 #include <variant>
 
+#include "value_type.hpp"
 #include "object.hpp"
 #include "string.hpp"
 
 using namespace std;
 
 namespace value {
-    enum class Type {
-        Bool,
-        Number,
-        Nil,
-        Object
-    };
-
     class Value {
         public:
             const Type type;

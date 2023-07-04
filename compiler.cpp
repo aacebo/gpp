@@ -80,6 +80,18 @@ namespace compiler {
         this->fn->chunk.push(offset & 0xff);
     }
 
+    bool Compiler::has_variable(string name) {
+        if (this->variables.count(name) > 0) {
+            return true;
+        }
+
+        if (this->parent) {
+            return this->parent->has_variable(name);
+        }
+
+        return false;
+    }
+
     void Compiler::_declaration() {
         if (this->parser->match(parser::Type::Class)) {
             // this->_class();
@@ -95,7 +107,8 @@ namespace compiler {
     }
 
     void Compiler::_let() {
-        parser::Type type = parser::Type::Nil;
+        value::Type type = value::Type::Nil;
+        bool is_const = this->parser->prev->type == parser::Type::Const;
 
         this->parser->consume(parser::Type::Identifier, "expected variable name");
         auto name = *this->parser->prev;
@@ -106,20 +119,22 @@ namespace compiler {
             this->parser->match(parser::Type::String) ||
             this->parser->match(parser::Type::Identifier)
         ) {
-            type = this->parser->prev->type;
+            type = this->token_to_value_type(this->parser->prev->type);
         }
 
         if (this->parser->match(parser::Type::Eq)) {
-            this->_expression();
+            this->expression();
         } else {
             this->fn->chunk.push(OpCode::Nil);
         }
 
         this->parser->consume(parser::Type::SemiColon, "expected ';' after variable declaration");
-        this->variables[name.value] = this->token_to_value_type(type);
-        int c = this->fn->chunk.push_const(new value::String(name.value));
-        this->fn->chunk.push(OpCode::DefineGlobal);
-        this->fn->chunk.push(c);
+        this->variables[name.value] = type;
+        auto name_value = dynamic_cast<value::Object*>(new value::String(name.value));
+        this->fn->chunk.push(OpCode::Define);
+        this->fn->chunk.push_const(value::Value(name_value));
+        this->fn->chunk.push_const(value::Value(is_const));
+        this->fn->chunk.push((int)type);
     }
 
     void Compiler::_statement() {  
@@ -232,8 +247,8 @@ namespace compiler {
             case parser::Type::Minus:
             case parser::Type::Not:
                 return this->_unary(can_assign);
-            // case parser::Type::Identifier:
-            //     return this->_variable(can_assign);
+            case parser::Type::Identifier:
+                return this->_variable(can_assign);
             case parser::Type::LString:
                 return this->_string(can_assign);
             case parser::Type::LNumber:
@@ -364,9 +379,20 @@ namespace compiler {
         this->fn->chunk.push_const(value::Value(value));
     }
 
-    // void Compiler::_variable(bool can_assign) {
+    void Compiler::_variable(bool can_assign) {
+        auto name = *this->parser->prev;
+        auto name_value = dynamic_cast<value::Object*>(new value::String(name.value));
+        this->parser->consume(parser::Type::SemiColon, "expected ';' after variable name");
 
-    // }
+        if (this->parser->match(parser::Type::Eq)) {
+            this->expression();
+            this->fn->chunk.push(OpCode::Assign);
+        } else {
+            this->fn->chunk.push(OpCode::Resolve);
+        }
+
+        this->fn->chunk.push_const(value::Value(name_value));
+    }
 
     void Compiler::_unary(bool can_assign) {
         auto type = this->parser->prev->type;
