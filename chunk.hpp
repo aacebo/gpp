@@ -22,7 +22,7 @@ namespace compiler {
             int size_consts();
             void push(uint8_t);
             void push(OpCode);
-            void push_const(value::Value);
+            int push_const(value::Value);
             void set(size_t, uint8_t);
     };
 };

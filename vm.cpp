@@ -35,8 +35,11 @@ namespace vm {
                     case compiler::OpCode::Divide:
                         this->_divide();
                         break;
+                    case compiler::OpCode::Print:
+                        this->_print();
+                        break;
                     default:
-                        // error unknown opcode
+                        break;
                 }
             }
 
@@ -85,5 +88,11 @@ namespace vm {
         auto a = this->stack.top();
         this->stack.pop();
         this->stack.push(value::Value(a / b));
+    }
+
+    void VM::_print() {
+        auto value = this->stack.top();
+        this->stack.pop();
+        cout << value.as_string() << endl;
     }
 };

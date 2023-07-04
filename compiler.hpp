@@ -12,6 +12,7 @@
 #include "value.hpp"
 #include "op_code.hpp"
 #include "precedence.hpp"
+#include "string.hpp"
 
 using namespace std;
 
@@ -24,7 +25,7 @@ namespace compiler {
         vector<error::Error> errors;
 
         public:
-            Compiler() = default;
+            Compiler();
             Compiler(Compiler*);
             Compiler(string, Compiler*);
 
@@ -33,24 +34,26 @@ namespace compiler {
         private:
             value::Type token_to_value_type(parser::Type);
             void expression();
+
+            // emit helpers
             int jump(OpCode);
             void patch_jump(int);
+            void loop(int);
 
             // expressions
-            void _block();
-            void _method();
-            void _function(value::FunctionType);
+            // void _method();
+            // void _function(value::FunctionType);
 
             // declarations
             void _declaration();
-            void _class();
-            void _fn();
+            // void _class();
+            // void _fn();
             void _let();
 
             // statements
             void _statement();
             void _print();
-            void _for();
+            // void _for();
             void _if();
             void _return();
             void _block();
@@ -62,18 +65,18 @@ namespace compiler {
             void _infix(parser::Type, bool);
 
             // rules
-            void _and(bool);
+            // void _and(bool);
             void _binary(bool);
-            void _call(bool);
-            void _dot(bool);
+            // void _call(bool);
+            // void _dot(bool);
             void _literal(bool);
             void _grouping(bool);
             void _number(bool);
             void _or(bool);
             void _string(bool);
-            void _variable(bool);
-            void _super(bool);
-            void _self(bool);
+            // void _variable(bool);
+            // void _super(bool);
+            // void _self(bool);
             void _unary(bool);
     };
 };

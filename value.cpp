@@ -84,7 +84,7 @@ namespace value {
         if (this->is_nil() && other.is_nil()) return true;
 
         if (this->is_object() && this->is_string() && other.is_string()) {
-            return *this->to_string() == *other.to_string();
+            return this->to_string()->equals(*other.to_string());
         }
 
         if (this->is_number()) {

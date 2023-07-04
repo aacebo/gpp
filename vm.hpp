@@ -4,6 +4,7 @@
 #include <stack>
 #include <string>
 #include <queue>
+#include <iostream>
 
 #include "compiler.hpp"
 #include "value.hpp"
@@ -32,6 +33,7 @@ namespace vm {
             void _subtract();
             void _multiply();
             void _divide();
+            void _print();
     };
 };
 

@@ -9,11 +9,11 @@ namespace value {
         return this->value;
     }
 
+    bool String::equals(const String& other) {
+        return this->value == other.value;
+    }
+    
     String* String::operator+(const String& other) {
         return new String(this->value + other.value);
-    }
-
-    bool String::operator==(const String& other) {
-        return this->value == other.value;
     }
 };

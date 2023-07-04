@@ -25,8 +25,13 @@ namespace compiler {
         this->bytes.push_back(static_cast<uint8_t>(code));
     }
 
-    void Chunk::push_const(value::Value value) {
+    int Chunk::push_const(value::Value value) {
         this->consts.push_back(value);
         this->bytes.push_back(this->consts.size() - 1);
+        return this->consts.size() - 1;
+    }
+
+    void Chunk::set(size_t i, uint8_t byte) {
+        this->bytes[i] = byte;
     }
 };

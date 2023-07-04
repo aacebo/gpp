@@ -2,6 +2,7 @@
 
 namespace compiler {
     Compiler::Compiler() {
+        this->fn = new value::Closure();
     }
 
     Compiler::Compiler(Compiler* parent) : Compiler() {
@@ -35,6 +36,8 @@ namespace compiler {
             case parser::Type::String:
             case parser::Type::Identifier:
                 return value::Type::Object;
+            default:
+                throw runtime_error("invalid token type");
         }
     }
 
@@ -55,12 +58,19 @@ namespace compiler {
         this->fn->chunk.set(offset + 1, jump & 0xff);
     }
 
+    void Compiler::loop(int start) {
+        this->fn->chunk.push(OpCode::Loop);
+        int offset = this->fn->chunk.size_bytes() - start + 2;
+        this->fn->chunk.push((offset >> 8) & 0xff);
+        this->fn->chunk.push(offset & 0xff);
+    }
+
     void Compiler::_declaration() {
         if (this->parser->match(parser::Type::Class)) {
-            this->_class();
+            // this->_class();
         } else if (this->parser->match(parser::Type::Fn)) {
-            this->_fn();
-        } else if (this->parser->match(parser::Type::Let)) {
+            // this->_fn();
+        } else if (this->parser->match(parser::Type::Let) || this->parser->match(parser::Type::Const)) {
             this->_let();
         } else {
             this->_statement();
@@ -73,7 +83,7 @@ namespace compiler {
         parser::Type type = parser::Type::Nil;
 
         this->parser->consume(parser::Type::Identifier, "expected variable name");
-        auto name = this->parser->prev;
+        auto name = *this->parser->prev;
         
         if (
             this->parser->match(parser::Type::Number) ||
@@ -91,14 +101,17 @@ namespace compiler {
         }
 
         this->parser->consume(parser::Type::SemiColon, "expected ';' after variable declaration");
-        this->variables[name->value] = this->token_to_value_type(type);
+        this->variables[name.value] = this->token_to_value_type(type);
+        int c = this->fn->chunk.push_const(new value::String(name.value));
+        this->fn->chunk.push(OpCode::DefineGlobal);
+        this->fn->chunk.push(c);
     }
 
     void Compiler::_statement() {
         if (this->parser->match(parser::Type::Print)) {
             return this->_print();
         } else if (this->parser->match(parser::Type::For)) {
-            return this->_for();
+            // return this->_for();
         } else if (this->parser->match(parser::Type::If)) {
             return this->_if();
         } else if (this->parser->match(parser::Type::Return)) {
@@ -108,6 +121,23 @@ namespace compiler {
         }
 
         return this->_expression();
+    }
+
+    void Compiler::_block() {
+        while (
+            this->parser->curr->type != parser::Type::RBrace &&
+            this->parser->curr->type != parser::Type::Eof
+        ) {
+            this->_declaration();
+        }
+
+        this->parser->consume(parser::Type::RBrace, "expected '}' after block");
+    }
+
+    void Compiler::_expression() {
+        this->expression();
+        this->parser->consume(parser::Type::SemiColon, "expected ';' after expression");
+        this->fn->chunk.push(OpCode::Pop);
     }
 
     void Compiler::_if() {
@@ -186,8 +216,8 @@ namespace compiler {
             case parser::Type::Minus:
             case parser::Type::Not:
                 return this->_unary(can_assign);
-            case parser::Type::Identifier:
-                return this->_variable(can_assign);
+            // case parser::Type::Identifier:
+            //     return this->_variable(can_assign);
             case parser::Type::LString:
                 return this->_string(can_assign);
             case parser::Type::LNumber:
@@ -196,10 +226,10 @@ namespace compiler {
             case parser::Type::False:
             case parser::Type::Nil:
                 return this->_literal(can_assign);
-            case parser::Type::Super:
-                return this->_super(can_assign);
-            case parser::Type::Self:
-                return this->_self(can_assign);
+            // case parser::Type::Super:
+            //     return this->_super(can_assign);
+            // case parser::Type::Self:
+            //     return this->_self(can_assign);
             default:
                 throw runtime_error("expected expression");
         }
@@ -207,12 +237,12 @@ namespace compiler {
 
     void Compiler::_infix(parser::Type type, bool can_assign) {
         switch (type) {
-            case parser::Type::LParen:
-                return this->_call(can_assign);
-            case parser::Type::Dot:
-                return this->_dot(can_assign);
-            case parser::Type::And:
-                return this->_and(can_assign);
+            // case parser::Type::LParen:
+            //     return this->_call(can_assign);
+            // case parser::Type::Dot:
+            //     return this->_dot(can_assign);
+            // case parser::Type::And:
+            //     return this->_and(can_assign);
             case parser::Type::Or:
                 return this->_or(can_assign);
             case parser::Type::Minus:
@@ -226,6 +256,113 @@ namespace compiler {
             case parser::Type::Lt:
             case parser::Type::LtEq:
                 return this->_binary(can_assign);
+            default:
+                break;
+        }
+    }
+
+    void Compiler::_binary(bool can_assign) {
+        auto type = this->parser->prev->type;
+        auto prec = get_precedence(type);
+        this->_precedence((Precedence)((int)prec + 1));
+
+        switch (type) {
+            case parser::Type::EqEq:
+                this->fn->chunk.push(OpCode::Eq);
+                break;
+            case parser::Type::NotEq:
+                this->fn->chunk.push(OpCode::Eq);
+                this->fn->chunk.push(OpCode::Not);
+                break;
+            case parser::Type::Gt:
+                this->fn->chunk.push(OpCode::Gt);
+                break;
+            case parser::Type::GtEq:
+                this->fn->chunk.push(OpCode::Lt);
+                this->fn->chunk.push(OpCode::Not);
+                break;
+            case parser::Type::Lt:
+                this->fn->chunk.push(OpCode::Lt);
+                break;
+            case parser::Type::LtEq:
+                this->fn->chunk.push(OpCode::Gt);
+                this->fn->chunk.push(OpCode::Not);
+                break;
+            case parser::Type::Plus:
+                this->fn->chunk.push(OpCode::Add);
+                break;
+            case parser::Type::Minus:
+                this->fn->chunk.push(OpCode::Subtract);
+                break;
+            case parser::Type::Star:
+                this->fn->chunk.push(OpCode::Multiply);
+                break;
+            case parser::Type::Slash:
+                this->fn->chunk.push(OpCode::Divide);
+                break;
+            default:
+                throw runtime_error("invalid token type");
+        }
+    }
+
+    void Compiler::_literal(bool can_assign) {
+        switch (this->parser->prev->type) {
+            case parser::Type::True:
+                this->fn->chunk.push(OpCode::True);
+                break;
+            case parser::Type::False:
+                this->fn->chunk.push(OpCode::False);
+                break;
+            case parser::Type::Nil:
+                this->fn->chunk.push(OpCode::Nil);
+                break;
+            default:
+                throw runtime_error("invalid token type");
+        }
+    }
+    
+    void Compiler::_grouping(bool can_assign) {
+        this->expression();
+        this->parser->consume(parser::Type::RParen, "expected ')' after expression");
+    }
+
+    void Compiler::_number(bool can_assign) {
+        auto value = this->parser->prev->to_float();
+        this->fn->chunk.push(OpCode::Const);
+        this->fn->chunk.push_const(value::Value(value));
+    }
+
+    void Compiler::_or(bool can_assign) {
+        int else_jump = this->jump(OpCode::JumpIfFalse);
+        int end_jump = this->jump(OpCode::Jump);
+
+        this->patch_jump(else_jump);
+        this->fn->chunk.push(OpCode::Pop);
+        this->_precedence(Precedence::Or);
+        this->patch_jump(end_jump);
+    }
+
+    void Compiler::_string(bool can_assign) {
+        this->fn->chunk.push_const(new value::String(this->parser->prev->value));
+    }
+
+    // void Compiler::_variable(bool can_assign) {
+
+    // }
+
+    void Compiler::_unary(bool can_assign) {
+        auto type = this->parser->prev->type;
+        this->_precedence(Precedence::Unary);
+
+        switch (type) {
+            case parser::Type::Not:
+                this->fn->chunk.push(OpCode::Not);
+                break;
+            case parser::Type::Minus:
+                this->fn->chunk.push(OpCode::Negate);
+                break;
+            default:
+                throw runtime_error("invalid token type");
         }
     }
 };

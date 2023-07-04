@@ -66,6 +66,7 @@ namespace parser {
                 case Type::Return:
                     return;
                 default:
+                    break;
             }
 
             this->next();

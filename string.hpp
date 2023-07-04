@@ -15,9 +15,8 @@ namespace value {
             String(const string& value);
 
             string to_string();
-
+            bool equals(const String&);
             String* operator+(const String&);
-            bool operator==(const String&);
     };
 };
 
