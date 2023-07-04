@@ -109,6 +109,7 @@ namespace compiler {
     void Compiler::_let() {
         value::Type type = value::Type::Nil;
         bool is_const = this->parser->prev->type == parser::Type::Const;
+        bool is_optional = false;
 
         this->parser->consume(parser::Type::Identifier, "expected variable name");
         auto name = *this->parser->prev;
@@ -120,6 +121,10 @@ namespace compiler {
             this->parser->match(parser::Type::Identifier)
         ) {
             type = this->token_to_value_type(this->parser->prev->type);
+
+            if (this->parser->match(parser::Type::Optional)) {
+                is_optional = true;
+            }
         }
 
         if (this->parser->match(parser::Type::Eq)) {
@@ -134,6 +139,7 @@ namespace compiler {
         this->fn->chunk.push(OpCode::Define);
         this->fn->chunk.push_const(value::Value(name_value));
         this->fn->chunk.push_const(value::Value(is_const));
+        this->fn->chunk.push_const(value::Value(is_optional));
         this->fn->chunk.push((int)type);
     }
 

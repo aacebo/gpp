@@ -75,8 +75,10 @@ namespace value {
         return "";
     }
 
-    Value& Value::operator=(Value& other) {
-        return other;
+    Value& Value::operator=(const Value& other) {
+        this->type = other.type;
+        this->value = other.value;
+        return *this;
     }
 
     bool Value::operator==(Value& other) {

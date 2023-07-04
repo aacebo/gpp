@@ -62,7 +62,7 @@ namespace value {
                 );
             }
 
-            this->values.insert({name, value});
+            this->values[name] = value;
             return;
         }
 

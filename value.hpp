@@ -13,7 +13,7 @@ using namespace std;
 namespace value {
     class Value {
         public:
-            const Type type;
+            Type type;
             variant<bool, float, nullptr_t, Object*> value;
 
             Value();
@@ -40,7 +40,7 @@ namespace value {
 
             string as_string();
 
-            Value& operator=(Value&);
+            Value& operator=(const Value&);
             bool operator==(Value&);
             bool operator!=(Value&);
             bool operator>(Value&);

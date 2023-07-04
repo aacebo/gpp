@@ -92,18 +92,23 @@ namespace vm {
     void VM::_define() {
         auto name = this->frames.front()->next_const();
         auto is_const = this->frames.front()->next_const();
+        auto is_optional = this->frames.front()->next_const();
         auto type = this->frames.front()->next_byte();
         auto value = this->stack.top();
         this->stack.pop();
         auto def = value::Definition(
             (value::Type)type,
             is_const.to_bool(),
-            false
+            is_optional.to_bool()
         );
 
         cout << "define: " << name.as_string() << " -> "
              << value.as_string() << " ("
              << value::type_to_string((value::Type)type);
+
+        if (is_optional.to_bool()) {
+            cout << "?";
+        }
 
         if (is_const.to_bool()) {
             cout << " (const)";
@@ -124,7 +129,6 @@ namespace vm {
     void VM::_assign() {
         auto name = this->frames.front()->next_const();
         auto value = this->stack.top();
-        this->stack.pop();
         cout << "assign: " << name.as_string() << " -> " << value.as_string() << endl;
         this->scope->assign(name.to_string()->to_string(), value);
     }
