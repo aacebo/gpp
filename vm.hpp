@@ -32,6 +32,8 @@ namespace vm {
         private:
             void _const();
             void _nil();
+            void _negate();
+
             void _define();
             void _resolve();
             void _assign();

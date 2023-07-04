@@ -39,6 +39,9 @@ namespace vm {
                     case compiler::OpCode::Nil:
                         this->_nil();
                         break;
+                    case compiler::OpCode::Negate:
+                        this->_negate();
+                        break;
                     case compiler::OpCode::Define:
                         this->_define();
                         break;
@@ -87,6 +90,17 @@ namespace vm {
     void VM::_nil() {
         cout << "nil" << endl;
         this->stack.push(value::Value());
+    }
+
+    void VM::_negate() {
+        auto value = this->stack.top();
+
+        if (!value.is_number()) {
+            throw runtime_error("cannot negate non number types");
+        }
+
+        this->stack.pop();
+        this->stack.push(value::Value(-value.to_number()));
     }
 
     void VM::_define() {
