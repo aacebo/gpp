@@ -18,7 +18,8 @@ namespace vm {
             uint8_t next_byte();
             value::Value next_const();
             uint16_t next_short();
-            void jump_to(int);
+            void jump_inc(int);
+            void jump_dec(int);
     };
 };
 

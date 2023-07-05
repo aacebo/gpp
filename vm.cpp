@@ -30,7 +30,7 @@ namespace vm {
         while (!this->frames.empty()) {
             while (!this->frames.front()->is_empty()) {
                 auto code = this->frames.front()->next_code();
-                cout << "code: " << compiler::code_to_string(code) << endl;
+                // cout << "code: " << compiler::code_to_string(code) << endl;
 
                 switch (code) {
                     case compiler::OpCode::Pop:
@@ -53,6 +53,9 @@ namespace vm {
                         break;
                     case compiler::OpCode::JumpIfFalse:
                         this->_jump_if_false();
+                        break;
+                    case compiler::OpCode::Loop:
+                        this->_loop();
                         break;
                     case compiler::OpCode::Define:
                         this->_define();
@@ -96,8 +99,6 @@ namespace vm {
                     default:
                         break;
                 }
-
-                cout << endl;
             }
 
             delete this->frames.front();
@@ -111,12 +112,10 @@ namespace vm {
 
     void VM::_const() {
         auto value = this->frames.front()->next_const();
-        cout << "const: " << value.as_string() << endl;
         this->stack.push(value);
     }
 
     void VM::_nil() {
-        cout << "nil" << endl;
         this->stack.push(value::Value());
     }
 
@@ -130,15 +129,20 @@ namespace vm {
 
     void VM::_jump() {
         auto offset = this->frames.front()->next_short();
-        this->frames.front()->jump_to(offset);
+        this->frames.front()->jump_inc(offset);
     }
 
     void VM::_jump_if_false() {
         auto offset = this->frames.front()->next_short();
         
         if (!this->stack.top().is_truthy()) {
-            this->frames.front()->jump_to(offset);
+            this->frames.front()->jump_inc(offset);
         }
+    }
+
+    void VM::_loop() {
+        auto offset = this->frames.front()->next_short();
+        this->frames.front()->jump_dec(offset);
     }
 
     void VM::_define() {
@@ -154,34 +158,18 @@ namespace vm {
             is_optional.to_bool()
         );
 
-        cout << "define: " << name.as_string() << " -> "
-             << value.as_string() << " ("
-             << value::type_to_string((value::Type)type);
-
-        if (is_optional.to_bool()) {
-            cout << "?";
-        }
-
-        if (is_const.to_bool()) {
-            cout << " (const)";
-        }
-
-        cout << ")" << endl;
-
         this->scope->define(name.to_string()->to_string(), def, value);
     }
 
     void VM::_resolve() {
         auto name = this->frames.front()->next_const();
         auto value = this->scope->resolve(name.to_string()->to_string());
-        cout << "resolve: " << name.as_string() << " -> " << value.as_string() << endl;
         this->stack.push(value);
     }
 
     void VM::_assign() {
         auto name = this->frames.front()->next_const();
         auto value = this->stack.top();
-        cout << "assign: " << name.as_string() << " -> " << value.as_string() << endl;
         this->scope->assign(name.to_string()->to_string(), value);
     }
 

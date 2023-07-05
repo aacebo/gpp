@@ -38,6 +38,7 @@ namespace vm {
 
             void _jump();
             void _jump_if_false();
+            void _loop();
 
             void _define();
             void _resolve();

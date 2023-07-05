@@ -1,10 +1,6 @@
-const a number = -10;
-let b number? = 5;
-
-print (5 + a) * b;
-print "\n";
-print "hello" + ", world\n";
-
-if (a <= -10 && b == 5) {
-    print "testing123\n";
+for (let i number = 0; i < 10; i = i + 1) {
+    print i
+    print " -> "
+    print "hi";
+    print "\n";
 }

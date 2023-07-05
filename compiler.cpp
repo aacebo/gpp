@@ -149,8 +149,7 @@ namespace compiler {
         if (this->parser->match(parser::Type::Print)) {
             return this->_print();
         } else if (this->parser->match(parser::Type::For)) {
-            // return this->_for();
-            return;
+            return this->_for();
         } else if (this->parser->match(parser::Type::If)) {
             return this->_if();
         } else if (this->parser->match(parser::Type::Return)) {
@@ -177,6 +176,55 @@ namespace compiler {
         this->expression();
         this->parser->consume(parser::Type::SemiColon, "expected ';' after expression");
         this->fn->chunk.push(OpCode::Pop);
+    }
+
+    void Compiler::_for() {
+        this->parser->consume(parser::Type::LParen, "expected '(' after 'for'");
+
+        // initializer
+        if (this->parser->match(parser::Type::SemiColon)) {
+            // do nothing
+        } else if (
+            this->parser->match(parser::Type::Let) ||
+            this->parser->match(parser::Type::Const)
+        ) {
+            this->_let();
+        } else {
+            this->_expression();
+        }
+
+        int loop_start = this->fn->chunk.size_bytes();
+        int jump_exit = -1;
+
+        // exit condition
+        if (!this->parser->match(parser::Type::SemiColon)) {
+            this->expression();
+            this->parser->consume(parser::Type::SemiColon, "expected ';' after loop condition");
+            jump_exit = this->jump(OpCode::JumpIfFalse);
+            this->fn->chunk.push(OpCode::Pop);
+        }
+
+        // incrementer
+        if (!this->parser->match(parser::Type::RParen)) {
+            int jump_body = this->jump(OpCode::Jump);
+            int inc_start = this->fn->chunk.size_bytes();
+
+            this->expression();
+            this->fn->chunk.push(OpCode::Pop);
+            this->parser->consume(parser::Type::RParen, "expected ')' after 'for' statement");
+            
+            this->loop(loop_start);
+            loop_start = inc_start;
+            this->patch_jump(jump_body);
+        }
+
+        this->_statement();
+        this->loop(loop_start);
+
+        if (jump_exit != -1) {
+            this->patch_jump(jump_exit);
+            this->fn->chunk.push(OpCode::Pop);
+        }
     }
 
     void Compiler::_if() {

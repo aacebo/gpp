@@ -56,7 +56,7 @@ namespace compiler {
             // statements
             void _statement();
             void _print();
-            // void _for();
+            void _for();
             void _if();
             void _return();
             void _block();

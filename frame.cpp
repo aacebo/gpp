@@ -33,7 +33,11 @@ namespace vm {
         return (a << 8) | b;
     }
 
-    void Frame::jump_to(int offset) {
+    void Frame::jump_inc(int offset) {
         this->ip += offset;
+    }
+
+    void Frame::jump_dec(int offset) {
+        this->ip -= offset;
     }
 };
