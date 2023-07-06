@@ -134,7 +134,11 @@ namespace compiler {
 
         if (this->parser->match(parser::Type::Eq)) {
             this->expression();
-            auto init_type = this->fn->chunk.const_at(this->fn->chunk.size_consts() - 1).type;
+            auto init_type = type;
+
+            if (type == value::Type::Nil) {
+                init_type = this->fn->chunk.const_at(this->fn->chunk.size_consts() - 1).type;
+            }
 
             if (type != value::Type::Nil && type != init_type) {
                 throw error::SyntaxError(
@@ -148,7 +152,26 @@ namespace compiler {
 
             type = init_type;
         } else {
-            this->fn->chunk.push(OpCode::Nil);
+            if (!is_optional) {
+                throw error::SyntaxError(
+                    this->parser->prev->ln,
+                    this->parser->prev->start,
+                    this->parser->prev->end,
+                    "only optional types can be nil"
+                );
+            }
+
+            this->fn->chunk.push(OpCode::Const);
+            this->fn->chunk.push_const(value::Value());
+        }
+
+        if (type == value::Type::Nil) {
+            throw error::SyntaxError(
+                this->parser->prev->ln,
+                this->parser->prev->start,
+                this->parser->prev->end,
+                "must provide a type"
+            );
         }
 
         this->parser->consume(parser::Type::SemiColon, "expected ';' after variable declaration");
@@ -271,7 +294,8 @@ namespace compiler {
 
     void Compiler::_return() {
         if (this->parser->match(parser::Type::SemiColon)) {
-            this->fn->chunk.push(OpCode::Nil);
+            this->fn->chunk.push(OpCode::Const);
+            this->fn->chunk.push_const(value::Value());
             this->fn->chunk.push(0);
             this->fn->chunk.push(OpCode::Return);
             return;
@@ -411,13 +435,19 @@ namespace compiler {
     void Compiler::_literal(bool can_assign) {
         switch (this->parser->prev->type) {
             case parser::Type::True:
-                this->fn->chunk.push(OpCode::True);
+                // this->fn->chunk.push(OpCode::True);
+                this->fn->chunk.push(OpCode::Const);
+                this->fn->chunk.push_const(value::Value(true));
                 break;
             case parser::Type::False:
-                this->fn->chunk.push(OpCode::False);
+                // this->fn->chunk.push(OpCode::False);
+                this->fn->chunk.push(OpCode::Const);
+                this->fn->chunk.push_const(value::Value(false));
                 break;
             case parser::Type::Nil:
-                this->fn->chunk.push(OpCode::Nil);
+                // this->fn->chunk.push(OpCode::Nil);
+                this->fn->chunk.push(OpCode::Const);
+                this->fn->chunk.push_const(value::Value());
                 break;
             default:
                 throw runtime_error("invalid token type");

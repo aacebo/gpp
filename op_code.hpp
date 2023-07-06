@@ -8,9 +8,6 @@ using namespace std;
 namespace compiler {
     enum class OpCode {
         Const,
-        Nil,
-        True,
-        False,
 
         Pop,
         Define,

@@ -31,9 +31,6 @@ namespace vm {
         private:
             void _pop();
             void _const();
-            void _nil();
-            void _true();
-            void _false();
 
             void _jump();
             void _jump_if_false();

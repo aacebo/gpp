@@ -5,12 +5,6 @@ namespace compiler {
         switch (code) {
             case OpCode::Const:
                 return "const";
-            case OpCode::Nil:
-                return "nil";
-            case OpCode::True:
-                return "true";
-            case OpCode::False:
-                return "false";
             case OpCode::Pop:
                 return "pop";
             case OpCode::Define:

@@ -39,15 +39,6 @@ namespace vm {
                     case compiler::OpCode::Const:
                         this->_const();
                         break;
-                    case compiler::OpCode::Nil:
-                        this->_nil();
-                        break;
-                    case compiler::OpCode::True:
-                        this->_true();
-                        break;
-                    case compiler::OpCode::False:
-                        this->_false();
-                        break;
                     case compiler::OpCode::Jump:
                         this->_jump();
                         break;
@@ -113,18 +104,6 @@ namespace vm {
     void VM::_const() {
         auto value = this->frames.front()->next_const();
         this->stack.push(value);
-    }
-
-    void VM::_nil() {
-        this->stack.push(value::Value());
-    }
-
-    void VM::_true() {
-        this->stack.push(value::Value(true));
-    }
-
-    void VM::_false() {
-        this->stack.push(value::Value(false));
     }
 
     void VM::_jump() {

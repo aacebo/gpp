@@ -18,6 +18,7 @@ My ideal outcome for this language is to offer the same simplicity/ease-of-use a
 |------------------------|--------------------------|-----------|---------------------------------------|
 | Variables              | `let` `const`            | [ ]       | [example](./examples/variables.gpp)   |
 | Types                  | `string` `number` `bool` | [ ]       | [example](./examples/types.gpp)       |
+| Optional               | `?`                      | [ ]       | [example](./examples/optional.gpp)    |
 | If                     | `if` `else if` `else`    | [ ]       | [example](./examples/if.gpp)          |
 | Match                  | `match`                  | [ ]       | [example](./examples/match.gpp)       |
 | Loops                  | `for`                    | [ ]       | [example](./examples/for.gpp)         |
