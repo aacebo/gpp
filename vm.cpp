@@ -2,18 +2,18 @@
 
 namespace vm {
     VM::VM() {
-        this->compiler = new compiler::Compiler();
         this->scope = new value::Scope();
     }
 
     VM::~VM() {
-        delete this->compiler;
         delete this->scope;
     }
 
     void VM::compile(const string& src) {
-        auto fn = this->compiler->compile(src);
-        auto errors = this->compiler->get_errors();
+        auto compiler = new compiler::Compiler();
+        auto fn = compiler->compile(src);
+        auto errors = compiler->get_errors();
+        delete compiler;
 
         if (errors.size() > 0) {
             for (auto e : errors) {
@@ -101,7 +101,7 @@ namespace vm {
                 }
             }
 
-            delete this->frames.front();
+            // delete this->frames.front();
             this->frames.pop();
         }
     }

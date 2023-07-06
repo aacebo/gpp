@@ -18,7 +18,6 @@ using namespace std;
 namespace vm {
     class VM {
         value::Scope* scope;
-        compiler::Compiler* compiler;
         queue<Frame*> frames;
         stack<value::Value> stack;
 

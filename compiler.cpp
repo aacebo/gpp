@@ -14,6 +14,10 @@ namespace compiler {
         this->fn = new value::Function(name);
     }
 
+    Compiler::~Compiler() {
+        delete this->parser;
+    }
+
     vector<error::Error> Compiler::get_errors() {
         vector<error::Error> errors;
 
@@ -36,7 +40,6 @@ namespace compiler {
             this->_declaration();
         }
 
-        delete this->parser;
         return this->fn;
     }
 
@@ -459,7 +462,7 @@ namespace compiler {
     void Compiler::_variable(bool can_assign) {
         auto name = *this->parser->prev;
         auto name_value = dynamic_cast<value::Object*>(new value::String(name.value));
-        this->parser->consume(parser::Type::SemiColon, "expected ';' after variable name");
+        // this->parser->consume(parser::Type::SemiColon, "expected ';' after variable name");
 
         if (this->parser->match(parser::Type::Eq)) {
             this->expression();

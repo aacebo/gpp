@@ -29,6 +29,7 @@ namespace compiler {
             Compiler();
             Compiler(Compiler*);
             Compiler(string, Compiler*);
+            ~Compiler();
 
             vector<error::Error> get_errors();
             value::Function* compile(const string&);

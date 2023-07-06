@@ -193,8 +193,8 @@ namespace parser {
         return new Token(
             type,
             this->_ln,
-            this->_left / this->_ln,
-            (this->_left / this->_ln) + (this->_right - this->_left),
+            this->_left,
+            this->_right,
             value
         );
     }

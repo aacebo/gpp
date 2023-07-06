@@ -1,0 +1,11 @@
+let is_ok = 0;
+
+if (is_ok > 0) {
+    print "should not print\n";
+}
+
+is_ok = 1;
+
+if (is_ok > 0) {
+    print "should print\n";
+}

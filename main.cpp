@@ -14,7 +14,7 @@ int main() {
 
     vm->run();
 
-    delete reader;
     delete vm;
+    delete reader;
     return 0;
 }
