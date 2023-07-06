@@ -131,6 +131,19 @@ namespace compiler {
 
         if (this->parser->match(parser::Type::Eq)) {
             this->expression();
+            auto init_type = this->fn->chunk.const_at(this->fn->chunk.size_consts() - 1).type;
+
+            if (type != value::Type::Nil && type != init_type) {
+                throw error::SyntaxError(
+                    this->parser->prev->ln,
+                    this->parser->prev->start,
+                    this->parser->prev->end,
+                    "cannot assign type '" + value::type_to_string(init_type) +
+                    "' to variable of type '" + value::type_to_string(type) + "'"
+                );
+            }
+
+            type = init_type;
         } else {
             this->fn->chunk.push(OpCode::Nil);
         }
