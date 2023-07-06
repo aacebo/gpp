@@ -8,11 +8,17 @@ int main() {
     auto reader = new file_reader::FileReader(".");
     auto vm = new vm::VM();
 
-    for (auto file : reader->get_files()) {
-        vm->compile(file.second);
-    }
+    try {
+        for (auto file : reader->get_files()) {
+            vm->compile(file.second);
+        }
 
-    vm->run();
+        vm->run();
+    } catch (vector<error::Error>& errors) {
+        for (auto e : errors) {
+            cout << e.what() << endl;
+        }
+    }
 
     delete vm;
     delete reader;

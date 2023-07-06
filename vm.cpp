@@ -16,14 +16,10 @@ namespace vm {
         delete compiler;
 
         if (errors.size() > 0) {
-            for (auto e : errors) {
-                cout << e.what() << endl;
-            }
-
-            return;
+            throw errors;
         }
 
-        this->frames.push(new Frame(dynamic_cast<value::Closure*>(fn)));
+        this->frames.push(new Frame(fn));
     }
 
     void VM::run() {

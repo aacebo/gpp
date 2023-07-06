@@ -1,7 +1,7 @@
 #include "frame.hpp"
 
 namespace vm {
-    Frame::Frame(value::Closure* closure) : closure(closure) {
+    Frame::Frame(value::Function* closure) : closure(closure) {
         this->ip = -1;
     }
 

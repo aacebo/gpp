@@ -7,10 +7,10 @@
 namespace vm {
     class Frame {
         int ip; // instruction pointer
-        value::Closure* closure;
+        value::Function* closure;
 
         public:
-            Frame(value::Closure*);
+            Frame(value::Function*);
             ~Frame();
 
             bool is_empty();

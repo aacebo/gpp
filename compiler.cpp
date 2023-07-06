@@ -29,6 +29,14 @@ namespace compiler {
             errors.push_back(e);
         }
 
+        sort(
+            errors.begin(),
+            errors.end(),
+            [](error::Error& a, error::Error& b) {
+                return a < b;
+            }
+        );
+
         return errors;
     }
 
@@ -37,7 +45,12 @@ namespace compiler {
         this->parser->next();
 
         while (!this->parser->match(parser::Type::Eof)) {
-            this->_declaration();
+            try {
+                this->_declaration();
+            } catch (error::SyntaxError& e) {
+                this->errors.push_back(e);
+                this->parser->sync();
+            }
         }
 
         return this->fn;
@@ -101,14 +114,10 @@ namespace compiler {
         } else if (this->parser->match(parser::Type::Fn)) {
             // this->_fn();
         } else if (this->parser->match(parser::Type::Let) || this->parser->match(parser::Type::Const)) {
-            this->_let();
-        } else {
-            this->_statement();
+            return this->_let();
         }
 
-        if (this->parser->errors.size() > 0) {
-            this->parser->sync();
-        }
+        return this->_statement();
     }
 
     void Compiler::_let() {
