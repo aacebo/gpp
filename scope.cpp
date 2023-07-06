@@ -1,42 +1,87 @@
-#include "interpreter.hpp"
+#include "scope.hpp"
 
-namespace interpreter {
-    Scope::~Scope() {
-        for (auto v : this->_values) {
-            delete v.second;
-        }
+namespace value {
+    Scope::Scope() {
+
     }
 
-    Var* Scope::get(string name) {
-        if (this->has(name)) {
-            return this->_values[name];
+    Scope::Scope(Scope* parent) : parent(parent) {
+
+    }
+
+    bool Scope::has_local(const string& name) {
+        return this->definitions.count(name) > 0;
+    }
+
+    bool Scope::has(const string& name) {
+        if (this->has_local(name)) {
+            return true;
         }
 
         if (this->parent) {
-            return this->parent->get(name);
+            return this->parent->has(name);
         }
 
-        throw runtime_error("undefined variable \"" + name + "\"");
+        return false;
     }
 
-    bool Scope::has(string name) {
-        return this->_values.count(name) == 1;
+    void Scope::define(const string& name, Definition def, Value value) {
+        if (this->has_local(name)) {
+            throw runtime_error("variable '" + name + "' is already defined in this scope");
+        }
+
+        this->definitions.insert({name, def});
+        this->values.insert({name, value});
     }
 
-    void Scope::define(string name, Var* var) {
-        this->_values[name] = var;
+    Definition& Scope::get_definition(const string& name) {
+        if (this->has_local(name)) {
+            return this->definitions.at(name);
+        }
+
+        if (this->parent) {
+            return this->parent->get_definition(name);
+        }
+
+        throw runtime_error("variable '" + name + "' is not defined");
     }
 
-    void Scope::assign(string name, Var* var) {
-        if (this->has(name)) {
-            this->_values[name] = var;
+    void Scope::assign(const string& name, Value value) {
+        if (this->has_local(name)) {
+            if (this->definitions.at(name).is_const) {
+                throw runtime_error("cannot assign to constant");
+            }
+
+            if (
+                !(this->definitions.at(name).is_optional && value.is_nil()) &&
+                this->definitions.at(name).type != value.type
+            ) {
+                throw runtime_error(
+                    "cannot assign value type '" + type_to_string(value.type) +
+                    "' to variable type '" + type_to_string(this->definitions.at(name).type) + "'"
+                );
+            }
+
+            this->values[name] = value;
             return;
         }
 
         if (this->parent) {
-            return this->parent->assign(name, var);
+            return this->parent->assign(name, value);
         }
 
-        throw runtime_error("undefined variable \"" + name + "\"");
+        throw runtime_error("cannot assign to undefined variable '" + name + "'");
+    }
+
+    Value& Scope::resolve(const string& name) {
+        if (this->has_local(name)) {
+            return this->values.at(name);
+        }
+
+        if (this->parent) {
+            return this->parent->resolve(name);
+        }
+
+        throw runtime_error("cannot resolve undefined variable '" + name + "'");
     }
 };

@@ -1,58 +1,26 @@
 #include "file_reader.hpp"
-#include "scanner.hpp"
-#include "parser.hpp"
-#include "interpreter.hpp"
+#include "vm.hpp"
 #include "error.hpp"
 
 using namespace std;
 
 int main() {
-    auto interpreter = new interpreter::Interpreter();
     auto reader = new file_reader::FileReader(".");
+    auto vm = new vm::VM();
 
-    for (auto f : reader->get_files()) {
-        auto scanner = new scanner::Scanner(f.second);
-
-        if (scanner->get_errors().size() > 0) {
-            for (auto e : scanner->get_errors()) {
-                cout << e->what() << endl;
-            }
-
-            return -1;
+    try {
+        for (auto file : reader->get_files()) {
+            vm->compile(file.second);
         }
 
-        // for (auto token : scanner->get_tokens()) {
-        //     cout << token->to_string() << endl;
-        // }
-
-        try {
-            auto parser = new parser::Parser(scanner->get_tokens());
-        
-            if (parser->get_errors().size() > 0) {
-                for (auto e : parser->get_errors()) {
-                    cout << e->what() << endl;
-                }
-
-                return -1;
-            }
-
-            try {
-                interpreter->run(parser->get_statements());
-            } catch (error::RuntimeError* e) {
-                cout << e->what() << endl;
-                return -1;
-            }
-
-            delete parser;
-        } catch (error::SyntaxError* e) {
-            cout << e->what() << endl;
-            return -1;
+        vm->run();
+    } catch (vector<error::Error>& errors) {
+        for (auto e : errors) {
+            cout << e.what() << endl;
         }
-
-        delete scanner;
     }
 
-    delete interpreter;
+    delete vm;
     delete reader;
     return 0;
 }

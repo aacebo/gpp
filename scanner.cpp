@@ -1,181 +1,156 @@
 #include "scanner.hpp"
-#include "error.hpp"
 
-namespace scanner {
-    Scanner::Scanner(string src) : _src(src) {
+namespace parser {
+    Scanner::Scanner(const string& src) : _src(src) {
         this->_left = 0;
         this->_right = 0;
         this->_ln = 0;
-        this->scan();
     }
 
-    Scanner::~Scanner() {
-        for (auto token : this->_tokens) {
-            delete token;
+    Token* Scanner::scan() {
+        if (this->_right >= this->_src.length()) {
+            return this->create(Type::Eof);
         }
 
-        this->_tokens.clear();
+        this->_left = this->_right;
+        char c = this->_src[_right];
+        this->_right++;
 
-        for (auto e : this->_errors) {
-            delete e;
-        }
-
-        this->_errors.clear();
-    }
-
-    const vector<token::Token*> Scanner::get_tokens() {
-        return this->_tokens;
-    }
-
-    const vector<error::Error*> Scanner::get_errors() {
-        return this->_errors;
-    }
-
-    void Scanner::scan() {
-        while (this->_right < this->_src.length()) {
-            this->_left = this->_right;
-            char c = this->_src[_right];
-            this->_right++;
-
-            switch (c) {
-                case ' ':
-                case '\r':
-                case '\t':
-                    // ignore whitespace
-                    break;
-                case '\n':
-                    this->_ln++;
-                    break;
-                case '(':
-                    this->push(token::Type::LParen);
-                    break;
-                case ')':
-                    this->push(token::Type::RParen);
-                    break;
-                case '{':
-                    this->push(token::Type::LBrace);
-                    break;
-                case '}':
-                    this->push(token::Type::RBrace);
-                    break;
-                case ',':
-                    this->push(token::Type::Comma);
-                    break;
-                case '.':
-                    this->push(token::Type::Dot);
-                    break;
-                case ';':
-                    this->push(token::Type::SemiColon);
-                    break;
-                case '?':
-                    this->push(token::Type::Optional);
-                    break;
-                case '-':
-                    if (this->peek() == '=') {
-                        this->_right++;
-                        this->push(token::Type::MinusEq);
-                    } else if (this->peek() == '>') {
-                        this->_right++;
-                        this->push(token::Type::ReturnType);
-                    } else {
-                        this->push(token::Type::Minus);
-                    }
-
-                    break;
-                case '+':
-                    if (this->peek() == '=') {
-                        this->_right++;
-                        this->push(token::Type::PlusEq);
-                    } else {
-                        this->push(token::Type::Plus);
-                    }
-
-                    break;
-                case '*':
-                    if (this->peek() == '=') {
-                        this->_right++;
-                        this->push(token::Type::StarEq);
-                    } else {
-                        this->push(token::Type::Star);
-                    }
-
-                    break;
-                case '/':
-                    if (this->peek() == '/') {
-                        this->on_comment();
-                    } else if (this->peek() == '=') {
-                        this->_right++;
-                        this->push(token::Type::SlashEq);
-                    } else {
-                        this->push(token::Type::Slash);
-                    }
-
-                    break;
-                case '!':
-                    if (this->peek() == '=') {
-                        this->_right++;
-                        this->push(token::Type::NotEq);
-                    } else {
-                        this->push(token::Type::Not);
-                    }
-
-                    break;
-                case '=':
-                    if (this->peek() == '=') {
-                        this->_right++;
-                        this->push(token::Type::EqEq);
-                    } else {
-                        this->push(token::Type::Eq);
-                    }
-
-                    break;
-                case '<':
-                    if (this->peek() == '=') {
-                        this->_right++;
-                        this->push(token::Type::LtEq);
-                    } else {
-                        this->push(token::Type::Lt);
-                    }
-
-                    break;
-                case '>':
-                    if (this->peek() == '=') {
-                        this->_right++;
-                        this->push(token::Type::GtEq);
-                    } else {
-                        this->push(token::Type::Gt);
-                    }
-
-                    break;
-                case '"':
-                    this->on_string();
-                    break;
-                default:
-                    if (this->is_integer(c)) {
-                        this->on_number();
-                        break;
-                    } else if (this->is_alpha(c)) {
-                        this->on_identifier();
-                        break;
-                    }
-
-                    this->_errors.push_back(new error::SyntaxError(
+        switch (c) {
+            case ' ':
+            case '\r':
+            case '\t':
+                // ignore whitespace
+                break;
+            case '\n':
+                this->_ln++;
+                break;
+            case '(':
+                return this->create(Type::LParen);
+            case ')':
+                return this->create(Type::RParen);
+            case '{':
+                return this->create(Type::LBrace);
+            case '}':
+                return this->create(Type::RBrace);
+            case ',':
+                return this->create(Type::Comma);
+            case '.':
+                return this->create(Type::Dot);
+            case ';':
+                return this->create(Type::SemiColon);
+            case '?':
+                return this->create(Type::Optional);
+            case '|':
+                if (this->peek() != '|') {
+                    throw error::SyntaxError(
                         this->_ln,
                         this->_left,
                         this->_right,
                         "unexpected character"
-                    ));
-            }
+                    );
+                }
+
+                this->_right++;
+                return this->create(Type::Or);
+            case '&':
+                if (this->peek() != '&') {
+                    throw error::SyntaxError(
+                        this->_ln,
+                        this->_left,
+                        this->_right,
+                        "unexpected character"
+                    );
+                }
+
+                this->_right++;
+                return this->create(Type::And);
+            case '-':
+                if (this->peek() == '=') {
+                    this->_right++;
+                    return this->create(Type::MinusEq);
+                } else if (this->peek() == '>') {
+                    this->_right++;
+                    return this->create(Type::ReturnType);
+                }
+
+                return this->create(Type::Minus);
+            case '+':
+                if (this->peek() == '=') {
+                    this->_right++;
+                    return this->create(Type::PlusEq);
+                }
+
+                return this->create(Type::Plus);
+            case '*':
+                if (this->peek() == '=') {
+                    this->_right++;
+                    return this->create(Type::StarEq);
+                }
+
+                return this->create(Type::Star);
+            case '/':
+                if (this->peek() == '/') {
+                    return this->on_comment();
+                } else if (this->peek() == '=') {
+                    this->_right++;
+                    return this->create(Type::SlashEq);
+                }
+
+                return this->create(Type::Slash);
+            case '!':
+                if (this->peek() == '=') {
+                    this->_right++;
+                    return this->create(Type::NotEq);
+                }
+
+                return this->create(Type::Not);
+            case '=':
+                if (this->peek() == '=') {
+                    this->_right++;
+                    return this->create(Type::EqEq);
+                }
+
+                return this->create(Type::Eq);
+            case '<':
+                if (this->peek() == '=') {
+                    this->_right++;
+                    return this->create(Type::LtEq);
+                }
+
+                return this->create(Type::Lt);
+            case '>':
+                if (this->peek() == '=') {
+                    this->_right++;
+                    return this->create(Type::GtEq);
+                }
+
+                return this->create(Type::Gt);
+            case '"':
+                return this->on_string();
+            default:
+                if (this->is_integer(c)) {
+                    return this->on_number();
+                } else if (this->is_alpha(c)) {
+                    return this->on_identifier();
+                }
+
+                throw error::SyntaxError(
+                    this->_ln,
+                    this->_left,
+                    this->_right,
+                    "unexpected character"
+                );
         }
 
-        this->push(token::Type::Eof);
+        return this->scan();
     }
 
-    void Scanner::push(token::Type type) {
+    Token* Scanner::create(Type type) {
         auto value = this->_src.substr(this->_left, this->_right - this->_left);
 
         // handle escaped characters
-        if (type == token::Type::LString) {
+        if (type == Type::LString) {
             for (int i = 0; i < value.length() - 1; i++) {
                 if (value[i] == '\\') {
                     value.erase(i, 1);
@@ -215,13 +190,13 @@ namespace scanner {
             }
         }
 
-        this->_tokens.push_back(new token::Token(
+        return new Token(
             type,
             this->_ln,
-            this->_left / this->_ln,
-            (this->_left / this->_ln) + (this->_right - this->_left),
+            this->_left,
+            this->_right,
             value
-        ));
+        );
     }
 
     char Scanner::peek() {
@@ -256,16 +231,17 @@ namespace scanner {
         );
     }
 
-    void Scanner::on_comment() {
+    Token* Scanner::on_comment() {
         while (this->peek() != '\n' && this->peek() != '\0') {
             this->_right++;
         }
 
         this->_ln++;
         this->_right++;
+        return this->scan();
     }
 
-    void Scanner::on_string() {
+    Token* Scanner::on_string() {
         while ((this->peek() != '"' || this->is_escaped()) && this->peek() != '\0') {
             if (this->peek() == '\n') {
                 this->_ln++;
@@ -275,22 +251,21 @@ namespace scanner {
         }
 
         if (this->_right == this->_src.length()) {
-            this->_errors.push_back(new error::SyntaxError(
+            throw error::SyntaxError(
                 this->_ln,
                 this->_left,
                 this->_right,
                 "unterminated string"
-            ));
-
-            return;
+            );
         }
 
         this->_left++;
-        this->push(token::Type::LString);
+        auto token = this->create(Type::LString);
         this->_right++;
+        return token;
     }
 
-    void Scanner::on_number() {
+    Token* Scanner::on_number() {
         while (this->is_integer(this->peek())) {
             this->_right++;
         }
@@ -303,10 +278,10 @@ namespace scanner {
             }
         }
 
-        this->push(token::Type::LNumber);
+        return this->create(Type::LNumber);
     }
 
-    void Scanner::on_identifier() {
+    Token* Scanner::on_identifier() {
         while (this->is_alpha(this->peek()) || this->is_integer(this->peek())) {
             this->_right++;
         }
@@ -316,10 +291,10 @@ namespace scanner {
             this->_right - this->_left
         );
 
-        if (token::keyword_to_type(identifier) != token::Type::Invalid) {
-            this->push(token::keyword_to_type(identifier));
-        } else {
-            this->push(token::Type::Identifier);
+        if (keyword_to_type(identifier) != Type::Invalid) {
+            return this->create(keyword_to_type(identifier));
         }
+
+        return this->create(Type::Identifier);
     }
 };

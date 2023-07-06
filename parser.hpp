@@ -1,67 +1,31 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include <string>
 #include <vector>
 
-#include "token.hpp"
+#include "scanner.hpp"
 #include "error.hpp"
-#include "expression.hpp"
-#include "statement.hpp"
+#include "value.hpp"
 
 using namespace std;
 
 namespace parser {
     class Parser {
-        const vector<token::Token*> _tokens;
-        vector<statement::Statement*> _statements;
-        vector<error::Error*> _errors;
-        int _it = 0;
+        Scanner* scanner;
 
         public:
-            Parser(vector<token::Token*>);
+            Token* curr;
+            Token* prev;
+            vector<error::Error> errors;
+
+            Parser(const string&);
             ~Parser();
-            const vector<statement::Statement*> get_statements();
-            const vector<error::Error*> get_errors();
 
-        private:
-            token::Token* next();
-            token::Token* prev();
-            token::Token* peek();
-            token::Token* consume(token::Type, string);
-            error::SyntaxError* error(token::Token*, string);
-
-            bool is_end();
-            bool is_type(token::Type);
-            bool match(initializer_list<token::Type>);
+            bool next();
+            bool match(Type);
+            void consume(Type, const string&);
             void sync();
-
-            // expressions
-            expression::Expression* _assignment();
-            expression::Expression* _expression();
-            expression::Expression* _primary();
-            expression::Expression* _or();
-            expression::Expression* _and();
-            expression::Expression* _equality();
-            expression::Expression* _comparison();
-            expression::Expression* _term();
-            expression::Expression* _factor();
-            expression::Expression* _unary();
-            expression::Expression* _call();
-            expression::Expression* _call_finish(expression::Expression*);
-
-            // statements
-            statement::Statement* _declaration();
-            statement::Statement* _statement();
-            statement::Statement* _class();
-            statement::Statement* _for();
-            statement::Statement* _if();
-            statement::Statement* _print();
-            statement::Statement* _return();
-            statement::Statement* _let();
-            statement::Statement* _expr();
-            statement::Statement* _use();
-            statement::Function* _function(string);
-            vector<statement::Statement*> _block();
     };
 };
 

@@ -9,13 +9,16 @@ using namespace std;
 namespace error {
     class Error : public exception {
         public:
-            const int ln;
-            const int start;
-            const int end;
-            const string message;
+            int ln;
+            int start;
+            int end;
+            string message;
 
             Error(int, int, int, string);
+            Error(const Error&);
+
             const string what();
+            bool operator<(Error&);
     };
 
     class SyntaxError : public Error { using Error::Error; };

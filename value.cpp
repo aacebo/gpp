@@ -1,56 +1,101 @@
-#include "interpreter.hpp"
+#include "value.hpp"
 
-namespace interpreter {
-    Var::Var(Type type) : type(type), value(any(NULL)) { }
-    Var::Var(Type type, any value) : type(type), value(value) { }
-    Var::Var(Type type, any value, bool is_const, bool is_optional) : type(type), value(value), is_const(is_const), is_optional(is_optional) { }
+namespace value {
+    Value::Value() : type(Type::Nil) {
+        this->value = nullptr;
+    }
 
-    void Var::nil() { this->value = any(NULL); }
-    bool Var::is_nil() { return this->value.type() == any(NULL).type(); }
+    Value::Value(bool value) : type(Type::Bool) {
+        this->value = value;
+    }
 
-    bool Var::is_string() { return this->type == Type::String; }
-    string Var::to_string() {
+    Value::Value(float value) : type(Type::Number) {
+        this->value = value;
+    }
+
+    Value::Value(Object* value) : type(Type::Object) {
+        this->value = value;
+    }
+
+    Value::Value(const Value& other) : type(other.type) {
+        this->value = other.value;
+    }
+
+    Value::~Value() {
+        // if (this->is_object()) {
+        //     delete this->to_object();
+        // }
+    }
+
+    bool Value::is_bool() {
+        return this->type == Type::Bool;
+    }
+
+    bool Value::to_bool() {
+        return get<bool>(this->value);
+    }
+
+    bool Value::is_number() {
+        return this->type == Type::Number;
+    }
+
+    float Value::to_number() {
+        return get<float>(this->value);
+    }
+
+    bool Value::is_nil() {
+        return this->type == Type::Nil;
+    }
+
+    nullptr_t Value::to_nil() {
+        return get<nullptr_t>(this->value);
+    }
+
+    bool Value::is_object() {
+        return this->type == Type::Object;
+    }
+
+    Object* Value::to_object() {
+        return get<Object*>(this->value);
+    }
+
+    bool Value::is_string() {
+        return this->to_object()->is_string();
+    }
+
+    String* Value::to_string() {
+        return dynamic_cast<String*>(this->to_object());
+    }
+
+    string Value::as_string() {
         if (this->is_nil()) return "<nil>";
-        if (this->is_string()) return any_cast<string>(this->value);
+        if (this->is_bool()) return this->to_bool() == true ? "true" : "false";
         if (this->is_number()) return std::to_string(this->to_number());
-        if (this->is_bool()) return this->to_bool() ? "true" : "false";
-        if (this->is_class()) return this->to_class()->to_string();
-        if (this->is_instance()) return this->to_instance()->to_string();
-        if (this->is_function()) return this->to_function()->to_string();
+        if (this->is_object() && this->is_string()) return this->to_string()->to_string();
         return "";
     }
 
-    bool Var::is_number() { return this->type == Type::Number; }
-    float Var::to_number() { return any_cast<float>(this->value); }
-
-    bool Var::is_bool() { return this->type == Type::Bool; }
-    bool Var::to_bool() { return any_cast<bool>(this->value); }
-
-    bool Var::is_class() { return this->type == Type::Class; }
-    Class* Var::to_class() { return any_cast<Class*>(this->value); }
-
-    bool Var::is_instance() { return this->type == Type::Instance; }
-    Instance* Var::to_instance() { return any_cast<Instance*>(this->value); }
-
-    bool Var::is_function() { return this->type == Type::Function; }
-    Function* Var::to_function() { return any_cast<Function*>(this->value); }
-
-    bool Var::is_truthy() {
+    bool Value::is_truthy() {
         if (this->is_nil()) return false;
-        if (this->is_bool()) {
-            return this->to_bool();
-        }
-
+        if (this->is_bool()) return this->to_bool();
         return true;
     }
 
-    bool Var::operator==(Var& other) {
+    Value& Value::operator=(const Value& other) {
+        this->type = other.type;
+        this->value = other.value;
+        return *this;
+    }
+
+    bool Value::operator==(Value& other) {
         if (this->type != other.type) return false;
         if (this->is_nil() && other.is_nil()) return true;
 
-        if (this->is_string()) {
-            return this->to_string() == other.to_string();
-        } else if (this->is_number()) {
+        if (this->is_object() && this->is_string() && other.is_string()) {
+            return this->to_string()->equals(*other.to_string());
+        }
+
+        if (this->is_number()) {
             return this->to_number() == other.to_number();
         } else if (this->is_bool()) {
             return this->to_bool() == other.to_bool();
@@ -59,11 +104,11 @@ namespace interpreter {
         return false;
     }
 
-    bool Var::operator!=(Var& other) {
+    bool Value::operator!=(Value& other) {
         return !this->operator==(other);
     }
 
-    bool Var::operator>(Var& other) {
+    bool Value::operator>(Value& other) {
         if (!this->is_number() || !other.is_number()) {
             throw runtime_error("both operands must be numbers");
         }
@@ -71,7 +116,7 @@ namespace interpreter {
         return this->to_number() > other.to_number();
     }
 
-    bool Var::operator>=(Var& other) {
+    bool Value::operator>=(Value& other) {
         if (!this->is_number() || !other.is_number()) {
             throw runtime_error("both operands must be numbers");
         }
@@ -79,7 +124,7 @@ namespace interpreter {
         return this->to_number() >= other.to_number();
     }
 
-    bool Var::operator<(Var& other) {
+    bool Value::operator<(Value& other) {
         if (!this->is_number() || !other.is_number()) {
             throw runtime_error("both operands must be numbers");
         }
@@ -87,7 +132,7 @@ namespace interpreter {
         return this->to_number() < other.to_number();
     }
 
-    bool Var::operator<=(Var& other) {
+    bool Value::operator<=(Value& other) {
         if (!this->is_number() || !other.is_number()) {
             throw runtime_error("both operands must be numbers");
         }
@@ -95,7 +140,7 @@ namespace interpreter {
         return this->to_number() <= other.to_number();
     }
 
-    float Var::operator+(Var& other) {
+    float Value::operator+(Value& other) {
         if (!this->is_number() || !other.is_number()) {
             throw runtime_error("both operands must be numbers");
         }
@@ -103,7 +148,7 @@ namespace interpreter {
         return this->to_number() + other.to_number();
     }
 
-    float Var::operator+=(Var& other) {
+    float Value::operator+=(Value& other) {
         if (!this->is_number() || !other.is_number()) {
             throw runtime_error("both operands must be numbers");
         }
@@ -113,7 +158,7 @@ namespace interpreter {
         return value;
     }
 
-    float Var::operator-() {
+    float Value::operator-() {
         if (!this->is_number()) {
             throw runtime_error("operand must be a number");
         }
@@ -121,7 +166,7 @@ namespace interpreter {
         return -this->to_number();
     }
 
-    float Var::operator-(Var& other) {
+    float Value::operator-(Value& other) {
         if (!this->is_number() || !other.is_number()) {
             throw runtime_error("both operands must be numbers");
         }
@@ -129,7 +174,7 @@ namespace interpreter {
         return this->to_number() - other.to_number();
     }
 
-    float Var::operator-=(Var& other) {
+    float Value::operator-=(Value& other) {
         if (!this->is_number() || !other.is_number()) {
             throw runtime_error("both operands must be numbers");
         }
@@ -139,7 +184,7 @@ namespace interpreter {
         return value;
     }
 
-    float Var::operator*(Var& other) {
+    float Value::operator*(Value& other) {
         if (!this->is_number() || !other.is_number()) {
             throw runtime_error("both operands must be numbers");
         }
@@ -147,7 +192,7 @@ namespace interpreter {
         return this->to_number() * other.to_number();
     }
 
-    float Var::operator*=(Var& other) {
+    float Value::operator*=(Value& other) {
         if (!this->is_number() || !other.is_number()) {
             throw runtime_error("both operands must be numbers");
         }
@@ -157,7 +202,7 @@ namespace interpreter {
         return value;
     }
 
-    float Var::operator/(Var& other) {
+    float Value::operator/(Value& other) {
         if (!this->is_number() || !other.is_number()) {
             throw runtime_error("both operands must be numbers");
         }
@@ -165,7 +210,7 @@ namespace interpreter {
         return this->to_number() / other.to_number();
     }
 
-    float Var::operator/=(Var& other) {
+    float Value::operator/=(Value& other) {
         if (!this->is_number() || !other.is_number()) {
             throw runtime_error("both operands must be numbers");
         }

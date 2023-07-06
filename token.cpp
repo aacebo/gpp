@@ -1,14 +1,27 @@
 #include "token.hpp"
-#include "error.hpp"
 
-namespace token {
+namespace parser {
     Token::Token(
         Type type,
         int ln,
         int start,
         int end,
-        string value
-    ) : type(type), ln(ln), start(start), end(end), value(value) {
+        string& value
+    ) : type(type),
+        ln(ln),
+        start(start),
+        end(end),
+        value(value) {
+
+    }
+
+    Token::Token(
+        const Token& token
+    ) : type(token.type),
+        ln(token.ln),
+        start(token.start),
+        end(token.end),
+        value(token.value) {
 
     }
 
@@ -27,7 +40,7 @@ namespace token {
         if (this->value == "true") return true;
         else if (this->value == "false") return false;
 
-        throw new error::RuntimeError(
+        throw error::RuntimeError(
             this->ln,
             this->start,
             this->end,

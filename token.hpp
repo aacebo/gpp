@@ -5,10 +5,11 @@
 #include <map>
 
 #include "token_type.hpp"
+#include "error.hpp"
 
 using namespace std;
 
-namespace token {
+namespace parser {
     class Token {
         public:
             const Type type;
@@ -17,7 +18,9 @@ namespace token {
             const int end;
             const string value;
 
-            Token(Type, int, int, int, string);
+            Token(Type, int, int, int, string&);
+            Token(const Token&);
+
             const string to_string();
             const float to_float();
             const bool to_bool();

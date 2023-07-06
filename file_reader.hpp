@@ -17,6 +17,7 @@ namespace file_reader {
         public:
             FileReader(string);
             const map<path, string> get_files();
+            const string get_src();
     };
 };
 

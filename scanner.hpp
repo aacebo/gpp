@@ -2,39 +2,33 @@
 #define SCANNER_H
 
 #include <string>
-#include <vector>
 
 #include "token.hpp"
 #include "error.hpp"
 
 using namespace std;
 
-namespace scanner {
+namespace parser {
     class Scanner {
         const string _src;
         int _left;
         int _right;
         int _ln;
-        vector<token::Token*> _tokens;
-        vector<error::Error*> _errors;
 
         public:
-            Scanner(string);
-            ~Scanner();
-            const vector<token::Token*> get_tokens();
-            const vector<error::Error*> get_errors();
+            Scanner(const string&);
+            Token* scan();
 
         private:
-            void scan();
-            void push(token::Type);
+            Token* create(Type);
             char peek();
             bool is_escaped();
             bool is_integer(char);
             bool is_alpha(char);
-            void on_comment();
-            void on_string();
-            void on_number();
-            void on_identifier();
+            Token* on_comment();
+            Token* on_string();
+            Token* on_number();
+            Token* on_identifier();
     };
 };
 

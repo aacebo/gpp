@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace token {
+namespace parser {
     enum class Type {
         Comma,
         Dot,
