@@ -31,10 +31,21 @@ My ideal outcome for this language is to offer the same simplicity/ease-of-use a
 | Imports                | `use`                    | [ ]       | [example](./examples/use.gpp)         |
 | Syntax Error Handling  |                          | [ ]       |                                       |
 | Runtime Error Handling |                          | [ ]       |                                       |
-| Struct Tags            |                          | [ ]       | [example](./examples/tags.gpp)        |
-| Inheritance            |                          | [ ]       | [example](./examples/inheritance.gpp) |
+| Visibility             | `pub`                    | [ ]       | [example](./examples/visibility.gpp)  |
+| Inheritance            | `extends`                | [ ]       | [example](./examples/inheritance.gpp) |
 | Generics               |                          | [ ]       | [example](./examples/generics.gpp)    |
-| Exceptions             | `throw`                  | [ ]       | [example](./examples/exceptions.gpp)  |
+| Exceptions             | `throw` `try` `catch`    | [ ]       | [example](./examples/exceptions.gpp)  |
+| Slices                 | `[]`                     | [ ]       | [example](./examples/slices.gpp)      |
+| Maps                   | `map[K]V`                | [ ]       | [example](./examples/maps.gpp)        |
+
+## Future (Advanced)
+
+| Title                  | Keywords                 | Status    | Example                               |
+|------------------------|--------------------------|-----------|---------------------------------------|
+| Struct Tags            |                          | [ ]       | [example](./examples/tags.gpp)        |
+| Reflection             |                          | [ ]       | [example](./examples/reflection.gpp)  |
+| Testing                |                          | [ ]       | [example](./examples/testing.gpp)     |
+| Decorators             | `@`                      | [ ]       | [example](./examples/decorators.gpp)  |
 
 ## Author
 
