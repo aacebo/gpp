@@ -96,18 +96,6 @@ namespace compiler {
         this->fn->chunk.push(offset & 0xff);
     }
 
-    bool Compiler::has_variable(string name) {
-        if (this->variables.count(name) > 0) {
-            return true;
-        }
-
-        if (this->parent) {
-            return this->parent->has_variable(name);
-        }
-
-        return false;
-    }
-
     void Compiler::_declaration() {
         if (this->parser->match(parser::Type::Class)) {
             // this->_class();
@@ -184,7 +172,6 @@ namespace compiler {
         }
 
         this->parser->consume(parser::Type::SemiColon, "expected ';' after variable declaration");
-        this->variables[name.value] = type;
         auto name_value = dynamic_cast<value::Object*>(new value::String(name.value));
         this->fn->chunk.push(OpCode::Define);
         this->fn->chunk.push_const(value::Value(name_value));

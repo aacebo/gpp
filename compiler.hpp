@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <string>
-#include <unordered_map>
 #include <algorithm>
 
 #include "function.hpp"
@@ -23,7 +22,6 @@ namespace compiler {
         Compiler* parent;
         value::Function* fn;
         parser::Parser* parser;
-        unordered_map<string, value::Type> variables;
         vector<error::Error> errors;
 
         public:
@@ -43,7 +41,6 @@ namespace compiler {
             int jump(OpCode);
             void patch_jump(int);
             void loop(int);
-            bool has_variable(string);
 
             // expressions
             // void _method();
