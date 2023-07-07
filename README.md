@@ -34,6 +34,7 @@ My ideal outcome for this language is to offer the same simplicity/ease-of-use a
 | Struct Tags            |                          | [ ]       | [example](./examples/tags.gpp)        |
 | Inheritance            |                          | [ ]       | [example](./examples/inheritance.gpp) |
 | Generics               |                          | [ ]       | [example](./examples/generics.gpp)    |
+| Exceptions             | `throw`                  | [ ]       | [example](./examples/exceptions.gpp)  |
 
 ## Author
 
