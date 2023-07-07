@@ -172,7 +172,7 @@ namespace compiler {
         }
 
         this->parser->consume(parser::Type::SemiColon, "expected ';' after variable declaration");
-        auto name_value = dynamic_cast<value::Object*>(new value::String(name.value));
+        auto name_value = (new value::String(name.value))->to_object();
         this->fn->chunk.push(OpCode::Define);
         this->fn->chunk.push_const(value::Value(name_value));
         this->fn->chunk.push_const(value::Value(is_const));
@@ -480,15 +480,14 @@ namespace compiler {
     }
 
     void Compiler::_string(bool can_assign) {
-        auto value = dynamic_cast<value::Object*>(new value::String(this->parser->prev->value));
+        auto value = (new value::String(this->parser->prev->value))->to_object();
         this->fn->chunk.push(OpCode::Const);
         this->fn->chunk.push_const(value::Value(value));
     }
 
     void Compiler::_variable(bool can_assign) {
         auto name = *this->parser->prev;
-        auto name_value = dynamic_cast<value::Object*>(new value::String(name.value));
-        // this->parser->consume(parser::Type::SemiColon, "expected ';' after variable name");
+        auto name_value = (new value::String(name.value))->to_object();
 
         if (this->parser->match(parser::Type::Eq)) {
             this->expression();

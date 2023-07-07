@@ -22,4 +22,8 @@ namespace value {
     bool Object::is_function() {
         return this->type == ObjectType::Function;
     }
+
+    Object* Object::to_object() {
+        return dynamic_cast<Object*>(this);
+    }
 };

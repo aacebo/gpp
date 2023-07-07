@@ -44,7 +44,7 @@ namespace value {
     }
 
     bool Value::is_nil() {
-        return this->type == Type::Nil;
+        return this->type == Type::Nil || holds_alternative<nullptr_t>(this->value);
     }
 
     nullptr_t Value::to_nil() {

@@ -27,6 +27,7 @@ namespace value {
             bool is_instance();
             bool is_up_value();
             bool is_function();
+            Object* to_object();
 
             virtual string to_string() = 0;
     };
