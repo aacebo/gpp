@@ -8,7 +8,7 @@ namespace value {
         public:
             const Type type;
             const bool is_const = false;
-            const bool is_optional = false;
+            const bool is_nilable = false;
 
             Definition(Type, bool, bool);
             Definition(const Definition&);

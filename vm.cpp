@@ -123,14 +123,14 @@ namespace vm {
     void VM::_define() {
         auto name = this->frames.front()->next_const();
         auto is_const = this->frames.front()->next_const();
-        auto is_optional = this->frames.front()->next_const();
+        auto is_nilable = this->frames.front()->next_const();
         auto type = this->frames.front()->next_byte();
         auto value = this->stack.top();
         this->stack.pop();
         auto def = value::Definition(
             (value::Type)type,
             is_const.to_bool(),
-            is_optional.to_bool()
+            is_nilable.to_bool()
         );
 
         this->scope->define(name.to_string()->to_string(), def, value);
@@ -155,9 +155,9 @@ namespace vm {
         this->stack.pop();
 
         if (a.is_number()) {
-            this->stack.push(value::Value(a + b));
+            this->stack.push(a + b);
         } else if (a.is_object() && a.is_string()) {
-            this->stack.push(value::Value(*a.to_string() + *b.to_string()));
+            this->stack.push(*a.to_string() + *b.to_string());
         }
     }
 
@@ -166,7 +166,7 @@ namespace vm {
         this->stack.pop();
         auto a = this->stack.top();
         this->stack.pop();
-        this->stack.push(value::Value(a - b));
+        this->stack.push(a - b);
     }
 
     void VM::_multiply() {
@@ -174,7 +174,7 @@ namespace vm {
         this->stack.pop();
         auto a = this->stack.top();
         this->stack.pop();
-        this->stack.push(value::Value(a * b));
+        this->stack.push(a * b);
     }
 
     void VM::_divide() {
@@ -182,7 +182,7 @@ namespace vm {
         this->stack.pop();
         auto a = this->stack.top();
         this->stack.pop();
-        this->stack.push(value::Value(a / b));
+        this->stack.push(a / b);
     }
 
     void VM::_negate() {
@@ -193,13 +193,13 @@ namespace vm {
         }
 
         this->stack.pop();
-        this->stack.push(value::Value(-value.to_number()));
+        this->stack.push(-value.to_number());
     }
 
     void VM::_not() {
         auto value = this->stack.top();
         this->stack.pop();
-        this->stack.push(value::Value(!value.is_truthy()));
+        this->stack.push(!value.is_truthy());
     }
 
     void VM::_eq() {
@@ -207,7 +207,7 @@ namespace vm {
         this->stack.pop();
         auto a = this->stack.top();
         this->stack.pop();
-        this->stack.push(value::Value(a == b));
+        this->stack.push(a == b);
     }
 
     void VM::_gt() {
@@ -215,7 +215,7 @@ namespace vm {
         this->stack.pop();
         auto a = this->stack.top();
         this->stack.pop();
-        this->stack.push(value::Value(a > b));
+        this->stack.push(a > b);
     }
 
     void VM::_lt() {
@@ -223,7 +223,7 @@ namespace vm {
         this->stack.pop();
         auto a = this->stack.top();
         this->stack.pop();
-        this->stack.push(value::Value(a < b));
+        this->stack.push(a < b);
     }
 
     void VM::_print() {

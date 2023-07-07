@@ -40,7 +40,7 @@ namespace parser {
             case ';':
                 return this->create(Type::SemiColon);
             case '?':
-                return this->create(Type::Optional);
+                return this->create(Type::Nilable);
             case '|':
                 if (this->peek() != '|') {
                     throw error::SyntaxError(

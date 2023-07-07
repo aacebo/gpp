@@ -4,10 +4,10 @@ namespace value {
     Definition::Definition(
         Type type,
         bool is_const,
-        bool is_optional
+        bool is_nilable
     ) : type(type),
         is_const(is_const),
-        is_optional(is_optional) {
+        is_nilable(is_nilable) {
         
     }
 
@@ -16,7 +16,7 @@ namespace value {
     ) : Definition(
         other.type,
         other.is_const,
-        other.is_optional
+        other.is_nilable
     ) {
         
     }

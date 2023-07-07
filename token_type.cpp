@@ -61,7 +61,7 @@ namespace parser {
                 return "{";
             case Type::RBrace:
                 return "}";
-            case Type::Optional:
+            case Type::Nilable:
                 return "?";
             case Type::Minus:
                 return "-";

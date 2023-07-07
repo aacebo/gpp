@@ -13,7 +13,7 @@ namespace parser {
         SemiColon,
         LParen, RParen,
         LBrace, RBrace,
-        Optional,
+        Nilable,
 
         // arithmetic
         Minus, MinusEq,

@@ -53,7 +53,7 @@ namespace value {
             }
 
             if (
-                !(this->definitions.at(name).is_optional && value.is_nil()) &&
+                !(this->definitions.at(name).is_nilable && value.is_nil()) &&
                 this->definitions.at(name).type != value.type
             ) {
                 throw runtime_error(

@@ -123,7 +123,7 @@ namespace compiler {
     void Compiler::_let() {
         value::Type type = value::Type::Nil;
         bool is_const = this->parser->prev->type == parser::Type::Const;
-        bool is_optional = false;
+        bool is_nilable = false;
 
         this->parser->consume(parser::Type::Identifier, "expected variable name");
         auto name = *this->parser->prev;
@@ -136,8 +136,8 @@ namespace compiler {
         ) {
             type = this->token_to_value_type(this->parser->prev->type);
 
-            if (this->parser->match(parser::Type::Optional)) {
-                is_optional = true;
+            if (this->parser->match(parser::Type::Nilable)) {
+                is_nilable = true;
             }
         }
 
@@ -161,12 +161,12 @@ namespace compiler {
 
             type = init_type;
         } else {
-            if (!is_optional) {
+            if (!is_nilable) {
                 throw error::SyntaxError(
                     this->parser->prev->ln,
                     this->parser->prev->start,
                     this->parser->prev->end,
-                    "only optional types can be nil"
+                    "only nilable types can be nil"
                 );
             }
 
@@ -189,7 +189,7 @@ namespace compiler {
         this->fn->chunk.push(OpCode::Define);
         this->fn->chunk.push_const(value::Value(name_value));
         this->fn->chunk.push_const(value::Value(is_const));
-        this->fn->chunk.push_const(value::Value(is_optional));
+        this->fn->chunk.push_const(value::Value(is_nilable));
         this->fn->chunk.push((int)type);
     }
 
