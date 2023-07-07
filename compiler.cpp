@@ -431,17 +431,14 @@ namespace compiler {
     void Compiler::_literal(bool can_assign) {
         switch (this->parser->prev->type) {
             case parser::Type::True:
-                // this->fn->chunk.push(OpCode::True);
                 this->fn->chunk.push(OpCode::Const);
                 this->fn->chunk.push_const(value::Value(true));
                 break;
             case parser::Type::False:
-                // this->fn->chunk.push(OpCode::False);
                 this->fn->chunk.push(OpCode::Const);
                 this->fn->chunk.push_const(value::Value(false));
                 break;
             case parser::Type::Nil:
-                // this->fn->chunk.push(OpCode::Nil);
                 this->fn->chunk.push(OpCode::Const);
                 this->fn->chunk.push_const(value::Value());
                 break;
@@ -489,8 +486,42 @@ namespace compiler {
         auto name = *this->parser->prev;
         auto name_value = (new value::String(name.value))->to_object();
 
-        if (this->parser->match(parser::Type::Eq)) {
+        if (
+            this->parser->match(parser::Type::Eq) ||
+            this->parser->match(parser::Type::PlusEq) ||
+            this->parser->match(parser::Type::MinusEq) ||
+            this->parser->match(parser::Type::StarEq) ||
+            this->parser->match(parser::Type::SlashEq)
+        ) {
+            auto type = this->parser->prev->type;
             this->expression();
+
+            if (
+                type == parser::Type::PlusEq ||
+                type == parser::Type::MinusEq ||
+                type == parser::Type::StarEq ||
+                type == parser::Type::SlashEq
+            ) {
+                this->fn->chunk.push(OpCode::Resolve);
+                this->fn->chunk.push_const(value::Value(name_value));
+
+                switch (type) {
+                    case parser::Type::PlusEq:
+                        this->fn->chunk.push(OpCode::Add);
+                        break;
+                    case parser::Type::MinusEq:
+                        this->fn->chunk.push(OpCode::Subtract);
+                        break;
+                    case parser::Type::StarEq:
+                        this->fn->chunk.push(OpCode::Multiply);
+                        break;
+                    case parser::Type::SlashEq:
+                        this->fn->chunk.push(OpCode::Divide);
+                        break;
+                    default: break;
+                }
+            }
+
             this->fn->chunk.push(OpCode::Assign);
         } else {
             this->fn->chunk.push(OpCode::Resolve);
