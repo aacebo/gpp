@@ -3,6 +3,7 @@
 
 #include <string>
 #include <variant>
+#include <any>
 
 #include "value_type.hpp"
 #include "object.hpp"
@@ -19,9 +20,12 @@ namespace value {
             Value();
             Value(bool);
             Value(float);
+            Value(int);
             Value(Object*);
             Value(const Value&);
             ~Value();
+
+            static Value parse(any);
 
             bool is_bool();
             bool to_bool();

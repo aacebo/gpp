@@ -52,6 +52,7 @@ namespace vm {
             void _lt();
 
             void _print();
+            void _call();
     };
 };
 

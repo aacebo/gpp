@@ -13,6 +13,10 @@ namespace value {
         this->value = value;
     }
 
+    Value::Value(int value) : type(Type::Number) {
+        this->value = static_cast<float>(value);
+    }
+
     Value::Value(Object* value) : type(Type::Object) {
         this->value = value;
     }
@@ -25,6 +29,22 @@ namespace value {
         // if (this->is_object()) {
         //     delete this->to_object();
         // }
+    }
+
+    Value Value::parse(any value) {
+        if (value.type() == typeid(nullptr)) {
+            return Value();
+        } else if (value.type() == typeid(bool)) {
+            return Value(any_cast<bool>(value));
+        } else if (value.type() == typeid(float)) {
+            return Value(any_cast<float>(value));
+        } else if (value.type() == typeid(int)) {
+            return Value(any_cast<int>(value));
+        } else if (value.type() == typeid(Object*)) {
+            return Value(any_cast<Object*>(value));
+        }
+
+        throw runtime_error("unsupported value type");
     }
 
     bool Value::is_bool() {

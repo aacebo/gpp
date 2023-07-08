@@ -83,6 +83,9 @@ namespace vm {
                     case compiler::OpCode::Print:
                         this->_print();
                         break;
+                    case compiler::OpCode::Call:
+                        this->_call();
+                        break;
                     default:
                         break;
                 }
@@ -230,5 +233,24 @@ namespace vm {
         auto value = this->stack.top();
         this->stack.pop();
         cout << value.as_string();
+    }
+
+    void VM::_call() {
+        vector<value::Value> args;
+
+        auto method = this->frames.front()->next_const();
+        auto argc = this->frames.front()->next_const();
+
+        for (int i = 0; i < argc.to_number(); i++) {
+            args.push_back(this->stack.top());
+            this->stack.pop();
+        }
+
+        auto value = this->stack.top();
+
+        if (value.is_string()) {
+            auto res = value.to_string()->call(method.to_string()->to_string());
+            this->stack.push(value::Value::parse(res));
+        }
     }
 };

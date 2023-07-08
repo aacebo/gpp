@@ -76,6 +76,20 @@ namespace compiler {
         this->_precedence(Precedence::Assignment);
     }
 
+    int Compiler::arguments() {
+        int argc = 0;
+
+        if (this->parser->curr->type != parser::Type::RParen) {
+            do {
+                this->expression();
+                argc++;
+            } while (this->parser->match(parser::Type::Comma));
+        }
+
+        this->parser->consume(parser::Type::RParen, "expected ')' after arguments");
+        return argc;
+    }
+
     int Compiler::jump(OpCode code) {
         this->fn->chunk.push(code);
         this->fn->chunk.push(0xff);
@@ -360,10 +374,10 @@ namespace compiler {
 
     void Compiler::_infix(parser::Type type, bool can_assign) {
         switch (type) {
-            // case parser::Type::LParen:
-            //     return this->_call(can_assign);
-            // case parser::Type::Dot:
-            //     return this->_dot(can_assign);
+            case parser::Type::LParen:
+                return this->_call(can_assign);
+            case parser::Type::Dot:
+                return this->_dot(can_assign);
             case parser::Type::And:
                 return this->_and(can_assign);
             case parser::Type::Or:
@@ -456,6 +470,25 @@ namespace compiler {
         auto value = this->parser->prev->to_float();
         this->fn->chunk.push(OpCode::Const);
         this->fn->chunk.push_const(value::Value(value));
+    }
+
+    void Compiler::_call(bool can_assign) {
+        auto name = (new value::String(this->parser->prev->value))->to_object();
+        this->parser->consume(parser::Type::LParen, "expected '(' after function name");
+        int argc = this->arguments();
+        this->fn->chunk.push(OpCode::Call);
+        this->fn->chunk.push_const(value::Value(name));
+        this->fn->chunk.push_const(value::Value(argc));
+    }
+
+    void Compiler::_dot(bool can_assign) {
+        this->parser->consume(parser::Type::Identifier, "expected identifier");
+
+        if (this->parser->curr->type == parser::Type::LParen) {
+            this->_call(can_assign);
+        } else {
+            this->_variable(can_assign);
+        }
     }
 
     void Compiler::_and(bool can_assign) {

@@ -16,4 +16,12 @@ namespace value {
     String* String::operator+(const String& other) {
         return new String(this->value + other.value);
     }
+
+    any String::call(const string& method) {
+        if (method == "len") {
+            return static_cast<int>(this->value.length());
+        }
+
+        throw runtime_error("'" + method + "' is not a valid method for type 'string'");
+    }
 };

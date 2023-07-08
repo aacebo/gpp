@@ -36,6 +36,7 @@ namespace compiler {
         private:
             value::Type token_to_value_type(parser::Type);
             void expression();
+            int arguments();
 
             // emit helpers
             int jump(OpCode);
@@ -68,8 +69,8 @@ namespace compiler {
 
             // rules
             void _binary(bool);
-            // void _call(bool);
-            // void _dot(bool);
+            void _call(bool);
+            void _dot(bool);
             void _literal(bool);
             void _grouping(bool);
             void _number(bool);

@@ -2,6 +2,7 @@
 #define STRING_H
 
 #include <string>
+#include <any>
 
 #include "object.hpp"
 
@@ -17,6 +18,7 @@ namespace value {
             string to_string();
             bool equals(const String&);
             String* operator+(const String&);
+            any call(const string&);
     };
 };
 
