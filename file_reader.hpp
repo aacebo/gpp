@@ -3,20 +3,18 @@
 
 #include <iostream>
 #include <fstream>
-#include <filesystem>
 #include <sstream>
 #include <map>
 
 using namespace std;
-using namespace std::filesystem;
 
 namespace file_reader {
     class FileReader {
-        map<path, string> _files;
+        map<string, string> _files;
 
         public:
-            FileReader(string);
-            const map<path, string> get_files();
+            FileReader(int, char*[]);
+            const map<string, string> get_files();
             const string get_src();
     };
 };

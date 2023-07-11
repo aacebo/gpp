@@ -6,4 +6,4 @@ build: clean
 	clang++ -g -std=c++20 *.cpp -o bin/gpp
 
 run: build
-	./bin/gpp
+	./bin/gpp ./**/*.gpp

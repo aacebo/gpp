@@ -4,8 +4,13 @@
 
 using namespace std;
 
-int main() {
-    auto reader = new file_reader::FileReader(".");
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        cout << "must specify source path" << endl;
+        return -1;
+    }
+
+    auto reader = new file_reader::FileReader(argc, argv);
     auto vm = new vm::VM();
 
     try {
@@ -18,6 +23,8 @@ int main() {
         for (auto e : errors) {
             cout << e.what() << endl;
         }
+
+        return -1;
     }
 
     delete vm;
