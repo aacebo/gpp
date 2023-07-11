@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "object.hpp"
-#include "class.hpp"
 #include "chunk.hpp"
 
 using namespace std;
@@ -13,7 +12,6 @@ using namespace std;
 namespace value {
     enum class FunctionType {
         Default,
-        Method,
         Closure
     };
 
@@ -32,7 +30,6 @@ namespace value {
 
             bool is_default();
             bool is_closure();
-            bool is_method();
             string to_string();
     };
 
@@ -40,15 +37,6 @@ namespace value {
         public:
             Closure();
             Closure(vector<value::Type>, value::Type);
-
-            string to_string();
-    };
-
-    class Method : public Function {
-        public:
-            Class* parent;
-
-            Method(string, vector<value::Type>, value::Type);
 
             string to_string();
     };

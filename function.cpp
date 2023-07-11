@@ -50,10 +50,6 @@ namespace value {
         return this->fn_type == FunctionType::Closure;
     }
 
-    bool Function::is_method() {
-        return this->fn_type == FunctionType::Method;
-    }
-
     string Function::to_string() {
         return "<fn " + this->name + ">";
     }
@@ -74,20 +70,5 @@ namespace value {
 
     string Closure::to_string() {
         return "<fn (anonymous)>";
-    }
-
-    Method::Method(
-        string name,
-        vector<value::Type> arg_types,
-        value::Type return_type
-    ) : Function(
-        FunctionType::Method,
-        name,
-        arg_types,
-        return_type
-    ) { }
-
-    string Method::to_string() {
-        return "<fn " + this->parent->name + "." + this->name + ">";
     }
 };

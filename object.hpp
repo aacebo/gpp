@@ -8,9 +8,6 @@ using namespace std;
 namespace value {
     enum class ObjectType {
         String,
-        Class,
-        Instance,
-        UpValue,
         Function
     };
 
@@ -23,9 +20,6 @@ namespace value {
             virtual ~Object() = default;
 
             bool is_string();
-            bool is_class();
-            bool is_instance();
-            bool is_up_value();
             bool is_function();
             Object* to_object();
 
