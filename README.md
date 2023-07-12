@@ -34,7 +34,7 @@ My ideal outcome for this language is to offer the same simplicity/ease-of-use a
 | Runtime Error Handling |                          | [ ]       |                                       |
 | Visibility             | `pub`                    | [ ]       | [example](./examples/visibility.gpp)  |
 | Inheritance            | `extends`                | [ ]       | [example](./examples/inheritance.gpp) |
-| Generics               |                          | [ ]       | [example](./examples/generics.gpp)    |
+| Generics               | `<T>`                    | [ ]       | [example](./examples/generics.gpp)    |
 | Exceptions             | `throw` `try` `catch`    | [ ]       | [example](./examples/exceptions.gpp)  |
 | Slices                 | `[]`                     | [ ]       | [example](./examples/slices.gpp)      |
 | Maps                   | `map[K]V`                | [ ]       | [example](./examples/maps.gpp)        |

@@ -14,7 +14,6 @@ namespace value {
     class Object {
         public:
             const ObjectType type;
-            Object* next;
 
             Object(ObjectType);
             virtual ~Object() = default;
