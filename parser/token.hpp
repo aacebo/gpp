@@ -4,8 +4,9 @@
 #include <string>
 #include <map>
 
+#include "../error.hpp"
+
 #include "token_type.hpp"
-#include "error.hpp"
 
 using namespace std;
 

@@ -4,9 +4,11 @@
 #include <string>
 #include <vector>
 
+#include "../error.hpp"
+
 #include "scanner.hpp"
-#include "error.hpp"
-#include "value.hpp"
+#include "token_type.hpp"
+#include "token.hpp"
 
 using namespace std;
 

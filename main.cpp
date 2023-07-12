@@ -1,6 +1,6 @@
 #include "file_reader.hpp"
-#include "vm.hpp"
 #include "error.hpp"
+#include "vm/vm.hpp"
 
 using namespace std;
 

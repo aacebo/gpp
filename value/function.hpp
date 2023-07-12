@@ -4,8 +4,10 @@
 #include <string>
 #include <vector>
 
+#include "../compiler/chunk.hpp"
+
 #include "object.hpp"
-#include "chunk.hpp"
+#include "value_type.hpp"
 
 using namespace std;
 

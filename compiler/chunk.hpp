@@ -3,7 +3,8 @@
 
 #include <vector>
 
-#include "value.hpp"
+#include "../value/value.hpp"
+
 #include "op_code.hpp"
 
 using namespace std;

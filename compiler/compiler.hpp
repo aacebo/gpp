@@ -5,15 +5,14 @@
 #include <string>
 #include <algorithm>
 
-#include "function.hpp"
-#include "parser.hpp"
-#include "error.hpp"
-#include "scanner.hpp"
-#include "value.hpp"
+#include "../error.hpp"
+#include "../parser/parser.hpp"
+#include "../value/value.hpp"
+#include "../value/function.hpp"
+
+#include "chunk.hpp"
 #include "op_code.hpp"
 #include "precedence.hpp"
-#include "object.hpp"
-#include "string.hpp"
 
 using namespace std;
 

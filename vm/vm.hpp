@@ -6,12 +6,11 @@
 #include <queue>
 #include <iostream>
 
-#include "compiler.hpp"
-#include "value.hpp"
-#include "string.hpp"
+#include "../compiler/compiler.hpp"
+#include "../value/value.hpp"
+#include "../value/scope.hpp"
+
 #include "frame.hpp"
-#include "op_code.hpp"
-#include "scope.hpp"
 
 using namespace std;
 

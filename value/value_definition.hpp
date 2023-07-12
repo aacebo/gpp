@@ -1,7 +1,7 @@
 #ifndef VALUE_DEFINITION_H
 #define VALUE_DEFINITION_H
 
-#include "value.hpp"
+#include "value_type.hpp"
 
 namespace value {
     class Definition {

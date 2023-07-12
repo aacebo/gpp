@@ -1,8 +1,9 @@
 #ifndef FRAME_H
 #define FRAME_H
 
-#include "function.hpp"
-#include "op_code.hpp"
+#include "../value/value.hpp"
+#include "../value/function.hpp"
+#include "../compiler/op_code.hpp"
 
 namespace vm {
     class Frame {

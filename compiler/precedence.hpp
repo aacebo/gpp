@@ -1,7 +1,7 @@
 #ifndef PRECEDENCE_H
 #define PRECEDENCE_H
 
-#include "token_type.hpp"
+#include "../parser/token_type.hpp"
 
 namespace compiler {
     enum class Precedence {

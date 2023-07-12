@@ -3,8 +3,10 @@
 
 #include <string>
 
+#include "../error.hpp"
+
 #include "token.hpp"
-#include "error.hpp"
+#include "token_type.hpp"
 
 using namespace std;
 
